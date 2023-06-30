@@ -1,0 +1,72 @@
+<%- include('./layout/header.ejs') %>
+    <div class="d-flex customerCare justify-content-between p-3 container-fluid ">
+        <div class="">24/7 customer service 1-800-235-5678
+        </div>
+        <form class="d-flex nav-link text-light " role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success text-light" type="submit">Search</button>
+        </form>
+    </div>
+    <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
+        <div class="container-fluid  navbarColor">
+            <a class="navbar-brand text-light img-fluid " href="#"><img src="/images/logo.png" class="logoControl"
+                    alt=""></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light " href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            All products
+                        </a>
+                        <ul class="dropdown-menu navbarColor ">
+                            <li><a class="dropdown-item text-light miniNav" href="#">Home Appliances</a></li>
+                            <li><a class="dropdown-item text-light miniNav" href="#">Audio & video</a></li>
+                            <li><a class="dropdown-item text-light miniNav" href="#">Refrigerator</a></li>
+                            <li><a class="dropdown-item text-light miniNav" href="#">Kitchen Appliances</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="#">New Arrivals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="#">Todays deal</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    </div>
+
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <form action="/login" method="POST" class=" formSize">
+            <h1 class="text-center pb-3">LOGIN</h1>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    name="email" required>
+                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" name="password" required>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Keep me logged in</label>
+                <a href="#!" class="text-end ms-5 ps-5 link-underline-light">Forgot password?</a>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn loginButton">Submit</button>
+            </div>
+            <div class="mt-5 text-center ">Don't have an account? <a href="#" class="link-underline-light">Sign Up</a>
+                here.</div>
+        </form>
+    </div>
+
+
+    <%- include('./layout/footer.ejs') %>

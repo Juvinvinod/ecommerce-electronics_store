@@ -9,12 +9,13 @@ mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
 });
 
-// READY?! Let's go!
+// import models
+require('./models/User');
 
 // Start our app!
 const app = require('./app');
 
-app.set('port', process.env.PORT || 7777);
+app.set('port', process.env.PORT);
 const server = app.listen(app.get('port'), () => {
   console.log(`Express running → PORT ${server.address().port}`);
 });
