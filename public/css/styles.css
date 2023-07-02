@@ -1,13 +1,11 @@
 .customerCare {
     background-color: #27323F;
     color: #ffff;
-    padding-left: 25px;
     font-size: 13px;
 }
 
 .formSize {
     width: 400px;
-    /* Adjust the width as per your needs */
 }
 
 .loginButton {
@@ -15,7 +13,7 @@
 }
 
 .logoControl {
-    height: 40px;
+    height: 50px;
 }
 
 .navbarColor {
@@ -24,4 +22,22 @@
 
 .miniNav:hover {
     background-color: #27323F;
+}
+
+.navIcon {
+    background-color: #27323F;
+    color: #ffff;
+    /* padding-right: 25px; */
+    margin: 0px 25px;
+}
+
+/*footer*/
+.footerLogo {
+    height: 75px;
+}
+
+
+.errorStatus {
+    margin: 50px;
+    text-align: center;
 }

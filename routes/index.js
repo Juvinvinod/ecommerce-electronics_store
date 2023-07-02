@@ -9,9 +9,15 @@ router.get('/', authController.isLoggedIn, userController.homePage);
 router.get('/login', userController.loginForm);
 router.get('/signup', userController.signupForm);
 router.get('/logout', authController.logout);
+router.get('/otp', authController.otpVerify);
 
 // POST REQUESTS
-router.post('/signup', userController.signup, authController.login);
+router.post(
+  '/signup',
+  userController.validateRegister,
+  userController.signup,
+  authController.login
+);
 router.post('/login', authController.login);
 
 module.exports = router;

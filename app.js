@@ -9,6 +9,7 @@ const promisify = require('es6-promisify');
 const MongoStore = require('connect-mongo');
 
 const routes = require('./routes/index');
+const adminRoutes = require('./routes/adminRoute');
 const errorHandlers = require('./handlers/errorHandlers');
 require('./handlers/passport');
 
@@ -26,8 +27,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(expressValidator());
-
 app.use(cookieParser());
 
 app.use(
@@ -40,15 +39,16 @@ app.use(
   })
 );
 
+app.use(flash());
+
 // Passport JS is what we use to handle our logins
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(flash());
-
 app.use((req, res, next) => {
   res.locals.flashes = req.flash();
   res.locals.user = req.user || null;
+  res.locals.currentPath = req.path;
   next();
 });
 
@@ -59,5 +59,19 @@ app.use((req, res, next) => {
 });
 
 app.use('/', routes);
+app.use('/admin', adminRoutes);
 
+// If that above routes didnt work, we 404 them and forward to error handler
+app.use(errorHandlers.notFound);
+
+// Otherwise this was a really bad error we didn't expect! Shoot eh
+if (app.get('env') === 'development') {
+  /* Development Error Handler - Prints stack trace */
+  app.use(errorHandlers.developmentErrors);
+}
+
+// production error handler
+app.use(errorHandlers.productionErrors);
+
+// done! we export it so we can start the site in start.js
 module.exports = app;

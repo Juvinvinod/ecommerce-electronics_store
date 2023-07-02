@@ -22,7 +22,15 @@ const userSchema = new Schema({
     trim: true,
   },
 
-  adminAccess: {
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  access: {
+    type: Boolean,
+    default: true,
+  },
+  isVerified: {
     type: Boolean,
     default: false,
   },

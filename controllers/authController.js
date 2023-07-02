@@ -16,6 +16,7 @@ const isLoggedIn = (req, res, next) => {
     next();
     return;
   }
+  req.flash('message', 'NOt logged in');
   res.redirect('/login');
 };
 
@@ -29,8 +30,13 @@ const logout = function (req, res, next) {
   });
 };
 
+const otpVerify = (req, res) => {
+  res.render('otp');
+};
+
 module.exports = {
   login,
   logout,
   isLoggedIn,
+  otpVerify,
 };
