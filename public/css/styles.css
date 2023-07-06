@@ -12,6 +12,10 @@
     background-color: #FBBB24;
 }
 
+.loginButton:hover {
+    background-color: #FBBB24;
+}
+
 .logoControl {
     height: 50px;
 }

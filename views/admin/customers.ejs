@@ -1,0 +1,61 @@
+<%- include('../layout/header.ejs') %>
+    <%- include('../layout/adminNavbar.ejs') %>
+        <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Enter username" name="search"
+                    aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <table class="table table-primary table-striped table-bordered align-middle table-hover">
+                <thead>
+                    <tr>
+                        <th>SL.NO</th>
+                        <th>USERNAME</th>
+                        <th>EMAIL</th>
+                        <th>PHONE NUMBER</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <% let count=1; %>
+                    <% userList.forEach((user)=> { %>
+                        <tr>
+                            <td>
+                                <%= count %>
+                            </td>
+                            <td>
+                                <%= user.name %>
+                            </td>
+                            <td>
+                                <%= user.email %>
+                            </td>
+                            <td>
+                                <%= user.number %>
+                            </td>
+                            <% count++; %>
+                                <td>
+                                    <form action="/admin/customers/?id=<%= user._id %>" method="POST">
+                                        <input type="hidden" name="access" value=<% if(user.access) { %>false<% } else {
+                                            %>true<% } %>>
+
+                                                <button type="submit"
+                                                    class="<% if(user.access) { %> btn btn-success <% } else { %> btn btn-danger <% } %>">
+                                                    <% if(user.access) { %>
+                                                        BLOCK
+                                                        <% } else { %>
+                                                            UNBLOCK
+                                                            <% } %>
+                                                </button>
+                                    </form>
+                                </td>
+
+
+
+
+                        </tr>
+                        <% }) %>
+            </table>
+        </div>
+
+
+
+        <%- include('../layout/footer.ejs') %>

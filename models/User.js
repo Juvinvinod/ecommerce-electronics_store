@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 mongoose.Promise = global.Promise;
-const md5 = require('md5');
 const validator = require('validator');
-const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const passportLocalMongoose = require('passport-local-mongoose');
 
 const userSchema = new Schema({
@@ -22,6 +20,12 @@ const userSchema = new Schema({
     trim: true,
   },
 
+  number: {
+    type: Number,
+    required: true,
+    trim: true,
+  },
+
   isAdmin: {
     type: Boolean,
     default: false,
@@ -36,7 +40,13 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
-userSchema.plugin(mongodbErrorHandler);
+userSchema.plugin(passportLocalMongoose, {
+  usernameField: 'email',
+  findByUsername: (User, email) => {
+    email.access = true;
+    email.isVerified = true;
+    return User.findOne(email);
+  },
+});
 
 module.exports = mongoose.model('User', userSchema);

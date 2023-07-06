@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE));
 
 app.use(
   session({
@@ -55,6 +55,13 @@ app.use((req, res, next) => {
 // promisify some callback based APIs
 app.use((req, res, next) => {
   req.login = promisify(req.login, req);
+  next();
+});
+
+app.use((req, res, next) => {
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate');
+  res.header('Expires', '0');
+  res.header('Pragma', 'no-cache');
   next();
 });
 

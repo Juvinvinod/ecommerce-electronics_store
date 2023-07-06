@@ -1,0 +1,46 @@
+<%- include('../layout/header.ejs') %>
+    <%- include('../layout/adminNavbar.ejs') %>
+
+        <div class="container my-5 card">
+            <div class="card-body">
+                <form action="/admin/addCategory" method="POST">
+                    <div class="mb-3 ">
+                        <h4>Add Category</h4>
+                        <label for="exampleInputEmail1" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                            name="name">
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">Add Image</label>
+                            <input class="form-control" type="file" id="formFile">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <div class="container my-5 card">
+            <div class="card-body">
+                <form>
+                    <div class="mb-3 ">
+                        <h4>Add Sub-Category</h4>
+                        <label for="exampleInputEmail1" class="form-label">Existing Category Name</label>
+                        <select class="form-select" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Sub Category</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp">
+
+
+                            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <%- include('../layout/footer.ejs') %>

@@ -1,0 +1,40 @@
+<%- include('../layout/header.ejs') %>
+    <%- include('../layout/adminNavbar.ejs') %>
+
+        <div class="container my-5 ">
+
+            <form>
+                <div class="mb-3 ">
+                    <h4>Product Information</h4>
+                    <label for="exampleInputEmail1" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <label for="exampleInputEmail1" class="form-label">Category</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <label for="exampleInputEmail1" class="form-label">Sub Category</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <label for="exampleInputEmail1" class="form-label">Quantity</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <label for="exampleInputEmail1" class="form-label">Price</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <label for="exampleInputEmail1" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
+                        <table class="table table-primary table-striped table-bordered align-middle table-hover">
+                            <thead>
+                                <tr>
+                                    <th>SL.NO</th>
+                                    <th>IMAGE</th>
+                                    <th>FILE Name</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+
+            </form>
+
+        </div>
+        </div>
+        <%- include('../layout/footer.ejs') %>

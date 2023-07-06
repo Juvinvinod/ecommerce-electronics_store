@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
-const { body, matchedData, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
+const mail = require('../handlers/mail');
 
 const homePage = (req, res) => {
   res.render('home');
@@ -33,6 +34,10 @@ const validateRegister = [
         throw new Error('E-mail already in use');
       }
     }),
+  body('number', 'Phone Number incorrect!')
+    .notEmpty()
+    .escape()
+    .isLength({ min: 7, max: 10 }),
   body('password', 'Password Cannot be Blank!').notEmpty().escape(),
   body('password-confirm', 'Confirmed Password cannot be blank!')
     .notEmpty()
@@ -50,10 +55,15 @@ const signup = async (req, res, next) => {
     req.flash('error', errors.array());
     return res.redirect('signup');
   }
-  const user = new User({ email: req.body.email, name: req.body.name });
+  const user = new User({
+    email: req.body.email,
+    name: req.body.name,
+    number: req.body.number,
+  });
   const register = promisify(User.register, User);
   await register(user, req.body.password);
-  next();
+  await mail.verifyEmail(user);
+  res.redirect('verifyEmail');
 };
 
 module.exports = {

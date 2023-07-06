@@ -1,9 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config({ path: 'variables.env' });
 
-function generateOTP() {
-  return Math.floor(1000 + Math.random() * 9000).toString();
-}
+const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
 const verifyEmail = async (body) => {
   try {
@@ -24,7 +22,7 @@ const verifyEmail = async (body) => {
       from: process.env.AU_EMAIL,
       to: body.email,
       subject: 'Welcome to e-mart',
-      html: `<p>Hello, <strong>${body.username}</strong>, Please click the link button below to complete the registration process. If this is not you, you can safely ignore this email</p><a href="http://localhost:3000/successemail/${body.username}">Click here</a>`,
+      html: `<p>Hello, <strong>${body.name}</strong>, Please click the link button below to complete the registration process. If this is not you, you can safely ignore this email</p><a href="http://localhost:3000/verifyEmailSuccess/${body.name}">Click here</a>`,
     };
 
     const info = await transporter.sendMail(mailOptions);
@@ -36,8 +34,11 @@ const verifyEmail = async (body) => {
   }
 };
 
-async function sendOTP(email, otp) {
+async function sendOTP(req, res, email) {
   try {
+    const otp1 = generateOTP();
+    res.cookie('otp', otp1, { signed: true });
+    res.cookie('username', email.name, { signed: true });
     // Configure the email transport settings
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -56,13 +57,14 @@ async function sendOTP(email, otp) {
     const mailOptions = {
       from: process.env.NM_EMAIL,
       to: email,
-      subject: 'OTP Verification',
-      text: `Your OTP: ${otp}`,
+      subject: 'VerifY  your Email',
+      text: `Your OTP: ${otp1}`,
     };
 
     // Send the email
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent:', info.response);
+    return otp1;
   } catch (error) {
     console.error('Error sending email:', error);
   }

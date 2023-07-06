@@ -1,0 +1,47 @@
+<%- include('../layout/header.ejs') %>
+    <%- include('../layout/adminNavbar.ejs') %>
+        <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
+            <table class="table table-primary table-striped table-bordered align-middle table-hover">
+                <thead>
+                    <tr>
+                        <th>SL.NO</th>
+                        <th>NAME</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <% let count=1; %>
+                    <% result.forEach((object)=> { %>
+                        <tr>
+                            <td>
+                                <%= count %>
+                            </td>
+                            <td>
+                                <%= object.category_name %>
+                            </td>
+                            <% count++; %>
+                                <td>
+                                    <form action="/admin/customers/?id=<%= object._id %>" method="POST">
+                                        <input type="hidden" name="access">
+
+                                        <button type="submit" class="btn btn-success">
+                                            EDIT
+                                        </button>
+                                        <input type="hidden" name="access">
+
+                                        <button type="submit" class="btn btn-danger">
+                                            BLOCK
+                                        </button>
+                                    </form>
+                                </td>
+
+
+
+
+                        </tr>
+                        <% }) %>
+
+            </table>
+        </div>
+
+
+        <%- include('../layout/footer.ejs') %>

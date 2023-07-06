@@ -1,164 +1,39 @@
 <%- include('./layout/header.ejs') %>
-    <!-- navbar starts here -->
-    <div class="d-flex customerCare justify-content-between p-3 ps-5 container-fluid ">
-        <div class="">24/7 customer service 1-800-235-5678
-        </div>
-        <form class="d-flex nav-link text-light " role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success text-light" type="submit">Search</button>
-        </form>
-    </div>
-    <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
-        <div class="container-fluid  navbarColor">
-            <a class="navbar-brand text-light img-fluid " href="#"><img src="/images/logo.png" class="logoControl"
-                    alt=""></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-theme="dark"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon "></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-light " href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            All products
-                        </a>
-                        <ul class="dropdown-menu navbarColor ">
-                            <li><a class="dropdown-item text-light miniNav" href="#">Home Appliances</a></li>
-                            <li><a class="dropdown-item text-light miniNav" href="#">Audio & video</a></li>
-                            <li><a class="dropdown-item text-light miniNav" href="#">Refrigerator</a></li>
-                            <li><a class="dropdown-item text-light miniNav" href="#">Kitchen Appliances</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light ps-3" href="#">New Arrivals</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-light ps-3" href="#">Todays deal</a>
-                    </li>
-                </ul>
-                <a href="#"><i class="fa fa-cart-shopping text-decoration-none navIcon"></i></a>
-                <a href="#"><i class="fa-regular fa-heart text-decoration-none navIcon"></i></a>
-            </div>
-        </div>
-    </nav>
-    </div>
-    <!-- Navbar ends here -->
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <form action="/login" method="POST" class=" formSize">
-            <h1 class="text-center pb-3 fw-bold ">LOGIN</h1>
-            <% if (flashes.error) { %>
-                <div class="flash-error">
-                    <%= flashes.error %>
-                </div>
-                <% } %>
-                    <% if (flashes.success) { %>
-                        <div class="">
-                            <%= flashes.success %>
+    <%- include('./layout/userNavbar.ejs') %>
+        <div class="container d-flex justify-content-center align-items-center vh-100">
+            <form action="/login" method="POST" class=" formSize">
+                <h1 class="text-center pb-3 fw-bold ">LOGIN</h1>
+                <% if (flashes.error) { %>
+                    <div class="container alert alert-danger alert-dismissible fade show" role="alert">
+                        <%= flashes.error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% } %>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" name="email" required>
+                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.
+                            </div>
                         </div>
-                        <% } %>
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                                <input type="email" class="form-control" id="exampleInputEmail1"
-                                    aria-describedby="emailHelp" name="email" required>
-                                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="exampleInputPassword1" name="password"
-                                    required>
-                            </div>
-                            <div class="mb-3 form-check conatiner d-flex">
-                                <input type="checkbox" class="form-check-input " id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">Keep me logged in</label>
-                                <a href="#!" class="text-end ms-5 ps-5 link-underline-light ">Forgot password?</a>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn loginButton">Submit</button>
-                            </div>
-                            <div class="mt-5 text-center ">Don't have an account? <a href="#"
-                                    class="link-underline-light">Sign
-                                    Up</a>
-                                here.</div>
-        </form>
-    </div>
-    <hr>
-    <!-- Footer -->
-    <footer class="text-center text-lg-start text-dark">
-        <!-- Grid container -->
-        <div class="container p-4 pb-0">
-            <!-- Section: Links -->
-            <section class="">
-                <!--Grid row-->
-                <div class="row">
-                    <!-- Grid column -->
-                    <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
-                        <img src="/images/footerlogo.png" class="footerLogo" alt="">
-                    </div>
-                    <!-- Grid column -->
-
-                    <hr class="w-100 clearfix d-md-none" />
-
-                    <!-- Grid column -->
-                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
-                        <h6 class="text-uppercase mb-4 font-weight-bold">Shop</h6>
-                        <p>
-                            <a href="#" class="link-underline-light">All products</a>
-                        </p>
-                        <p>
-                            <a href="#" class="link-underline-light">Todays deals</a>
-                        </p>
-                        <p>
-                            <a href="#" class="link-underline-light">New Arrivals</a>
-                        </p>
-                    </div>
-                    <!-- Grid column -->
-
-                    <hr class="w-100 clearfix d-md-none" />
-
-                    <!-- Grid column -->
-                    <hr class="w-100 clearfix d-md-none" />
-
-                    <!-- Grid column -->
-                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
-                        <h6 class="text-uppercase mb-4 font-weight-bold">Need help?</h6>
-                        <p><a class="mr-3 link-underline-light" href="#">Contact</a></p>
-                        <p><a class="mr-3 link-underline-light" href="#"> Order tracking</a></p>
-                    </div>
-                    <!-- Grid column -->
-
-                    <!-- Grid column -->
-                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
-                        <h6 class="text-uppercase mb-4 font-weight-bold">Contact us</h6>
-                        <p>
-                            123 Fifth Avenue,New York,
-                        </p>
-                        <p>
-                            NY 10160
-                        </p>
-                        <p>
-                            contact@info.com
-                        </p>
-                        <p>
-                            8907244273
-                        </p>
-                    </div>
-                </div>
-                <!--Grid row-->
-            </section>
-            <!-- Section: Links -->
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="exampleInputPassword1" name="password"
+                                required>
+                        </div>
+                        <div class="mb-3 form-check conatiner d-flex">
+                            <input type="checkbox" class="form-check-input " id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Keep me logged in</label>
+                            <a href="#!" class="text-end ms-5 ps-5 link-underline-light ">Forgot password?</a>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn loginButton">Submit</button>
+                        </div>
+                        <div class="mt-5 text-center ">Don't have an account? <a href="/signup"
+                                class="link-underline-light">Sign
+                                Up</a>
+                            here.</div>
+            </form>
         </div>
-        <!-- Grid container -->
-
-        <!-- Copyright -->
-        <div class="text-center p-3 text-white" style="background-color: #27323F">
-            © 2023 Copyright:
-            <a class="text-white text-decoration-none" href="juvinvinod@.com/">juvinvinod@gmail.com</a>
-        </div>
-        <!-- Copyright -->
-    </footer>
-    <!-- Footer -->
-
-    <%- include('./layout/footer.ejs') %>
+        <%- include('./layout/userFooterbar.ejs') %>
+            <%- include('./layout/footer.ejs') %>
