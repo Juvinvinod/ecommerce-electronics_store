@@ -10,10 +10,12 @@
 
 .loginButton {
     background-color: #FBBB24;
+    color: black;
 }
 
 .loginButton:hover {
     background-color: #FBBB24;
+    color: black;
 }
 
 .logoControl {
@@ -44,4 +46,30 @@
 .errorStatus {
     margin: 50px;
     text-align: center;
+}
+
+
+/*admin category page */
+.addCategoryButtonSetup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    margin-right: 0;
+}
+
+.addCategoryButton {
+    padding: 10px;
+    font-weight: bold;
+}
+
+.categoryPage {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+/*product display page */
+
+.productImageTable {
+    width: 100px;
 }

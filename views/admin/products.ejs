@@ -2,20 +2,87 @@
     <%- include('../layout/adminNavbar.ejs') %>
 
         <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
-            <table class="table table-primary table-striped table-bordered align-middle table-hover">
-                <thead>
-                    <tr>
-                        <th>SL.NO</th>
-                        <th>IMAGE</th>
-                        <th> PRODUCT NAME</th>
-                        <th>PRICE</th>
-                        <th>CATEGORY</th>
-                        <th>STOCK</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
+            <div class="container pt-3 d-flex justify-content-end ">
+                <div class="addCategoryButtonSetup">
+                    <a class="btn  mr-3 loginButton addCategoryButton" href="addProducts">Add
+                        Products</a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-primary table-striped table-bordered align-middle table-hover">
+                    <thead>
+                        <tr>
+                            <th>SL.NO</th>
+                            <th>IMAGES</th>
+                            <th> PRODUCT NAME</th>
+                            <th>PRICE</th>
+                            <th>CATEGORY</th>
+                            <th>STOCK</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <% let count=1; %>
+                        <% result.forEach((object)=> { %>
+                            <tr>
+                                <td>
+                                    <%= count %>
+                                </td>
+                                <td>
+                                    <img src=".././uploads/<%= object.product_image1 %>"
+                                        class="img-fluid productImageTable" alt="">
+                                    <img src=".././uploads/<%= object.product_image2 %>"
+                                        class="img-fluid productImageTable" alt="">
+                                    <img src=".././uploads/<%= object.product_image3 %>"
+                                        class="img-fluid productImageTable" alt="">
+                                    <img src=".././uploads/<%= object.product_image4 %>"
+                                        class="img-fluid productImageTable" alt="">
+                                </td>
+                                <td>
+                                    <%= object.product_name %>
+                                </td>
+                                <td>
+                                    <%= object.price %>
+                                </td>
+                                <td>
+                                    <%= object.category_name %>
+                                </td>
+                                <td>
+                                    <%= object.stock %>
+                                </td>
+                                <td>
 
-            </table>
+                                    <div class="container">
+                                        <div class="row justify-content-center">
+                                            <!-- edit button -->
+                                            <div class="col-auto">
+                                                <a href="/admin/editProducts?id=<%= object._id %>">
+                                                    <button type="submit" class="btn btn-success">EDIT</button>
+                                                </a>
+                                            </div>
+                                            <!-- block button -->
+                                            <div class="col-auto">
+                                                <a href="/admin/editProducts?id=<%= object._id %>">
+                                                    <button type="submit" class="btn btn-success">BLOCK</button>
+                                                </a>
+                                            </div>
+                                            <!-- delete button -->
+                                            <div class="col-auto">
+                                                <a href="/admin/editProducts?id=<%= object._id %>">
+                                                    <button type="submit" class="btn btn-success">DELETE</button>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+
+
+                                <% count++; %>
+                            </tr>
+                            <% }) %>
+
+                </table>
+            </div>
         </div>
 
         <%- include('../layout/footer.ejs') %>

@@ -3,37 +3,118 @@
 
         <div class="container my-5 ">
 
-            <form>
+            <form method="post" action="/admin/editcategory?id=<%= result._id %>">
                 <div class="mb-3 ">
                     <h4>Product Information</h4>
                     <label for="exampleInputEmail1" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        value="<%=result.product_name%>" name="product_name">
                     <label for="exampleInputEmail1" class="form-label">Category</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    <label for="exampleInputEmail1" class="form-label">Sub Category</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    <label for="exampleInputEmail1" class="form-label">Quantity</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        value="<%=result.category_name%>" name="category_name">
+                    <label for="exampleInputEmail1" class="form-label">Stock</label>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        value="<%=result.stock%>" name="stock">
                     <label for="exampleInputEmail1" class="form-label">Price</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        value="<%=result.price%>" name="price">
                     <label for="exampleInputEmail1" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
-                        <table class="table table-primary table-striped table-bordered align-middle table-hover">
-                            <thead>
-                                <tr>
-                                    <th>SL.NO</th>
-                                    <th>IMAGE</th>
-                                    <th>FILE Name</th>
-                                    <th>ACTIONS</th>
-                                </tr>
-                            </thead>
-
-                        </table>
-                    </div>
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        value="<%=result.description%>" name="description">
                     <button type="submit" class="btn btn-primary">Submit</button>
-
             </form>
+            <div style="padding: 20px 0px 20px 0px;" class="my-5 container">
+                <table class="table table-primary table-striped table-bordered align-middle table-hover">
+                    <thead>
+                        <tr>
+                            <th>SL.NO</th>
+                            <th>IMAGE</th>
+                            <th>CHOOSE FILE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <form method="post" action="/admin/changeImage?id=<%= result._id %>" enctype="multipart/form-data">
+                        <!-- Existing image 1 -->
+                        <input type="hidden" name="existingImageField" value="<%= result.product_image1 %>">
+                        <input type="hidden" name="imageNumber" value="1">
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <img src=".././uploads/<%= result.product_image1 %>" class="img-fluid productImageTable"
+                                    alt="">
+                            </td>
+                            <td>
+                                <input type="file" name="photo" accept="image/*">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Change</button>
+                            </td>
+                        </tr>
+                        </tr>
+                        </thead>
+                        <form method="post" action="/admin/changeImage?id=<%= result._id %>"
+                            enctype="multipart/form-data">
+                            <!-- Existing image 2 -->
+                            <input type="hidden" name="existingImageField" value="<%= result.product_image2 %>">
+                            <input type="hidden" name="imageNumber" value="2">
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    <img src=".././uploads/<%= result.product_image2 %>"
+                                        class="img-fluid productImageTable" alt="">
+                                </td>
+                                <td>
+                                    <input type="file" name="photo" accept="image/*">
+                                </td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary">Change</button>
+                                </td>
+                            </tr>
+                            </tr>
+                            </thead>
+                            <form method="post" action="/admin/changeImage?id=<%= result._id %>"
+                                enctype="multipart/form-data">
+                                <!-- Existing image 3 -->
+                                <input type="hidden" name="existingImageField" value="<%= result.product_image3 %>">
+                                <input type="hidden" name="imageNumber" value="3">
+                                <tr>
+                                    <td>3</td>
+                                    <td>
+                                        <img src=".././uploads/<%= result.product_image3 %>"
+                                            class="img-fluid productImageTable" alt="">
+                                    </td>
+                                    <td>
+                                        <input type="file" name="photo" accept="image/*">
+                                    </td>
+                                    <td>
+                                        <button type="submit" class="btn btn-primary">Change</button>
+                                    </td>
+                                </tr>
+                                </tr>
+                                </thead>
+                                <form method="post" action="/admin/changeImage?id=<%= result._id %>"
+                                    enctype="multipart/form-data">
+                                    <!-- Existing image 4 -->
+                                    <input type="hidden" name="existingImageField" value="<%= result.product_image4 %>">
+                                    <input type="hidden" name="imageNumber" value="1">
+                                    <tr>
+                                        <td>4</td>
+                                        <td>
+                                            <img src=".././uploads/<%= result.product_image4 %>"
+                                                class="img-fluid productImageTable" alt="">
+                                        </td>
+                                        <td>
+                                            <input type="file" name="photo" accept="image/*">
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-primary">Change</button>
+                                        </td>
+                                    </tr>
+                </table>
+            </div>
+
+
+
 
         </div>
         </div>

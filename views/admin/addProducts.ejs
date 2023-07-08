@@ -3,61 +3,60 @@
 
         <div class="container my-5">
 
-            <form>
+            <form method="POST" action="addProducts" enctype="multipart/form-data">
                 <div class="mb-3 ">
 
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Add Image 1</label>
-                        <input class="form-control" type="file" id="formFile">
+                        <input class="form-control" type="file" id="formFile" name="image1"
+                            accept="image/gif ,image/png ,image/jpeg">
                     </div>
 
 
                     <div>
                         <div class="mb-3">
                             <label for="formFile" class="form-label">Add Image 2</label>
-                            <input class="form-control" type="file" id="formFile">
+                            <input class="form-control" type="file" id="formFile" name="image2"
+                                accept="image/gif ,image/png ,image/jpeg">
                         </div>
 
 
                         <div>
                             <div class="mb-3">
                                 <label for="formFile" class="form-label">Add Image 3</label>
-                                <input class="form-control" type="file" id="formFile">
+                                <input class="form-control" type="file" id="formFile" name="image3"
+                                    accept="image/gif ,image/png ,image/jpeg">
                             </div>
 
 
-                            <div>
-                                <div class="mb-3">
-                                    <label for="formFile" class="form-label">Add Image 4</label>
-                                    <input class="form-control" type="file" id="formFile">
-                                </div>
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">Add Image 4</label>
+                                <input class="form-control" type="file" id="formFile" name="image4"
+                                    accept="image/gif ,image/png ,image/jpeg">
+                            </div>
 
 
-                                <div class="my-3">
-                                    <input type="text" class="form-control" id="exampleFormControlInput1"
-                                        placeholder="Product Name">
-                                </div>
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" id="exampleFormControlInput1"
-                                        placeholder="Price">
-                                </div>
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" id="exampleFormControlInput1"
-                                        placeholder="stock">
-                                </div>
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" id="exampleFormControlInput1"
-                                        placeholder="Description">
-                                </div>
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" id="exampleFormControlInput1"
-                                        placeholder="Category">
-                                </div>
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" id="exampleFormControlInput1"
-                                        placeholder="sub-category">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                            <div class="my-3">
+                                <input type="text" class="form-control" id="exampleFormControlInput1"
+                                    placeholder="Product Name" name="productName" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="exampleFormControlInput1"
+                                    placeholder="Price" name="price" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="exampleFormControlInput1"
+                                    placeholder="stock" name="stock" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="exampleFormControlInput1"
+                                    placeholder="Description" name="description" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="exampleFormControlInput1"
+                                    placeholder="Category" name="category" required>
+                            </div>
+                            <button type="submit" class="btn loginButton">Submit</button>
             </form>
 
         </div>

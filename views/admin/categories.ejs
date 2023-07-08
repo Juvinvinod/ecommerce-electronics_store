@@ -1,7 +1,13 @@
 <%- include('../layout/header.ejs') %>
     <%- include('../layout/adminNavbar.ejs') %>
-        <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
-            <table class="table table-primary table-striped table-bordered align-middle table-hover">
+        <div style="padding: 0px 20px 20px 20px;" class="my-5 container ">
+            <div class="container pt-3 d-flex justify-content-end ">
+                <div class="addCategoryButtonSetup">
+                    <a class="btn  mr-3 loginButton addCategoryButton" href="addcategories">Add
+                        Categories</a>
+                </div>
+            </div>
+            <table class="table table-primary table-striped table-bordered align-middle table-hover ">
                 <thead>
                     <tr>
                         <th>SL.NO</th>
@@ -20,18 +26,12 @@
                             </td>
                             <% count++; %>
                                 <td>
-                                    <form action="/admin/customers/?id=<%= object._id %>" method="POST">
-                                        <input type="hidden" name="access">
 
-                                        <button type="submit" class="btn btn-success">
-                                            EDIT
-                                        </button>
-                                        <input type="hidden" name="access">
+                                    <a href="/admin/editCategory?id=<%= object._id %>""><button type=" submit"
+                                        class="btn btn-success">
+                                        EDIT
+                                        </button></a>
 
-                                        <button type="submit" class="btn btn-danger">
-                                            BLOCK
-                                        </button>
-                                    </form>
                                 </td>
 
 
