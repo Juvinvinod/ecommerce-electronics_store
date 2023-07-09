@@ -5,18 +5,22 @@ const promisify = require('es6-promisify');
 const { body, validationResult } = require('express-validator');
 const mail = require('../handlers/mail');
 
+// display home page
 const homePage = (req, res) => {
   res.render('home');
 };
 
+// display login page
 const loginForm = (req, res) => {
   res.render('login', { title: 'Login' });
 };
 
+// display signup page
 const signupForm = (req, res) => {
   res.render('signup');
 };
 
+// form validation for sign up page,works as a middleware
 const validateRegister = [
   body('name', 'You must supply a name!').notEmpty().escape(),
   body('email', 'That Email is not valid!')
@@ -48,6 +52,7 @@ const validateRegister = [
   // there were no errors!
 ];
 
+// display errors from sign up page form validation,if no errors then add the new user to the database
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

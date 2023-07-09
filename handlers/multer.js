@@ -3,6 +3,7 @@ const jimp = require('jimp');
 const uuid = require('uuid');
 const fs = require('fs');
 
+// setting up storage options and checking if the file send is an image
 const multerOptions = {
   storage: multer.memoryStorage(),
   fileFilter(req, file, next) {
@@ -15,6 +16,7 @@ const multerOptions = {
   },
 };
 
+// configure the files for uploading
 const upload = multer(multerOptions).fields([
   { name: 'image1', maxCount: 1 },
   { name: 'image2', maxCount: 1 },
@@ -22,6 +24,7 @@ const upload = multer(multerOptions).fields([
   { name: 'image4', maxCount: 1 },
 ]);
 
+// resize the images,create unique name, upload and send the name to next function
 const resize = async (req, res, next) => {
   if (!req.files) {
     next();
@@ -43,11 +46,15 @@ const resize = async (req, res, next) => {
   next();
 };
 
+// configure the single image to be uploaded
 const updateUpload = multer(multerOptions).single('photo');
 
+// delete the existing image,create new image name,upload the image,and send the name to next function
 const updateResize = async (req, res, next) => {
   if (!req.file) {
-    next();
+    const error = new Error('Photo not selected!');
+    error.status = 400;
+    next(error);
   }
   const existingFileName = req.body.existingImageField;
   await fs.promises.unlink(`./public/uploads/${existingFileName}`);

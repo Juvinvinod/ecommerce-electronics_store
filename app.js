@@ -27,8 +27,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// cookieParser to store cookies
 app.use(cookieParser(process.env.COOKIE));
 
+// using session
 app.use(
   session({
     secret: process.env.SECRET,
@@ -39,12 +41,14 @@ app.use(
   })
 );
 
+// to send success/fail messages for displaying in the next page
 app.use(flash());
 
 // Passport JS is what we use to handle our logins
 app.use(passport.initialize());
 app.use(passport.session());
 
+// storing different data in res
 app.use((req, res, next) => {
   res.locals.flashes = req.flash();
   res.locals.user = req.user || null;
@@ -58,6 +62,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// middleware to not store cache
 app.use((req, res, next) => {
   res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate');
   res.header('Expires', '0');

@@ -42,11 +42,7 @@ const userSchema = new Schema({
 
 userSchema.plugin(passportLocalMongoose, {
   usernameField: 'email',
-  findByUsername: (User, email) => {
-    email.access = true;
-    email.isVerified = true;
-    return User.findOne(email);
-  },
+  findByUsername: (User, email) => User.findOne(email),
 });
 
 module.exports = mongoose.model('User', userSchema);

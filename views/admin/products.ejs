@@ -13,12 +13,12 @@
                     <thead>
                         <tr>
                             <th>SL.NO</th>
-                            <th>IMAGES</th>
+                            <th class="text-center">IMAGES</th>
                             <th> PRODUCT NAME</th>
                             <th>PRICE</th>
                             <th>CATEGORY</th>
                             <th>STOCK</th>
-                            <th>ACTIONS</th>
+                            <th class="text-center">ACTIONS</th>
                         </tr>
                     </thead>
                     <% let count=1; %>
@@ -61,15 +61,19 @@
                                             </div>
                                             <!-- block button -->
                                             <div class="col-auto">
-                                                <a href="/admin/editProducts?id=<%= object._id %>">
-                                                    <button type="submit" class="btn btn-success">BLOCK</button>
-                                                </a>
-                                            </div>
-                                            <!-- delete button -->
-                                            <div class="col-auto">
-                                                <a href="/admin/editProducts?id=<%= object._id %>">
-                                                    <button type="submit" class="btn btn-success">DELETE</button>
-                                                </a>
+                                                <form action="/admin/products?id=<%= object._id %>" method="POST">
+                                                    <input type="hidden" name="status"
+                                                        value="<%= object.status ? 'false' : 'true' %>">
+                                                    <button type="submit"
+                                                        class="<% if(object.status) { %> btn btn-success <% } else { %> btn btn-danger <% } %>">
+                                                        <% if(object.status) { %>
+                                                            BLOCK
+                                                            <% } else { %>
+                                                                UNBLOCK
+                                                                <% } %>
+                                                    </button>
+                                                </form>
+
                                             </div>
                                         </div>
                                     </div>

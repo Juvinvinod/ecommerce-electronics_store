@@ -1,8 +1,10 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config({ path: 'variables.env' });
 
+// generate a random number for using as OTP
 const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
 
+// send mail to the mail address of registered user for email verification
 const verifyEmail = async (body) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -34,6 +36,7 @@ const verifyEmail = async (body) => {
   }
 };
 
+// generate otp,store it in a cookie and send it through an email to the user.
 async function sendOTP(req, res, email) {
   try {
     const otp1 = generateOTP();

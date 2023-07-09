@@ -11,26 +11,19 @@
                                 <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">SIGN UP</p>
 
-                                    <% if (flashes.error) { %>
+                                    <form class="mx-1 mx-md-4" action="/signup" method="POST">
 
-                                        <div class="container alert alert-danger alert-dismissible fade show"
-                                            role="alert">
-                                            <ul>
+                                        <% if (flashes.error && flashes.error.find((err)=> err.path ===
+                                            'name')) { %>
+                                            <div class="container alert alert-danger alert-dismissible fade show"
+                                                role="alert">
+                                                <%= flashes.error.find((err)=> err.path ===
+                                                    'name').msg %>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <% } %>
 
-                                                <% flashes.error.forEach((clientError)=> { %>
-
-                                                    <li>
-
-                                                        <%= clientError.msg %>
-                                                    </li>
-                                                    <% }) %>
-                                            </ul>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <% } %>
-
-                                            <form class="mx-1 mx-md-4" action="/signup" method="POST">
                                                 <div class="d-flex flex-row align-items-center mb-4">
                                                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                                     <div class="form-outline flex-fill mb-0">
@@ -41,61 +34,117 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="d-flex flex-row align-items-center mb-4">
-                                                    <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                                                    <div class="form-outline flex-fill mb-0">
-                                                        <input type="email" id="form3Example3c" class="form-control"
-                                                            name="email" />
-                                                        <label class="form-label" for="form3Example3c">Your
-                                                            Email</label>
+                                                <% if (flashes.error && flashes.error.find((err)=> err.path ===
+                                                    'email')) { %>
+                                                    <div class="container alert alert-danger alert-dismissible fade show"
+                                                        role="alert">
+                                                        <%= flashes.error.find((err)=> err.path ===
+                                                            'email').msg %>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="alert" aria-label="Close"></button>
                                                     </div>
-                                                </div>
+                                                    <% } %>
 
-                                                <div class="d-flex flex-row align-items-center mb-4">
-                                                    <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
-                                                    <div class="form-outline flex-fill mb-0">
-                                                        <input type="tel" id="form3Example3c" class="form-control"
-                                                            name="number" />
-                                                        <label class="form-label" for="form3Example3c">Your
-                                                            Number</label>
-                                                    </div>
-                                                </div>
+                                                        <div class="d-flex flex-row align-items-center mb-4">
+                                                            <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                                            <div class="form-outline flex-fill mb-0">
+                                                                <input type="email" id="form3Example3c"
+                                                                    class="form-control" name="email" />
+                                                                <label class="form-label" for="form3Example3c">Your
+                                                                    Email</label>
+                                                            </div>
+                                                        </div>
 
-                                                <div class="d-flex flex-row align-items-center mb-4">
-                                                    <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                                                    <div class="form-outline flex-fill mb-0">
-                                                        <input type="password" id="form3Example4c" class="form-control"
-                                                            name="password" />
-                                                        <label class="form-label" for="form3Example4c">Password</label>
-                                                    </div>
-                                                </div>
+                                                        <% if (flashes.error && flashes.error.find((err)=> err.path ===
+                                                            'number')) { %>
+                                                            <div class="container alert alert-danger alert-dismissible fade show"
+                                                                role="alert">
+                                                                <%= flashes.error.find((err)=> err.path ===
+                                                                    'number').msg %>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="alert"
+                                                                        aria-label="Close"></button>
+                                                            </div>
+                                                            <% } %>
 
-                                                <div class="d-flex flex-row align-items-center mb-4">
-                                                    <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                                                    <div class="form-outline flex-fill mb-0">
-                                                        <input type="password" id="form3Example4cd" class="form-control"
-                                                            name="password-confirm" />
-                                                        <label class="form-label" for="form3Example4cd">Repeat
-                                                            your
-                                                            password</label>
-                                                    </div>
-                                                </div>
+                                                                <div class="d-flex flex-row align-items-center mb-4">
+                                                                    <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+                                                                    <div class="form-outline flex-fill mb-0">
+                                                                        <input type="tel" id="form3Example3c"
+                                                                            class="form-control" name="number" />
+                                                                        <label class="form-label"
+                                                                            for="form3Example3c">Your
+                                                                            Number</label>
+                                                                    </div>
+                                                                </div>
 
-                                                <div class="form-check d-flex justify-content-center mb-5">
-                                                    <input class="form-check-input me-2" type="checkbox" value=""
-                                                        id="form2Example3c" />
-                                                    <label class="form-check-label" for="form2Example3">
-                                                        I agree all statements in <a href="#!">Terms of
-                                                            service</a>
-                                                    </label>
-                                                </div>
+                                                                <% if (flashes.error && flashes.error.find((err)=>
+                                                                    err.path ===
+                                                                    'password')) { %>
+                                                                    <div class="container alert alert-danger alert-dismissible fade show"
+                                                                        role="alert">
+                                                                        <%= flashes.error.find((err)=> err.path ===
+                                                                            'password').msg %>
+                                                                            <button type="button" class="btn-close"
+                                                                                data-bs-dismiss="alert"
+                                                                                aria-label="Close"></button>
+                                                                    </div>
+                                                                    <% } %>
 
-                                                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                                    <button type="submit"
-                                                        class="btn btn-primary btn-lg">Register</button>
-                                                </div>
+                                                                        <div
+                                                                            class="d-flex flex-row align-items-center mb-4">
+                                                                            <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                                                            <div class="form-outline flex-fill mb-0">
+                                                                                <input type="password"
+                                                                                    id="form3Example4c"
+                                                                                    class="form-control"
+                                                                                    name="password" />
+                                                                                <label class="form-label"
+                                                                                    for="form3Example4c">Password</label>
+                                                                            </div>
+                                                                        </div>
 
-                                            </form>
+                                                                        <% if (flashes.error &&
+                                                                            flashes.error.find((err)=>
+                                                                            err.path ===
+                                                                            'password-confirm')) { %>
+                                                                            <div class="container alert alert-danger alert-dismissible fade show"
+                                                                                role="alert">
+                                                                                <%= flashes.error.find((err)=> err.path
+                                                                                    ===
+                                                                                    'password-confirm').msg %>
+                                                                                    <button type="button"
+                                                                                        class="btn-close"
+                                                                                        data-bs-dismiss="alert"
+                                                                                        aria-label="Close"></button>
+                                                                            </div>
+                                                                            <% } %>
+
+                                                                                <div
+                                                                                    class="d-flex flex-row align-items-center mb-4">
+                                                                                    <i
+                                                                                        class="fas fa-key fa-lg me-3 fa-fw"></i>
+                                                                                    <div
+                                                                                        class="form-outline flex-fill mb-0">
+                                                                                        <input type="password"
+                                                                                            id="form3Example4cd"
+                                                                                            class="form-control"
+                                                                                            name="password-confirm" />
+                                                                                        <label class="form-label"
+                                                                                            for="form3Example4cd">Repeat
+                                                                                            your
+                                                                                            password</label>
+                                                                                    </div>
+                                                                                </div>
+
+
+                                                                                <div
+                                                                                    class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-primary btn-lg">Register</button>
+                                                                                </div>
+
+                                    </form>
 
                                 </div>
 
