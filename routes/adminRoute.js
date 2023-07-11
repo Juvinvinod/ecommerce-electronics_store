@@ -11,20 +11,48 @@ const router = express.Router();
 router.get('/', adminController.dashBoard);
 
 // customers
-router.get('/customers', adminController.allCustomers); // display all customers
+router.get(
+  '/customers',
+  authController.adminChecker,
+  adminController.allCustomers
+); // display all customers
 router.post('/customers', catchErrors(adminController.changeAccess)); // change access of customers
 
 // categories
-router.get('/categories', adminController.displayCategory); // display all categories
-router.get('/addCategories', adminController.viewAddCategory); // display addCategory
-router.get('/editCategory', adminController.viewEditCategory); // display editCategory
+router.get(
+  '/categories',
+  authController.adminChecker,
+  adminController.displayCategory
+); // display all categories
+router.get(
+  '/addCategories',
+  authController.adminChecker,
+  adminController.viewAddCategory
+); // display addCategory
+router.get(
+  '/editCategory',
+  authController.adminChecker,
+  adminController.viewEditCategory
+); // display editCategory
 router.post('/addCategories', adminController.addCategory); // add new categories
 router.post('/editCategory', catchErrors(adminController.editCategory)); // edit existing categories
 
 // products
-router.get('/products', adminController.displayProducts); // display all products
-router.get('/addProducts', adminController.viewAddProducts); // display add products
-router.get('/editProducts', adminController.viewEditProducts); // display edit products
+router.get(
+  '/products',
+  authController.adminChecker,
+  adminController.displayProducts
+); // display all products
+router.get(
+  '/addProducts',
+  authController.adminChecker,
+  adminController.viewAddProducts
+); // display add products
+router.get(
+  '/editProducts',
+  authController.adminChecker,
+  adminController.viewEditProducts
+); // display edit products
 router.post(
   '/addProducts',
   imageOptions.upload,

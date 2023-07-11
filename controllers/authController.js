@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const mail = require('../handlers/mail');
 const { sendOTP } = require('../handlers/mail');
 
+const Category = mongoose.model('Category');
+
 const User = mongoose.model('User');
 
 // find the user document,send otp and render otp page
@@ -27,6 +29,18 @@ const login = (req, res, next) => {
       req.flash('error', 'Email not verified');
       return res.redirect('/login');
     }
+
+    // check if the user is an admin
+    if (user.isAdmin) {
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        return res.redirect('/admin');
+      });
+      return;
+    }
+
     // Generate and send OTP
     sendOTP(req, res, user.email);
 
@@ -43,12 +57,13 @@ const login = (req, res, next) => {
 };
 
 // check if the user is already logged in
-const isLoggedIn = (req, res, next) => {
+const isLoggedIn = async (req, res, next) => {
   if (req.isAuthenticated() && req.session.isOTPVerified) {
     next();
     return;
   }
-  res.render('login');
+  const categories = await Category.find({});
+  res.render('login', { categories });
 };
 
 // function to prevent going back to otp page after logging in
@@ -87,8 +102,9 @@ const emailVerifySuccess = async (req, res) => {
 };
 
 // display otp page
-const otpVerifyPage = (req, res) => {
-  res.render('otp');
+const otpVerifyPage = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('otp', { categories });
 };
 
 // verify if the otp entered by the user is correct
@@ -108,6 +124,18 @@ const otpVerify = async (req, res) => {
   }
 };
 
+// middleware to check for admin
+const adminChecker = (req, res, next) => {
+  if (!req.user) {
+    return res.redirect('/');
+  }
+  if (req.user.isAdmin) {
+    next();
+  } else {
+    res.redirect('/');
+  }
+};
+
 module.exports = {
   login,
   logout,
@@ -117,4 +145,5 @@ module.exports = {
   verifyEmail,
   emailVerifySuccess,
   otpSessionCheck,
+  adminChecker,
 };

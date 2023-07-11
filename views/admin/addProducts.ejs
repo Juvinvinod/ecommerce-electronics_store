@@ -52,11 +52,22 @@
                                 <input type="text" class="form-control" id="exampleFormControlInput1"
                                     placeholder="Description" name="description" required>
                             </div>
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <input type="text" class="form-control" id="exampleFormControlInput1"
                                     placeholder="Category" name="category" required>
+                            </div> -->
+                            <div class="mb-3">
+                                <select class="form-select" name="category" aria-label="Default select example">
+                                    <option selected>Category</option>
+                                    <% result.forEach((object)=> { %>
+
+                                        <option value="<%= object.category_name %>">
+                                            <%= object.category_name %>
+                                        </option>
+                                        <% }) %>
+                                </select>
                             </div>
-                            <button type="submit" class="btn loginButton">Submit</button>
+                            <button type="submit" class="btn loginButton mt-3">Submit</button>
             </form>
 
         </div>

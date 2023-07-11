@@ -31,7 +31,6 @@ const resize = async (req, res, next) => {
     return;
   }
   const fileFieldNames = Object.keys(req.files);
-
   for (const fieldName of fileFieldNames) {
     const file = req.files[fieldName][0];
     const extension = file.mimetype.split('/')[1];
@@ -54,7 +53,7 @@ const updateResize = async (req, res, next) => {
   if (!req.file) {
     const error = new Error('Photo not selected!');
     error.status = 400;
-    next(error);
+    return next(error);
   }
   const existingFileName = req.body.existingImageField;
   await fs.promises.unlink(`./public/uploads/${existingFileName}`);

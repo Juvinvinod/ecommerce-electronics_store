@@ -73,3 +73,43 @@
 .productImageTable {
     width: 100px;
 }
+
+/* user homepage */
+.icon-hover:hover {
+    border-color: #3b71ca !important;
+    background-color: white !important;
+}
+
+.icon-hover:hover i {
+    color: #3b71ca !important;
+}
+
+/* carousal home */
+.carousel-inner {
+    max-height: 300px;
+    margin-top: 10px;
+    /* Adjust the height value as needed */
+}
+
+
+
+
+@media (max-width: 768px) {
+
+    /* Adjust the breakpoint value as needed */
+    #carouselExampleAutoplaying {
+        margin-top: 40px;
+        /* Adjust the margin-top value as needed */
+    }
+}
+
+/* homepage */
+.navbar {
+    position: relative;
+    z-index: 1001;
+}
+
+.productContainer {
+    position: relative;
+    z-index: 1;
+}

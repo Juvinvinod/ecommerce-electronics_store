@@ -1,23 +1,32 @@
 const mongoose = require('mongoose');
 
+const Product = mongoose.model('Product');
+const Category = mongoose.model('Category');
+
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
 const { body, validationResult } = require('express-validator');
 const mail = require('../handlers/mail');
 
 // display home page
-const homePage = (req, res) => {
-  res.render('home');
+const homePage = async (req, res) => {
+  const categories = await Category.find({});
+  await Product.find({ status: true }).then((result) => {
+    res.render('home', { result, categories });
+  });
 };
 
 // display login page
-const loginForm = (req, res) => {
-  res.render('login', { title: 'Login' });
+const loginForm = async (req, res) => {
+  const categories = await Category.find({});
+  console.log(categories);
+  res.render('login', { categories });
 };
 
 // display signup page
-const signupForm = (req, res) => {
-  res.render('signup');
+const signupForm = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('signup', { categories });
 };
 
 // form validation for sign up page,works as a middleware
@@ -71,10 +80,17 @@ const signup = async (req, res, next) => {
   res.redirect('verifyEmail');
 };
 
+// detailed view of a product
+const productDetails = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('productDetails', { categories });
+};
+
 module.exports = {
   loginForm,
   signupForm,
   signup,
   homePage,
   validateRegister,
+  productDetails,
 };

@@ -7,7 +7,7 @@
 <div>
     <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
         <div class="container-fluid  navbarColor">
-            <a class="navbar-brand text-light img-fluid " href="#"><img src="/images/logo.png" class="logoControl"
+            <a class="navbar-brand text-light img-fluid " href="#"><img src="/img/logo.png" class="logoControl"
                     alt=""></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-theme="dark"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -17,26 +17,37 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
-                        <a class="nav-link text-light " href="#">
+                        <a class="nav-link text-light " href="/admin">
                             Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light ps-3" href="#">Categories</a>
+                        <a class="nav-link text-light ps-3" href="/admin/categories">Categories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light ps-3" href="#">Products</a>
+                        <a class="nav-link text-light ps-3" href="/admin/products">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-light ps-3" href="#">Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light ps-3" href="#">Customers</a>
+                        <a class="nav-link text-light ps-3" href="/admin/customers">Customers</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-light ps-3" href="#">Coupons</a>
                     </li>
                 </ul>
+                <div class="dropdown" style="margin-right: 30px;background-color: #27323F;">
+                    <button class="btn btn-secondary dropdown-toggle" style="background-color: #27323F;" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <%= admin.name %>
+                    </button>
+                    <ul class="dropdown-menu navbarColor" style="min-width: 60px !important;">
+                        <li><a class="dropdown-item text-light miniNav" href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+
+
             </div>
         </div>
     </nav>

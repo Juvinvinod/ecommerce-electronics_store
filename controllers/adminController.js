@@ -6,11 +6,13 @@ const Product = mongoose.model('Product');
 
 // display dashboard
 const dashBoard = (req, res) => {
-  res.render('admin/adminHome');
+  const admin = req.user;
+  res.render('admin/adminHome', { admin });
 };
 
 // display all the customers and search option
 const allCustomers = async (req, res) => {
+  const admin = req.user;
   if (req.query.search) {
     const { search } = req.query;
     await User.find({
@@ -28,6 +30,7 @@ const allCustomers = async (req, res) => {
     await User.find({ isAdmin: false }).then((result) => {
       res.render('admin/customers', {
         userList: result,
+        admin,
       });
     });
   }
@@ -43,29 +46,43 @@ const changeAccess = async (req, res) => {
 
 // find all documents and render categories page
 const displayCategory = async (req, res) => {
+  const admin = req.user;
   await Category.find({}).then((result) => {
-    res.render('admin/categories', { result });
+    res.render('admin/categories', { result, admin });
   });
 };
 
 // using the query send,find the document & render editCategory page
 const viewEditCategory = async (req, res) => {
+  const admin = req.user;
   await Category.findById(req.query.id).then((result) => {
-    res.render('admin/editCategories', { result });
+    res.render('admin/editCategories', { result, admin });
   });
 };
 
 // search for the old category name  document & update it
-const editCategory = async (req, res) => {
+const editCategory = async (req, res, next) => {
   const oldName = { _id: req.query.id };
+  const check = req.body.name;
   const newName = { category_name: req.body.name };
-  await Category.findOneAndUpdate(oldName, newName);
-  res.redirect('/admin/Categories');
+  const existingCategory = await Category.findOne({
+    category_name: { $regex: new RegExp(`^${check}$`, 'i') },
+  });
+  if (!existingCategory) {
+    await Category.findOneAndUpdate(oldName, newName);
+    req.flash('success', 'Categories updated');
+    res.redirect('/admin/Categories');
+  } else {
+    const error = new Error('Category already exists');
+    error.status = 400;
+    next(error);
+  }
 };
 
 // view addCategories page
 const viewAddCategory = (req, res) => {
-  res.render('admin/addCategories');
+  const admin = req.user;
+  res.render('admin/addCategories', { admin });
 };
 
 // check whether the category already exists,if not add it to the database
@@ -87,19 +104,24 @@ const addCategory = async (req, res, next) => {
 
 // find all documents and render products page
 const displayProducts = async (req, res) => {
+  const admin = req.user;
   await Product.find({}).then((result) => {
-    res.render('admin/products', { result });
+    res.render('admin/products', { result, admin });
   });
 };
 
 // view addProducts page
-const viewAddProducts = (req, res) => {
-  res.render('admin/addProducts');
+const viewAddProducts = async (req, res) => {
+  const admin = req.user;
+  await Category.find({}).then((result) => {
+    res.render('admin/addProducts', { result, admin });
+  });
 };
 
 // check if the category already exists,if so then add the product to the database
 const addProducts = async (req, res, next) => {
   const findCategory = req.body.category;
+  console.log(findCategory);
   const found = await Category.findOne({
     category_name: { $regex: new RegExp(`^${findCategory}$`, 'i') },
   });
@@ -127,13 +149,15 @@ const addProducts = async (req, res, next) => {
 
 // using the query send,find the document and render editProducts page
 const viewEditProducts = async (req, res) => {
+  const admin = req.user;
   await Product.findById(req.query.id).then((result) => {
-    res.render('admin/editProducts', { result });
+    res.render('admin/editProducts', { result, admin });
   });
 };
 
 // find the product and update image data in it
 const updateImages = async (req, res) => {
+  const admin = req.user;
   const productId = req.query.id;
   const { imageNumber } = req.body;
   const newImage = req.body.image;
@@ -141,7 +165,7 @@ const updateImages = async (req, res) => {
   updateObject[`product_image${imageNumber}`] = newImage;
   await Product.findByIdAndUpdate(productId, updateObject);
   await Product.findById(req.query.id).then((result) => {
-    res.render('admin/editProducts', { result });
+    res.render('admin/editProducts', { result, admin });
   });
 };
 

@@ -9,8 +9,7 @@
 </div>
 <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
     <div class="container-fluid  navbarColor">
-        <a class="navbar-brand text-light img-fluid " href="#"><img src="/images/logo.png" class="logoControl"
-                alt=""></a>
+        <a class="navbar-brand text-light img-fluid " href="#"><img src="/img/logo.png" class="logoControl" alt=""></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-theme="dark"
             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -23,12 +22,16 @@
                         aria-expanded="false">
                         All products
                     </a>
+
                     <ul class="dropdown-menu navbarColor ">
-                        <li><a class="dropdown-item text-light miniNav" href="#">Home Appliances</a></li>
-                        <li><a class="dropdown-item text-light miniNav" href="#">Audio & video</a></li>
-                        <li><a class="dropdown-item text-light miniNav" href="#">Refrigerator</a></li>
-                        <li><a class="dropdown-item text-light miniNav" href="#">Kitchen Appliances</a></li>
+                        <% categories.forEach((object)=> { %>
+                            <li><a class="dropdown-item text-light miniNav" href="#">
+
+                                    <%= object.category_name %>
+                                        <% }) %>
+                                </a></li>
                     </ul>
+
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-light ps-3" href="#">New Arrivals</a>
@@ -39,6 +42,7 @@
             </ul>
             <a href="#"><i class="fa fa-cart-shopping text-decoration-none navIcon"></i></a>
             <a href="#"><i class="fa-regular fa-heart text-decoration-none navIcon"></i></a>
+            <a href="/logout" class="text-light text-decoration-none">Logout</a>
         </div>
     </div>
 </nav>
