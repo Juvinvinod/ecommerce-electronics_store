@@ -56,7 +56,9 @@ const updateResize = async (req, res, next) => {
     return next(error);
   }
   const existingFileName = req.body.existingImageField;
-  await fs.promises.unlink(`./public/uploads/${existingFileName}`);
+  if (existingFileName) {
+    await fs.promises.unlink(`./public/uploads/${existingFileName}`);
+  }
   const extension = req.file.mimetype.split('/')[1];
   req.body.image = `${uuid.v4()}.${extension}`;
   const photo = await jimp.read(req.file.buffer);

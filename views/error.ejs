@@ -1,24 +1,67 @@
 <%- include('./layout/header.ejs') %>
-    <%- include('./layout/userNavbar.ejs') %>
-        <div class="container justify-content-center align-items-center">
-            <h1 class="errorStatus">
-                <% if (status) { %>
-                    <p>
-                        <%= status %>
-                    </p>
-                    <% } %>
+    <!-- navbar starts here -->
+    <div class="d-flex customerCare justify-content-between p-3 ps-5 container-fluid ">
+        <div class="">24/7 customer service 1-800-235-5678
+        </div>
+        <form class="d-flex nav-link text-light " role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success text-light" type="submit">Search</button>
+        </form>
+    </div>
+    <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
+        <div class="container-fluid  navbarColor">
+            <a class="navbar-brand text-light img-fluid " href="#"><img src="/img/logo.png" class="logoControl"
+                    alt=""></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-theme="dark"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon "></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light " href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            All products
+                        </a>
 
-                        <% if (message) { %>
-                            <p>
-                                <%= message %>
-                            </p>
-                            <% } %>
-            </h1>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="#">New Arrivals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="#">Todays deal</a>
+                    </li>
+                </ul>
+                <a href="#"><i class="fa fa-cart-shopping text-decoration-none navIcon"></i></a>
+                <a href="#"><i class="fa-regular fa-heart text-decoration-none navIcon"></i></a>
+                <a href="/logout" class="text-light text-decoration-none">Logout</a>
+            </div>
+        </div>
+    </nav>
+    </div>
+    <!-- Navbar ends here -->
+    <div class="p-5"></div>
+    <div class="container justify-content-center align-items-center">
+        <h1 class="errorStatus ">
+            <% if (status) { %>
+                <p>
+                    <%= status %>
+                </p>
+                <% } %>
 
-            <!-- <% if (stackHighlighted) { %>
+                    <% if (message) { %>
+                        <p>
+                            <%= message %>
+                        </p>
+                        <% } %>
+        </h1>
+
+        <!-- <% if (stackHighlighted) { %>
                 <pre><%= stackHighlighted %></pre>
                 <% } %> -->
-        </div>
+    </div>
+    <div class="mt-5 p-5"></div>
+    <%- include('./layout/userFooterbar.ejs') %>
 
-        <%- include('./layout/userFooterbar.ejs') %>
-            <%- include('./layout/footer.ejs') %>
+        <%- include('./layout/footer.ejs') %>

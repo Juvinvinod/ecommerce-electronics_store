@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Category = mongoose.model('Category');
 const Product = mongoose.model('Product');
+const fs = require('fs');
 
 // display dashboard
 const dashBoard = (req, res) => {
@@ -139,6 +140,7 @@ const addProducts = async (req, res, next) => {
       category_id: found._id,
     });
     await newProduct.save();
+    req.flash('success', 'Product added!');
     res.redirect('/admin/Products');
   } else {
     const error = new Error('Category specified does not exist!');
@@ -172,6 +174,23 @@ const updateImages = async (req, res) => {
 // check if the category newly entered already exists.if not, find the product and update data
 const updateProducts = async (req, res, next) => {
   const { id } = req.query;
+  const { imageNumber } = req.query;
+  const imageField = `product_image${imageNumber}`;
+  const existingImageField = req.query.imageId;
+
+  if (req.query.imageName && req.query.imageId) {
+    // Delete the existing image
+    await fs.promises.unlink(`./public/uploads/${existingImageField}`);
+
+    // Update the database to remove the image field
+    await Product.findByIdAndUpdate(id, {
+      $unset: {
+        [imageField]: 1,
+      },
+    });
+
+    return res.redirect('/admin/products');
+  }
   const findCategory = req.body.category_name;
   const found = await Category.findOne({
     category_name: { $regex: new RegExp(`^${findCategory}$`, 'i') },

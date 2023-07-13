@@ -5,19 +5,19 @@ const { Schema } = mongoose;
 const productSchema = new Schema({
   product_image1: {
     type: String,
-    required: true,
+    // required: true,
   },
   product_image2: {
     type: String,
-    required: true,
+    // required: true,
   },
   product_image3: {
     type: String,
-    required: true,
+    // required: true,
   },
   product_image4: {
     type: String,
-    required: true,
+    // required: true,
   },
   product_name: {
     type: String,

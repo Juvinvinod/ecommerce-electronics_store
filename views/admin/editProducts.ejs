@@ -1,29 +1,28 @@
 <%- include('../layout/header.ejs') %>
     <%- include('../layout/adminNavbar.ejs') %>
 
-        <div class="container my-5 ">
-
+        <div class="container my-5">
             <form method="post" action="/admin/editProducts?id=<%= result._id %>">
-                <div class="mb-3 ">
+                <div class="mb-3">
                     <h4>Product Information</h4>
-                    <label for="exampleInputEmail1" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                        value="<%=result.product_name%>" name="product_name" required>
-                    <label for="exampleInputEmail1" class="form-label">Category</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                        value="<%=result.category_name%>" name="category_name" required>
-                    <label for="exampleInputEmail1" class="form-label">Stock</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                        value="<%=result.stock%>" name="stock" required>
-                    <label for="exampleInputEmail1" class="form-label">Price</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                        value="<%=result.price%>" name="price" required>
-                    <label for="exampleInputEmail1" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                        value="<%=result.description%>" name="description" required>
+                    <label for="productName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="productName" value="<%=result.product_name%>"
+                        name="product_name" required>
+                    <label for="categoryName" class="form-label">Category</label>
+                    <input type="text" class="form-control" id="categoryName" value="<%=result.category_name%>"
+                        name="category_name" required>
+                    <label for="stock" class="form-label">Stock</label>
+                    <input type="text" class="form-control" id="stock" value="<%=result.stock%>" name="stock" required>
+                    <label for="price" class="form-label">Price</label>
+                    <input type="text" class="form-control" id="price" value="<%=result.price%>" name="price" required>
+                    <label for="description" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="description" value="<%=result.description%>"
+                        name="description" required>
                     <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </div>
             </form>
         </div>
+
         <div style="padding: 20px 0px 20px 0px;" class="my-5 container">
             <table class="table table-primary table-striped table-bordered align-middle table-hover">
                 <thead>
@@ -34,86 +33,39 @@
                         <th>ACTIONS</th>
                     </tr>
                 </thead>
-                <form method="post" action="/admin/changeImage?id=<%= result._id %>" enctype="multipart/form-data">
-                    <!-- Existing image 1 -->
-                    <input type="hidden" name="existingImageField" value="<%= result.product_image1 %>">
-                    <input type="hidden" name="imageNumber" value="1">
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <img src=".././uploads/<%= result.product_image1 %>" class="img-fluid productImageTable"
-                                alt="">
-                        </td>
-                        <td>
-                            <input type="file" name="photo" accept="image/*">
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Change</button>
-                        </td>
-                    </tr>
-                </form>
-                <form method="post" action="/admin/changeImage?id=<%= result._id %>" enctype="multipart/form-data">
-                    <!-- Existing image 2 -->
-                    <input type="hidden" name="existingImageField" value="<%= result.product_image2 %>">
-                    <input type="hidden" name="imageNumber" value="2">
-                    <tr>
-                        <td>2</td>
-                        <td>
-                            <img src=".././uploads/<%= result.product_image2 %>" class="img-fluid productImageTable"
-                                alt="">
-                        </td>
-                        <td>
-                            <input type="file" name="photo" accept="image/*">
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Change</button>
-                        </td>
-                    </tr>
-                </form>
-                <form method="post" action="/admin/changeImage?id=<%= result._id %>" enctype="multipart/form-data">
-                    <!-- Existing image 3 -->
-                    <input type="hidden" name="existingImageField" value="<%= result.product_image3 %>">
-                    <input type="hidden" name="imageNumber" value="3">
-                    <tr>
-                        <td>3</td>
-                        <td>
-                            <img src=".././uploads/<%= result.product_image3 %>" class="img-fluid productImageTable"
-                                alt="">
-                        </td>
-                        <td>
-                            <input type="file" name="photo" accept="image/*">
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Change</button>
-                        </td>
-                    </tr>
-                </form>
-                <form method="post" action="/admin/changeImage?id=<%= result._id %>" enctype="multipart/form-data">
-                    <!-- Existing image 4 -->
-                    <input type="hidden" name="existingImageField" value="<%= result.product_image4 %>">
-                    <input type="hidden" name="imageNumber" value="1">
-                    <tr>
-                        <td>4</td>
-                        <td>
-                            <img src=".././uploads/<%= result.product_image4 %>" class="img-fluid productImageTable"
-                                alt="">
-                        </td>
-                        <td>
-                            <input type="file" name="photo" accept="image/*">
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary">Change</button>
-                        </td>
-                    </tr>
-                </form>
-                </tr>
 
+                <% for (let i=1; i <=4; i++) { %>
+                    <tr>
+                        <td>
+                            <%= i %>
+                        </td>
+                        <td>
+                            <img src=".././uploads/<%= result['product_image' + i] %>"
+                                class="img-fluid productImageTable" alt="">
+                        </td>
+                        <td>
+                            <form method="post" action="/admin/changeImage?id=<%= result._id %>"
+                                enctype="multipart/form-data">
+                                <!-- Existing image <%= i %> -->
+                                <input type="hidden" name="existingImageField"
+                                    value="<%= result['product_image' + i] %>">
+                                <input type="hidden" name="imageNumber" value="<%= i %>">
+                                <input type="file" name="photo" accept="image/*">
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary">Change</button>
+                            </form>
+                            <form
+                                action="/admin/editProducts?id=<%= result._id %>&&imageName=product_image<%= i %>&&imageId=<%= result['product_image' + i] %>&&imageNumber=<%= i %>"
+                                method="POST">
+                                <input type="hidden" name="access" value="">
+                                <button type="submit" style="width: 6rem" class="btn btn-danger"
+                                    name="deleteImage">DELETE</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
             </table>
         </div>
 
-
-
-
-
-        </div>
         <%- include('../layout/footer.ejs') %>

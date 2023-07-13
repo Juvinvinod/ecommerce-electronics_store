@@ -23,7 +23,7 @@ router.get(
   authController.otpSessionCheck,
   authController.otpVerifyPage
 ); // check if the user is already logged in.If not then render the otp page
-router.post('/otp', authController.otpVerify); // check if the otp entered by user is correct
+router.post('/otp/login', authController.otpVerify); // check if the otp entered by user is correct
 
 // login/logout
 router.get('/login', authController.isLoggedIn, userController.homePage); // display loginPage if user not logged in
@@ -37,4 +37,14 @@ router.get(
   userController.productDetails
 );
 
+// forgot password
+router.get('/forgotPassword', authController.viewForgotPass); // view forgot password page
+router.post('/forgotPassword', authController.forgotPass); // check the entered email address
+router.post('/otp/reset', authController.resetOtpVerify); // check the otp entered by user
+router.get('/changePassword', authController.viewChangePass);
+router.post(
+  '/changePassword',
+  authController.validateResetPass,
+  authController.changePassword
+);
 module.exports = router;
