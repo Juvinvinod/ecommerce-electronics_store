@@ -32,7 +32,7 @@ router.get('/logout', authController.logout); // logout the current user
 
 // product
 router.get(
-  '/productDetails',
+  '/productDetails/:id',
   authController.isLoggedIn,
   userController.productDetails
 );
@@ -47,4 +47,8 @@ router.post(
   authController.validateResetPass,
   authController.changePassword
 );
+
+// product categories
+router.get('/categories', userController.viewCategories);
+
 module.exports = router;

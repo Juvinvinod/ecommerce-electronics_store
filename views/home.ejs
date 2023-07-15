@@ -1,6 +1,7 @@
 <%- include('./layout/header.ejs') %>
         <%- include('./layout/userNavbar.ejs') %>
 
+
                 <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                                 <div class="carousel-item active">
@@ -27,11 +28,61 @@
                                 <span class="visually-hidden">Next</span>
                         </button>
                 </div>
+
+
+
+
+                <div class="container my-5 productContainer">
+                        <div class="container mt-100">
+
+
+
+
+                                <div class="row category-card-wrapper overflow-auto">
+                                        <% categories.forEach((object)=> { %>
+
+                                                <div class="col-md-4 col-sm-6">
+                                                        <div class="card mb-30 categoryCard">
+                                                                <a class="card-img-tiles" href="#" data-abc="true">
+                                                                        <div class="inner">
+                                                                                <% products.forEach((object1)=> { %>
+                                                                                        <% if (object1.category_id===object._id)
+                                                                                                { %>
+                                                                                                <div class="main-img">
+                                                                                                        <img src=".././uploads/<%= object1.product_image1 %>"
+                                                                                                                alt="Category">
+                                                                                                </div>
+                                                                                                <div class="thumblist">
+                                                                                                        <img src=".././uploads/<%= object1.product_image2 %>"
+                                                                                                                alt="Category">
+                                                                                                        <img src=".././uploads/<%= object1.product_image3 %>"
+                                                                                                                alt="Category">
+                                                                                                </div>
+                                                                                                <% } %>
+                                                                                                        <% }) %>
+                                                                        </div>
+                                                                </a>
+                                                                <div class="card-body text-center">
+                                                                        <h4 class="card-title">
+                                                                                <%= object.category_name %>
+                                                                        </h4>
+                                                                        <a class="btn btn-outline-primary btn-sm"
+                                                                                href="#" data-abc="true">View
+                                                                                Products</a>
+                                                                </div>
+                                                        </div>
+                                                </div>
+
+                                                <% }) %>
+                                </div>
+
+                        </div>
+                </div>
                 <section>
-                        <div class="container my-5 productContainer">
+                        <div class="container my-5 ">
 
                                 <header class="mb-4">
-                                        <h3>New products</h3>
+                                        <h3>Featured products</h3>
                                 </header>
 
                                 <div class="row">
@@ -42,7 +93,7 @@
                                                                         class="card-img-top"
                                                                         style="aspect-ratio: 1 / 1" />
                                                                 <div class="card-body d-flex flex-column">
-                                                                        <a href="/productDetails"
+                                                                        <a href="/productDetails/<%= object._id %>"
                                                                                 class="text-reset text-decoration-none">
                                                                                 <h5 class="card-title">
                                                                                         <%= object.product_name %>
@@ -66,7 +117,7 @@
                                                 </div>
                                                 <% }) %>
                                 </div>
-
+                        </div>
                 </section>
                 <!-- Products -->
 
@@ -86,7 +137,8 @@
                                                         </span>
                                                         <figcaption class="info">
                                                                 <h6 class="title">Reasonable prices</h6>
-                                                                <p>Lorem ipsum dolor sit amet, consectetur
+                                                                <p>Lorem ipsum dolor sit amet,
+                                                                        consectetur
                                                                         adipisicing elit sed do
                                                                         eiusmor</p>
                                                         </figcaption>
@@ -102,7 +154,8 @@
                                                         </span>
                                                         <figcaption class="info">
                                                                 <h6 class="title">Best quality</h6>
-                                                                <p>Lorem ipsum dolor sit amet, consectetur
+                                                                <p>Lorem ipsum dolor sit amet,
+                                                                        consectetur
                                                                         adipisicing elit sed do
                                                                         eiusmor</p>
                                                         </figcaption>
@@ -117,8 +170,10 @@
                                                                         class="fas fa-plane fa-2x fa-fw text-primary floating"></i>
                                                         </span>
                                                         <figcaption class="info">
-                                                                <h6 class="title">Worldwide shipping</h6>
-                                                                <p>Lorem ipsum dolor sit amet, consectetur
+                                                                <h6 class="title">Worldwide shipping
+                                                                </h6>
+                                                                <p>Lorem ipsum dolor sit amet,
+                                                                        consectetur
                                                                         adipisicing elit sed do
                                                                         eiusmor</p>
                                                         </figcaption>
@@ -133,8 +188,10 @@
                                                                         class="fas fa-users fa-2x fa-fw text-primary floating"></i>
                                                         </span>
                                                         <figcaption class="info">
-                                                                <h6 class="title">Customer satisfaction</h6>
-                                                                <p>Lorem ipsum dolor sit amet, consectetur
+                                                                <h6 class="title">Customer satisfaction
+                                                                </h6>
+                                                                <p>Lorem ipsum dolor sit amet,
+                                                                        consectetur
                                                                         adipisicing elit sed do
                                                                         eiusmor</p>
                                                         </figcaption>
@@ -150,7 +207,8 @@
                                                         </span>
                                                         <figcaption class="info">
                                                                 <h6 class="title">Happy customers</h6>
-                                                                <p>Lorem ipsum dolor sit amet, consectetur
+                                                                <p>Lorem ipsum dolor sit amet,
+                                                                        consectetur
                                                                         adipisicing elit sed do
                                                                         eiusmor</p>
                                                         </figcaption>
@@ -166,7 +224,8 @@
                                                         </span>
                                                         <figcaption class="info">
                                                                 <h6 class="title">Thousand items</h6>
-                                                                <p>Lorem ipsum dolor sit amet, consectetur
+                                                                <p>Lorem ipsum dolor sit amet,
+                                                                        consectetur
                                                                         adipisicing elit sed do
                                                                         eiusmor</p>
                                                         </figcaption>
@@ -201,10 +260,12 @@
                                                                         23.12.2022
                                                                 </span>
                                                                 <a href="#">
-                                                                        <h6 class="text-dark">How to promote
+                                                                        <h6 class="text-dark">How to
+                                                                                promote
                                                                                 brands</h6>
                                                                 </a>
-                                                                <p>When you enter into any new area of science,
+                                                                <p>When you enter into any new area of
+                                                                        science,
                                                                         you almost reach</p>
                                                         </div>
                                                 </article>
@@ -223,10 +284,12 @@
                                                                         13.12.2022
                                                                 </span>
                                                                 <a href="#">
-                                                                        <h6 class="text-dark">How we handle
+                                                                        <h6 class="text-dark">How we
+                                                                                handle
                                                                                 shipping</h6>
                                                                 </a>
-                                                                <p>When you enter into any new area of science,
+                                                                <p>When you enter into any new area of
+                                                                        science,
                                                                         you almost reach</p>
                                                         </div>
                                                 </article>
@@ -245,10 +308,12 @@
                                                                         25.11.2022
                                                                 </span>
                                                                 <a href="#">
-                                                                        <h6 class="text-dark">How to promote
+                                                                        <h6 class="text-dark">How to
+                                                                                promote
                                                                                 brands</h6>
                                                                 </a>
-                                                                <p>When you enter into any new area of science,
+                                                                <p>When you enter into any new area of
+                                                                        science,
                                                                         you almost reach</p>
                                                         </div>
                                                 </article>
@@ -267,10 +332,12 @@
                                                                         03.09.2022
                                                                 </span>
                                                                 <a href="#">
-                                                                        <h6 class="text-dark">Success story of
+                                                                        <h6 class="text-dark">Success
+                                                                                story of
                                                                                 sellers</h6>
                                                                 </a>
-                                                                <p>When you enter into any new area of science,
+                                                                <p>When you enter into any new area of
+                                                                        science,
                                                                         you almost reach</p>
                                                         </div>
                                                 </article>

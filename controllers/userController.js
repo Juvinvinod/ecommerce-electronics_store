@@ -11,9 +11,12 @@ const mail = require('../handlers/mail');
 // display home page
 const homePage = async (req, res) => {
   const categories = await Category.find({});
-  await Product.find({ status: true }).then((result) => {
-    res.render('home', { result, categories });
-  });
+  const products = await Product.find({});
+  await Product.find({ status: true })
+    .limit(8)
+    .then((result) => {
+      res.render('home', { result, categories, products });
+    });
 };
 
 // display login page
@@ -83,7 +86,15 @@ const signup = async (req, res, next) => {
 // detailed view of a product
 const productDetails = async (req, res) => {
   const categories = await Category.find({});
-  res.render('productDetails', { categories });
+  const document = await Product.find({ _id: req.params.id });
+  console.log(document);
+  res.render('productDetails', { categories, document });
+};
+
+// Display different categories
+const viewCategories = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('categories', { categories });
 };
 
 module.exports = {
@@ -93,4 +104,5 @@ module.exports = {
   homePage,
   validateRegister,
   productDetails,
+  viewCategories,
 };

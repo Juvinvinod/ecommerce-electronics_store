@@ -1,0 +1,51 @@
+<%- include('./layout/header.ejs') %>
+    <%- include('./layout/userNavbar.ejs') %>
+
+        <div class="col-1 col-md-3">
+            <form class="filter-sec" method="get">
+                <div class="row bg-white d-md-none d-flex p-2">
+                    <div class="col d-flex flex-row-reverse align-items-center" onclick="hideFilter()">
+                        <i class="ri-close-fill" style="margin-top: 10px; font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+                <input type="text" value="" name="key" style="height: 0px; visibility: hidden;">
+                <div class="row">
+                    <h6>Category</h6>
+                </div>
+                <div class="filter-options mt-3">
+                    <div class="ft-option">
+                        <input type="radio" value="" name="category" id="d" />
+                        <label for="d">All</label>
+                    </div>
+
+                    <div class="ft-option">
+                        <input type="radio" value="" name="category" id="" />
+                        <label for="">
+
+                        </label>
+                    </div>
+
+                </div>
+                <div class="row mt-5">
+                    <h6>Sort By </h6>
+                </div>
+                <div class="filter-options mt-3">
+                    <div class="ft-option">
+                        <input type="radio" value="1" name="filter" id="lowToHigh" />
+                        <label for="lowToHigh">Price - Low to High</label>
+                    </div>
+                    <div class="ft-option">
+                        <input type="radio" value="-1" name="filter" id="highToLow" />
+                        <label for="highToLow">Price - High to Low</label>
+                    </div>
+                    <div class="ft-option">
+                        <input type="radio" value="0" name="filter" id="newLaunches" />
+                        <label for="newLaunches">New Launches</label>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <%- include('./layout/userFooterbar.ejs') %>
+            <%- include('./layout/footer.ejs') %>

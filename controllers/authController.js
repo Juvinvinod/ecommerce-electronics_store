@@ -201,6 +201,7 @@ const changePassword = async (req, res) => {
     const updateUser = await User.findOne({ email: username });
     await updateUser.setPassword(newPass);
     await updateUser.save();
+    res.clearCookie(username);
     req.flash('success', 'Password reset Success!!');
     res.redirect('/');
   } else {
