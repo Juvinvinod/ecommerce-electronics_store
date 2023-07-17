@@ -93,8 +93,14 @@ const productDetails = async (req, res) => {
 
 // Display different categories
 const viewCategories = async (req, res) => {
+  const products = await Product.find({ category_id: req.params.id });
   const categories = await Category.find({});
-  res.render('categories', { categories });
+  res.render('categories', { categories, products });
+};
+
+const viewUserProfile = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('userProfile', { categories });
 };
 
 module.exports = {
@@ -105,4 +111,5 @@ module.exports = {
   validateRegister,
   productDetails,
   viewCategories,
+  viewUserProfile,
 };

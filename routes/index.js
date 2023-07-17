@@ -49,6 +49,9 @@ router.post(
 );
 
 // product categories
-router.get('/categories', userController.viewCategories);
+router.get('/categories/:id', userController.viewCategories);
+
+// user profile
+router.get('/userProfile', userController.viewUserProfile);
 
 module.exports = router;

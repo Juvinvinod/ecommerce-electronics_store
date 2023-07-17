@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const mail = require('../handlers/mail');
 const { sendOTP } = require('../handlers/mail');
+const validationHelpers = require('../helper');
 
 const Category = mongoose.model('Category');
 
@@ -181,8 +182,9 @@ const resetOtpVerify = async (req, res) => {
 };
 
 const viewChangePass = async (req, res) => {
+  const validationHelper = validationHelpers.validationChecker;
   const categories = await Category.find({});
-  res.render('passwordReset', { categories });
+  res.render('passwordReset', { categories, validationHelper });
 };
 
 const changePassword = async (req, res) => {

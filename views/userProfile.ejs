@@ -1,0 +1,96 @@
+<%- include('./layout/header.ejs') %>
+    <%- include('./layout/userNavbar.ejs') %>
+
+
+        <div>
+            <div class="container pt-5">
+                <h3>Profile</h3>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="profile-container card">
+                            <h4>General</h4>
+                            <div class="profil-row">
+                                <b>Name : </b><span></span>
+                            </div>
+                            <div class="profil-row">
+                                <b>Email : </b><span> </span>
+                            </div>
+                            <div class="profil-row">
+                                <b>Password : </b><span>
+                                    <i class="fa fa-circle"></i>
+                                    <i class="fa fa-circle"></i>
+                                    <i class="fa fa-circle"></i>
+                                    <i class="fa fa-circle"></i>
+                                    <i class="fa fa-circle"></i>
+                                    <i class="fa fa-circle"></i>
+                                </span>
+                            </div>
+                            <div class="profil-row">
+                                <button onclick="window.location.href='/edit-profile'">Edit</button>
+                                <a href="/logout">
+                                    <button>Logout</button>
+
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="porfile-items card mt-3">
+                            <a href="#" class="profile-item cardBackground text-decoration-none">
+                                <b class="d-flex align-items-center"><i class="fa fa-credit-card-alt"></i> Wallet</b>
+                                <b>₹ </b>
+                            </a>
+                        </div>
+                        <div class="porfile-items card mt-3">
+                            <a href="/cart" class="profile-item cardBackground text-decoration-none">
+                                <b>Cart</b>
+                                <i class="ri-shopping-cart-line"></i>
+                            </a>
+                        </div>
+                        <div class="porfile-items card mt-3">
+                            <a href="/wishlist" class="profile-item cardBackground text-decoration-none">
+                                <b>Wishlist</b>
+                                <i class="ri-heart-line"></i>
+                            </a>
+                        </div>
+                        <div class="porfile-items card mt-3">
+                            <a href="/orders" class="profile-item cardBackground text-decoration-none">
+                                <b>Order History</b>
+                                <i class="ri-shopping-bag-2-line"></i>
+                            </a>
+                        </div>
+                        <div class="porfile-items card mt-3">
+                            <a href="/coupons" class="profile-item cardBackground text-decoration-none">
+                                <b>Coupons</b>
+                                <i class="ri-coupon-2-line"></i>
+                            </a>
+                        </div>
+                        <div class="row"></div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="manage-profile-address pt-3">
+                            <div class="d-flex justify-content-between">
+                                <h4>Manage address </h4>
+                                <a href="/add-address?redirect=profile" class="btn btn-dark rounded-0 ">Add</a>
+                            </div>
+
+                            <div class="manage-address-row card">
+                                <div class="man-ad-left">
+                                    <b> </b>
+                                    <b> </b>
+                                    <b> </b>
+                                    <b>PIN: </b>
+                                </div>
+                                <div class="man-ad-right">
+                                    <i class="ri-delete-bin-5-fill text-dark"></i>
+                                    <a href="/edit-address/"><i class="ri-edit-box-line text-dark"></i></a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('./layout/userFooterbar.ejs') %>
+            <%- include('./layout/footer.ejs') %>
