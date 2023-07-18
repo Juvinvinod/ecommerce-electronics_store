@@ -7,6 +7,7 @@ const User = mongoose.model('User');
 const promisify = require('es6-promisify');
 const { body, validationResult } = require('express-validator');
 const mail = require('../handlers/mail');
+const validationHelpers = require('../helper');
 
 // display home page
 const homePage = async (req, res) => {
@@ -68,7 +69,6 @@ const validateRegister = [
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log({ error: errors.array() });
     req.flash('error', errors.array());
     return res.redirect('signup');
   }
@@ -99,8 +99,61 @@ const viewCategories = async (req, res) => {
 };
 
 const viewUserProfile = async (req, res) => {
+  const { user } = req;
   const categories = await Category.find({});
-  res.render('userProfile', { categories });
+  res.render('userProfile', { categories, user });
+};
+
+const viewEditProfile = async (req, res) => {
+  const { user } = req;
+  const categories = await Category.find({});
+  res.render('editProfile', { categories, user });
+};
+
+const updateName = async (req, res) => {
+  const { id } = req.query;
+  const newName = req.body.name;
+  console.log(newName);
+  await User.findByIdAndUpdate(id, { name: newName });
+  res.redirect('/userprofile');
+};
+
+const displayPasswordChange = async (req, res) => {
+  const validationHelper = validationHelpers.validationChecker;
+  const { user } = req;
+  const categories = await Category.find({});
+  res.render('changePassword', { categories, user, validationHelper });
+};
+
+const validateUpdatePass = [
+  body('password', 'Password Cannot be Blank!').notEmpty().escape(),
+  body('newPassword', 'New Password cannot be blank!').notEmpty().escape(),
+  body('passwordConfirm', 'Confirmed Password cannot be blank!')
+    .notEmpty()
+    .escape(),
+];
+
+const updatePassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('errorObject', errors.array());
+    return res.redirect('/updatePassword');
+  }
+  const oldPass = req.body.password;
+  const newPass = req.body.newPassword;
+  const repeatPass = req.body.passwordConfirm;
+  if (newPass !== repeatPass) {
+    req.flash('error', 'Entered new Passwords do not match');
+    return res.redirect('/updatePassword');
+  }
+  const document = await User.findOne({ _id: req.query.id });
+  try {
+    await document.changePassword(oldPass, newPass);
+  } catch (error) {
+    req.flash('error', 'Entered Password is incorrect');
+    return res.redirect('/updatePassword');
+  }
+  res.redirect('/userProfile');
 };
 
 module.exports = {
@@ -112,4 +165,9 @@ module.exports = {
   productDetails,
   viewCategories,
   viewUserProfile,
+  viewEditProfile,
+  updateName,
+  displayPasswordChange,
+  updatePassword,
+  validateUpdatePass,
 };

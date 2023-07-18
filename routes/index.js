@@ -52,6 +52,33 @@ router.post(
 router.get('/categories/:id', userController.viewCategories);
 
 // user profile
-router.get('/userProfile', userController.viewUserProfile);
+router.get(
+  '/userProfile',
+  authController.isLoggedIn,
+  userController.viewUserProfile
+); // view user profile page of user
+router.get(
+  '/editProfile',
+  authController.isLoggedIn,
+  userController.viewEditProfile
+); // view edit username page
+router.post(
+  '/editProfile',
+  authController.isLoggedIn,
+  userController.updateName
+); // change existing user name
+
+// change user password
+router.get(
+  '/updatePassword',
+  authController.isLoggedIn,
+  userController.displayPasswordChange
+); // display change password page
+router.post(
+  '/updatePassword',
+  authController.isLoggedIn,
+  userController.validateUpdatePass,
+  userController.updatePassword
+);
 
 module.exports = router;

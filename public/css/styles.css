@@ -321,21 +321,8 @@ a {
     margin-top: 20px;
 }
 
-.profil-row button {
-    width: 70px;
-    height: 35px;
-    border: none;
-    outline: none;
-    background-color: rgb(37, 35, 35);
-    color: white;
-    font-weight: 500;
-    font-size: .9rem;
-    margin-top: 20px;
-}
 
-.profil-row button:last-child {
-    background-color: rgb(248, 50, 50);
-}
+
 
 .profil-row i {
     font-size: .7rem;
@@ -379,16 +366,6 @@ a {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.man-ad-right i {
-    font-size: 1.2rem;
-    color: red;
-    font-weight: 500;
-}
-
-.man-ad-right i:last-child {
-    color: blue;
 }
 
 .cardBackground {
