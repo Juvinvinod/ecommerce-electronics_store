@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const Product = mongoose.model('Product');
 const Category = mongoose.model('Category');
+const Address = mongoose.model('Address');
 
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
@@ -101,7 +102,8 @@ const viewCategories = async (req, res) => {
 const viewUserProfile = async (req, res) => {
   const { user } = req;
   const categories = await Category.find({});
-  res.render('userProfile', { categories, user });
+  const address = await Address.find({});
+  res.render('userProfile', { categories, user, address });
 };
 
 const viewEditProfile = async (req, res) => {
@@ -156,6 +158,55 @@ const updatePassword = async (req, res) => {
   res.redirect('/userProfile');
 };
 
+const viewAddressPage = async (req, res) => {
+  const validationHelper = validationHelpers.validationChecker;
+  const { user } = req;
+  const categories = await Category.find({});
+  res.render('addAddress', { categories, user, validationHelper });
+};
+
+const addAddress = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('errorObject', errors.array());
+    return res.redirect('/addAddress');
+  }
+  const newAddress = new Address({
+    building_name: req.body.building_name,
+    street: req.body.street,
+    city: req.body.city,
+    state: req.body.state,
+    pin_code: req.body.pin_code,
+    phone_number: req.body.phone_number,
+    user_id: req.user.id,
+  });
+  await newAddress.save();
+  res.redirect('/userProfile');
+};
+
+const viewEditAddress = async (req, res) => {
+  const address = await Address.findOne({ _id: req.query.id });
+  const categories = await Category.find({});
+  res.render('editAddress', { categories, address });
+};
+
+const updateAddress = async (req, res) => {
+  await Address.findByIdAndUpdate(req.query.id, {
+    building_name: req.body.building_name,
+    street: req.body.street,
+    city: req.body.city,
+    state: req.body.state,
+    pin_code: req.body.pin_code,
+    phone_number: req.body.phone_number,
+  });
+  res.redirect('/userProfile');
+};
+
+const deleteAddress = async (req, res) => {
+  await Address.findByIdAndDelete(req.params.id);
+  res.redirect('/userProfile');
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -170,4 +221,9 @@ module.exports = {
   displayPasswordChange,
   updatePassword,
   validateUpdatePass,
+  viewAddressPage,
+  addAddress,
+  viewEditAddress,
+  updateAddress,
+  deleteAddress,
 };

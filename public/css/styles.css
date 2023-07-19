@@ -362,12 +362,6 @@ a {
     flex-direction: column;
 }
 
-.man-ad-right {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
 .cardBackground {
     background-color: #dde7ed;
 }

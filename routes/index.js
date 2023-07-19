@@ -1,6 +1,7 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+const validator = require('../handlers/validators');
 
 const { catchErrors } = require('../handlers/errorHandlers');
 
@@ -41,12 +42,12 @@ router.get(
 router.get('/forgotPassword', authController.viewForgotPass); // view forgot password page
 router.post('/forgotPassword', authController.forgotPass); // check the entered email address
 router.post('/otp/reset', authController.resetOtpVerify); // check the otp entered by user
-router.get('/changePassword', authController.viewChangePass);
+router.get('/changePassword', authController.viewChangePass); // view change password page
 router.post(
   '/changePassword',
   authController.validateResetPass,
   authController.changePassword
-);
+); // reset the password of user
 
 // product categories
 router.get('/categories/:id', userController.viewCategories);
@@ -79,6 +80,33 @@ router.post(
   authController.isLoggedIn,
   userController.validateUpdatePass,
   userController.updatePassword
-);
+); // update the user password
 
+// address page
+router.get(
+  '/addAddress',
+  authController.isLoggedIn,
+  userController.viewAddressPage
+); // show  add address page
+router.post(
+  '/addAddress',
+  authController.isLoggedIn,
+  validator.validateAddress,
+  catchErrors(userController.addAddress)
+); // add entered address to user
+router.get(
+  '/editAddress',
+  authController.isLoggedIn,
+  userController.viewEditAddress
+); // display edit address page
+router.post(
+  '/editAddress',
+  authController.isLoggedIn,
+  userController.updateAddress
+); // update user address
+router.get(
+  '/editAddress/:id',
+  authController.isLoggedIn,
+  userController.deleteAddress
+); // delete user address
 module.exports = router;

@@ -77,22 +77,60 @@
                         <div class="manage-profile-address pt-3">
                             <div class="d-flex justify-content-between ">
                                 <h4>Manage address </h4>
-                                <a href="/add-address?redirect=profile" class="btn loginButton ">Add</a>
+                                <a href="/addAddress" class="btn loginButton ">Add</a>
                             </div>
-
-                            <div class="manage-address-row card">
-                                <div class="man-ad-left">
-                                    <b> </b>
-                                    <b> </b>
-                                    <b> </b>
-                                    <b>PIN: </b>
-                                </div>
-                                <div class="man-ad-right">
-                                    <i class="ri-delete-bin-5-fill text-dark"></i>
-                                    <a href="/edit-address/"><i class="ri-edit-box-line text-dark"></i></a>
-                                </div>
-                            </div>
-
+                            <% if(address) { %>
+                                <% address.forEach((object)=> { %>
+                                    <div class="manage-address-row card">
+                                        <div class="man-ad-left">
+                                            <div class=" profil-row"
+                                                style="display:flex; justify-content: space-between;">
+                                                <div>
+                                                    <b>
+                                                        Building name:</b>
+                                                    <%= object.building_name %> <span>
+                                                </div>
+                                                <div><a href="/editAddress/<%= object._id %>" style="color: black;"
+                                                        class="delete"><i class="fa fa-trash mx-3 "></i></a><a
+                                                        style="color: black;margin-left: 20px;"
+                                                        href="/editAddress?id=<%= object._id %>"><i
+                                                            class="fa fa-pencil"></i></a>
+                                                </div>
+                                                </span>
+                                            </div>
+                                            <div class=" profil-row">
+                                                <b>
+                                                    Street: </b><span>
+                                                    <%= object.street %>
+                                                </span>
+                                            </div>
+                                            <div class=" profil-row">
+                                                <b>
+                                                    City:</b> <span>
+                                                    <%= object.city %>
+                                                </span>
+                                            </div>
+                                            <div class=" profil-row">
+                                                <b>
+                                                    State: </b><span>
+                                                    <%= object.state %>
+                                                </span>
+                                            </div>
+                                            <div class=" profil-row">
+                                                <b>
+                                                    Number:</b> <span>
+                                                    <%= object.phone_number %>
+                                                </span>
+                                            </div>
+                                            <div class=" profil-row">
+                                                <b>PIN: </b><span>
+                                                    <%= object.pin_code %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                                        <% } %>
                         </div>
                     </div>
                 </div>
@@ -100,4 +138,7 @@
         </div>
 
         <%- include('./layout/userFooterbar.ejs') %>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script src="./js/sweetAlertDelete.js"></script>
             <%- include('./layout/footer.ejs') %>

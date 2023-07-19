@@ -1,0 +1,47 @@
+<%- include('./layout/header.ejs') %>
+    <%- include('./layout/userNavbar.ejs') %>
+
+        <div class="container d-flex justify-content-center align-items-center mt-5">
+            <form action="/editAddress?id=<%=address._id %>" method="POST" class=" formSize">
+                <h1 class="text-center py-3 fw-bold ">EDIT ADDRESS</h1>
+                <% if (flashes.error) { %>
+                    <div class="container alert alert-danger alert-dismissible fade show" role="alert">
+                        <%= flashes.error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% } %>
+                        <div class="mb-3">
+                            <label for="addressField1" class="form-label">Building name</label>
+                            <input type="text" class="form-control" name="building_name"
+                                value="<%= address.building_name %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField2" class="form-label">Street</label>
+                            <input type="text" class="form-control" name="street" value="<%= address.street %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField3" class="form-label">City</label>
+                            <input type="text" class="form-control" name="city" value="<%= address.city %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField4" class="form-label">state</label>
+                            <input type="text" class="form-control" name="state" value="<%= address.state %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField5" class="form-label">PinCode</label>
+                            <input type="text" class="form-control" name="pin_code" value="<%= address.pin_code %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField6" class="form-label">Phone-number</label>
+                            <input type="tel" class="form-control" name="phone_number"
+                                value="<%= address.phone_number %>">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn loginButton">Update</button>
+                        </div>
+            </form>
+        </div>
+
+
+        <%- include('./layout/userFooterbar.ejs') %>
+            <%- include('./layout/footer.ejs') %>

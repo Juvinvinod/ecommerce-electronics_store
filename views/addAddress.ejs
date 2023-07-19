@@ -1,0 +1,75 @@
+<%- include('./layout/header.ejs') %>
+    <%- include('./layout/userNavbar.ejs') %>
+
+        <div class="container d-flex justify-content-center align-items-center mt-5">
+            <form action="/addAddress" method="POST" class=" formSize">
+                <h1 class="text-center py-3 fw-bold ">ADD ADDRESS</h1>
+                <% if (flashes.error) { %>
+                    <div class="container alert alert-danger alert-dismissible fade show" role="alert">
+                        <%= flashes.error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% } %>
+                        <div class="mb-3">
+                            <label for="addressField1" class="form-label">Building name</label>
+                            <input type="text"
+                                class="<% if(validationHelper(flashes,'building_name')) { %>form-control is-invalid <% } else { %>form-control<% } %>"
+                                name="building_name" aria-describedby="formField1">
+                            <div id="formField1" class="invalid-feedback">
+                                <%= validationHelper(flashes,"building_name") %>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField2" class="form-label">Street</label>
+                            <input type="text" class="<% if(validationHelper(flashes,'street')) { %>
+                            form-control is-invalid <% } else { %> form-control <% } %>" name="street"
+                                aria-describedby="formField2">
+                            <div id="formField2" class="invalid-feedback">
+                                <%= validationHelper(flashes,"street") %>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField3" class="form-label">City</label>
+                            <input type="text" class="<% if(validationHelper(flashes,'city')) { %>
+                            form-control is-invalid <% } else { %> form-control <% } %>" name="city"
+                                aria-describedby="formField3">
+                            <div id="formField3" class="invalid-feedback">
+                                <%= validationHelper(flashes,"city") %>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField4" class="form-label">state</label>
+                            <input type="text" class="<% if(validationHelper(flashes,'state')) { %>
+                            form-control is-invalid <% } else { %> form-control <% } %>" name="state"
+                                aria-describedby="formField4">
+                            <div id="formField4" class="invalid-feedback">
+                                <%= validationHelper(flashes,"state") %>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField5" class="form-label">PinCode</label>
+                            <input type="text" class="<% if(validationHelper(flashes,'pin_code')) { %>
+                            form-control is-invalid <% } else { %> form-control <% } %>" name="pin_code"
+                                aria-describedby="formField5">
+                            <div id="formField5" class="invalid-feedback">
+                                <%= validationHelper(flashes,"pin_code") %>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressField6" class="form-label">Phone-number</label>
+                            <input type="tel" class="<% if(validationHelper(flashes,'phone_number')) { %>
+                            form-control is-invalid <% } else { %> form-control <% } %>" name="phone_number"
+                                aria-describedby="formField6">
+                            <div id="formField6" class="invalid-feedback">
+                                <%= validationHelper(flashes,"phone_number") %>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn loginButton">Add</button>
+                        </div>
+            </form>
+        </div>
+
+
+        <%- include('./layout/userFooterbar.ejs') %>
+            <%- include('./layout/footer.ejs') %>
