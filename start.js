@@ -14,6 +14,7 @@ require('./models/User');
 require('./models/Category');
 require('./models/Product');
 require('./models/Address');
+require('./models/Cart');
 
 // Start our app!
 const app = require('./app');

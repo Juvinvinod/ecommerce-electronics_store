@@ -61,14 +61,14 @@
                                     <p>
                                         <%= object.description %>
                                     </p>
-                                    <% }) %>
 
-                                        <hr />
 
-                                        <div class="row mb-4">
+                                    <hr />
 
-                                            <!-- col.// -->
-                                            <!-- <div class="col-md-4 col-6 mb-3">
+                                    <div class="row mb-4">
+
+                                        <!-- col.// -->
+                                        <!-- <div class="col-md-4 col-6 mb-3">
                                         <label class="mb-2 d-block">Quantity</label>
                                         <div class="input-group mb-3" style="width: 170px;">
                                             <button class="btn btn-white border border-secondary px-3" type="button"
@@ -84,12 +84,20 @@
                                             </button>
                                         </div>
                                     </div> -->
-                                        </div>
-                                        <a href="#" class="btn btn-warning shadow-0"> <i
-                                                class="me-1 fa fa-shopping-basket"></i>Add
+                                    </div>
+                                    <% if(locals.user) { %>
+                                        <a href="/addToCart?id=<%=object._id %>" class="btn btn-warning shadow-0"
+                                            id="addToCart"> <i class="me-1 fa fa-shopping-basket"></i>Add
                                             to cart </a>
-                                        <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3">
-                                            <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                                        <% } else { %>
+                                            <a href="/login" class="btn btn-warning shadow-0" id="loginRequired"> <i
+                                                    class="me-1 fa fa-shopping-basket"></i>Add
+                                                to cart </a>
+                                            <% } %>
+                                                <a href="#"
+                                                    class="btn btn-light border border-secondary py-2 icon-hover px-3">
+                                                    <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                                                <% }) %>
                                 </div>
                             </main>
                         </div>
@@ -108,11 +116,10 @@
 
 
                 <%- include('./layout/userFooterbar.ejs') %>
-                    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-                        integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
-                        crossorigin="anonymous"></script>
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script src="/js/jquery.jqZoom.js"></script>
                     <script type="text/javascript">
+                        // change image on click function
                         $(document).ready(function () {
                             $('.thumb a').click(function (e) {
                                 e.preventDefault();
@@ -121,6 +128,8 @@
                             });
                         });
                     </script>
+
+                    <!-- image zoom script -->
                     <script>
                         $(function () {
                             function enableZoom() {
@@ -152,6 +161,48 @@
                                     disableZoom();
                                 }
                             });
+                        });
+                    </script>
+
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                    <!-- script function to show added to cart message  -->
+                    <script>
+                        document.getElementById("addToCart").addEventListener("click", function (e) {
+                            e.preventDefault();
+                            const self = $(this);
+                            Swal.fire({
+                                title: 'Added',
+                                text: " Added To Cart",
+                                icon: 'success',
+                                showConfirmButton: false,
+                            })
+                            setTimeout(() => {
+                                location.href = self.attr('href');
+
+                            }, 2000);
+                        });
+                    </script>
+
+                    <!-- login required -->
+                    <script>
+                        document.getElementById("loginRequired").addEventListener("click", function (e) {
+                            e.preventDefault();
+                            const self = $(this);
+                            Swal.fire({
+                                title: 'Not Logged In',
+                                text: "Please login to continue",
+                                icon: 'error',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Log In'
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.href = self.attr('href');
+                                }
+                            })
+
                         });
                     </script>
 

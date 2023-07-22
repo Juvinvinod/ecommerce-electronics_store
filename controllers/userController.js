@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 const Product = mongoose.model('Product');
 const Category = mongoose.model('Category');
 const Address = mongoose.model('Address');
+const Cart = mongoose.model('Cart');
 
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
 const { body, validationResult } = require('express-validator');
 const mail = require('../handlers/mail');
-const validationHelpers = require('../helper');
+const helpers = require('../helper');
 
 // display home page
 const homePage = async (req, res) => {
@@ -99,6 +100,7 @@ const viewCategories = async (req, res) => {
   res.render('categories', { categories, products });
 };
 
+// display userprofile page
 const viewUserProfile = async (req, res) => {
   const { user } = req;
   const categories = await Category.find({});
@@ -106,12 +108,14 @@ const viewUserProfile = async (req, res) => {
   res.render('userProfile', { categories, user, address });
 };
 
+// display editProfile page
 const viewEditProfile = async (req, res) => {
   const { user } = req;
   const categories = await Category.find({});
   res.render('editProfile', { categories, user });
 };
 
+// update the existing username with data provided
 const updateName = async (req, res) => {
   const { id } = req.query;
   const newName = req.body.name;
@@ -120,13 +124,15 @@ const updateName = async (req, res) => {
   res.redirect('/userprofile');
 };
 
+// display change password page
 const displayPasswordChange = async (req, res) => {
-  const validationHelper = validationHelpers.validationChecker;
+  const validationHelper = helpers.validationChecker;
   const { user } = req;
   const categories = await Category.find({});
   res.render('changePassword', { categories, user, validationHelper });
 };
 
+// validation checks for form in changePassword page
 const validateUpdatePass = [
   body('password', 'Password Cannot be Blank!').notEmpty().escape(),
   body('newPassword', 'New Password cannot be blank!').notEmpty().escape(),
@@ -135,6 +141,7 @@ const validateUpdatePass = [
     .escape(),
 ];
 
+// if validation errors,display it. else,update existing password with new one
 const updatePassword = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -158,13 +165,15 @@ const updatePassword = async (req, res) => {
   res.redirect('/userProfile');
 };
 
+// display add address page
 const viewAddressPage = async (req, res) => {
-  const validationHelper = validationHelpers.validationChecker;
+  const validationHelper = helpers.validationChecker;
   const { user } = req;
   const categories = await Category.find({});
   res.render('addAddress', { categories, user, validationHelper });
 };
 
+// if validation errors,display it. else, add the address to database
 const addAddress = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -184,12 +193,14 @@ const addAddress = async (req, res) => {
   res.redirect('/userProfile');
 };
 
+// display edit address page
 const viewEditAddress = async (req, res) => {
   const address = await Address.findOne({ _id: req.query.id });
   const categories = await Category.find({});
   res.render('editAddress', { categories, address });
 };
 
+// update existing address with new data
 const updateAddress = async (req, res) => {
   await Address.findByIdAndUpdate(req.query.id, {
     building_name: req.body.building_name,
@@ -202,9 +213,99 @@ const updateAddress = async (req, res) => {
   res.redirect('/userProfile');
 };
 
+// delete the address document in database
 const deleteAddress = async (req, res) => {
   await Address.findByIdAndDelete(req.params.id);
   res.redirect('/userProfile');
+};
+
+// add products to cart
+const addToCart = async (req, res) => {
+  const existingProduct = await Cart.findOne({
+    user: req.user.id,
+    product: req.query.id,
+  });
+  if (existingProduct) {
+    await Cart.findOneAndUpdate(
+      { user: req.user.id, product: req.query.id },
+      { $inc: { quantity: 1 } }
+    );
+  } else {
+    const newCart = new Cart({
+      user: req.user.id,
+      product: req.query.id,
+    });
+    await newCart.save();
+  }
+  res.redirect('back');
+};
+
+function totalAmount(products) {
+  let totalPrice = 0;
+  for (let i = 0; i < products.length; i++) {
+    const document = products[i];
+    totalPrice += document.product.price * document.quantity;
+  }
+  return totalPrice;
+}
+
+const displayCart = async (req, res) => {
+  if (req.user) {
+    const categories = await Category.find({});
+    const carts = await Cart.find({ user: req.user._id }).populate('product');
+    const count = await Cart.find({ user: req.user._id }).count();
+    const total = totalAmount(carts);
+    res.render('cart', { categories, carts, count, total });
+  } else {
+    req.flash('error', 'Please login to purchase products');
+    res.redirect('/login');
+  }
+};
+
+const deleteCartItem = async (req, res) => {
+  await Cart.findByIdAndDelete(req.params.id);
+};
+
+const decQuantity = async (req, res) => {
+  const { cartId } = req.query;
+  let quantityZero = false;
+  await Cart.findOneAndUpdate({ _id: cartId }, { $inc: { quantity: -1 } });
+  const carts = await Cart.find({ user: req.user._id }).populate('product');
+  const count = await Cart.find({ user: req.user._id }).count();
+  const total = totalAmount(carts);
+  const product = await Cart.findOne({ _id: cartId }).populate('product');
+  if (product.quantity <= 0) {
+    await Cart.deleteOne({ _id: cartId });
+    quantityZero = true;
+  }
+  const newPrice = parseInt(product.product.price * product.quantity);
+  res.send({
+    data: 'this is data',
+    quantityZero,
+    carts,
+    count,
+    total,
+    newPrice,
+    product,
+  });
+};
+
+const incQuantity = async (req, res) => {
+  const { cartId } = req.query;
+  await Cart.findOneAndUpdate({ _id: cartId }, { $inc: { quantity: 1 } });
+  const carts = await Cart.find({ user: req.user._id }).populate('product');
+  const count = await Cart.find({ user: req.user._id }).count();
+  const total = totalAmount(carts);
+  const product = await Cart.findOne({ _id: cartId }).populate('product');
+
+  const newPrice = parseInt(product.product.price * product.quantity);
+  res.send({
+    data: carts,
+    count,
+    total,
+    newPrice,
+    product,
+  });
 };
 
 module.exports = {
@@ -226,4 +327,9 @@ module.exports = {
   viewEditAddress,
   updateAddress,
   deleteAddress,
+  addToCart,
+  displayCart,
+  deleteCartItem,
+  decQuantity,
+  incQuantity,
 };

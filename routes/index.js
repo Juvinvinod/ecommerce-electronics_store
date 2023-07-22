@@ -8,7 +8,7 @@ const { catchErrors } = require('../handlers/errorHandlers');
 const router = express.Router();
 
 // homepage
-router.get('/', authController.isLoggedIn, userController.homePage); // display homepage
+router.get('/', userController.homePage); // display homepage
 
 // signup
 router.get('/signup', userController.signupForm); // display signup page
@@ -32,11 +32,7 @@ router.post('/login', authController.login); // check if the user entered the co
 router.get('/logout', authController.logout); // logout the current user
 
 // product
-router.get(
-  '/productDetails/:id',
-  authController.isLoggedIn,
-  userController.productDetails
-);
+router.get('/productDetails/:id', userController.productDetails);
 
 // forgot password
 router.get('/forgotPassword', authController.viewForgotPass); // view forgot password page
@@ -109,4 +105,28 @@ router.get(
   authController.isLoggedIn,
   userController.deleteAddress
 ); // delete user address
+
+// cart
+router.get(
+  '/addToCart',
+  authController.isLoggedIn,
+  catchErrors(userController.addToCart)
+); // add product to user cart
+router.get('/cart', userController.displayCart); // display user cart
+router.get(
+  '/cartDelete/:id',
+  authController.isLoggedIn,
+  userController.deleteCartItem
+);
+router.put(
+  '/productDec',
+  authController.isLoggedIn,
+  catchErrors(userController.decQuantity)
+);
+router.put(
+  '/productInc',
+  authController.isLoggedIn,
+  catchErrors(userController.incQuantity)
+);
+
 module.exports = router;

@@ -1,0 +1,197 @@
+<%- include('./layout/header.ejs') %>
+    <%- include('./layout/userNavbar.ejs') %>
+
+        <div class="cartlist-main">
+            <div class="container pt-3">
+                <% if(count!==0) { %>
+                    <h3 class="cart-head">Cart <i class="ri-shopping-cart-line"></i></h3>
+                    <% } %>
+                        <div class="alert alert-dark alert-dismissible fade show" role="alert" style="display: none;"
+                            id="cartAlert">
+                            <div>
+                                <strong>Out Of Stock!</strong>
+                            </div>
+
+
+                        </div>
+                        <% if(count===0) { %>
+                            <div class="row">
+                                <div class="empty-container w-100 h-50 d-flex flex-column justify-content-center align-items-center"
+                                    style="gap:10px">
+                                    <img src="img/emptyCart.png" height="300px" alt="">
+                                    <h3>Your Cart is empty!</h3>
+                                    <p>Looks like you haven't added anything to your cart </p>
+                                </div>
+                            </div>
+                            <% } else { %>
+                                <div class="row">
+                                    <% if (flashes.message) { %>
+                                        <div class="container alert alert-success alert-dismissible fade show"
+                                            role="alert">
+                                            <%= flashes.message %>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <% } %>
+                                            <div class="col-12 col-md-7">
+
+                                                <% carts.forEach((cart)=>{ %>
+                                                    <div class="col-12">
+                                                        <div id="cart<%=cart.product._id%>" class="cart-item">
+                                                            <div class="cart-img">
+                                                                <img src=".././uploads/<%= cart?.product?.product_image1 %>"
+                                                                    alt="">
+                                                            </div>
+                                                            <div class="cart-detail">
+                                                                <a href="">
+                                                                    <b>
+                                                                        <%= cart?.product?.product_name %>
+                                                                    </b>
+                                                                </a>
+                                                                <div>
+                                                                    <div class="d-flex">
+                                                                        ₹<h5 id="pricePerUnit<%=cart.product._id%>">
+                                                                            <%= cart?.product?.price*cart.quantity %>
+                                                                        </h5>
+                                                                    </div>
+                                                                    <!-- <strike style="font-size: .85rem; color: grey;">
+                                                                ₹<span id="">
+
+                                                                </span>
+                                                            </strike> -->
+                                                                </div>
+                                                                </h5>
+                                                                <% if(cart?.product?.stock===0) { %>
+                                                                    <b id="" class="text-danger">
+
+                                                                        Out Of Stock
+                                                                    </b>
+                                                                    <% } %>
+                                                            </div>
+                                                            <div class="cart-quantity">
+                                                                <div class="cartquantiy-box">
+                                                                    <button
+                                                                        onclick="decQuantity('<%= cart._id %>')">-</button>
+                                                                    <input type="number" readonly
+                                                                        value="<%= cart?.quantity %>"
+                                                                        id="totalCount<%=cart.product._id %>">
+                                                                    <button
+                                                                        onclick="incQuantity('<%= cart._id %>')">+</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="cart-cancel"><a class="delete"
+                                                                    style="color: black;"
+                                                                    href="/cartDelete/<%=cart?._id %>">
+                                                                    <i class="fa fa-times "></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <% }) %>
+                                            </div>
+                                            <div class=" col-12 col-md-5">
+                                                <div class="row">
+
+                                                    <div class="cart-price-details">
+                                                        <h4>Price details</h4>
+                                                        <div class="price-item">
+                                                            <label for="">Total Price</label>
+
+                                                            <b>₹ <span id="totalPrice">
+                                                                    <%= total %>
+                                                                </span></b>
+                                                        </div>
+                                                        <div class="price-item">
+                                                            <label for="">Discount</label>
+                                                            <b class="text-success">- ₹ <span id="totalDiscount">
+                                                                    0
+                                                                </span> </b>
+                                                        </div>
+                                                        <div class="price-item">
+                                                            <label for="">Total amount</label>
+                                                            <b>₹ <span id="totalAmount">
+                                                                    <%= total %>
+                                                                </span> </b>
+                                                        </div>
+                                                        <div class="price-item">
+                                                            <button class="w-100"
+                                                                onclick="checkQuantity()">Checkout</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <%- include('./layout/userFooterbar.ejs') %>
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                $(document).ready(() => {
+                    $('.delete').on('click', function (e) {
+                        e.preventDefault();
+                        const self = $(this);
+                        console.log(self);
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, remove it!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = self.attr('href');
+                            }
+                        });
+                    });
+                });
+            </script>
+            <script>
+                function decQuantity(cartId) {
+                    const url = window.location.origin;
+                    fetch(`${url}/productDec?cartId=${cartId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            "Content-Type": "application/json",
+                        }
+                    }).then((response) => response.json())
+                        .then((data) => {
+                            document.getElementById(`totalCount${data.product.product._id}`).value = data.product.quantity
+                            document.getElementById('totalAmount').innerText = data.total
+                            document.getElementById('totalPrice').innerText = data.total
+                            document.getElementById(`pricePerUnit${data.product.product._id}`).innerText = data.newPrice
+                            if (data.quantityZero == true) {
+                                document.getElementById(`cart${data.product.product._id}`).remove()
+                            }
+                        })
+                }
+
+                function incQuantity(cartId) {
+                    const url = window.location.origin;
+                    fetch(`${url}/productInc?cartId=${cartId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            "Content-Type": "application/json",
+                        }
+                    }).then((response) => response.json())
+                        .then((data) => {
+                            document.getElementById(`totalCount${data.product.product._id}`).value = data.product.quantity
+                            document.getElementById('totalAmount').innerText = data.total
+                            document.getElementById('totalPrice').innerText = data.total
+                            document.getElementById(`pricePerUnit${data.product.product._id}`).innerText = data.newPrice
+                        })
+                }
+
+
+            </script>
+            <%- include('./layout/footer.ejs') %>
