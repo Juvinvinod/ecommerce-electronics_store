@@ -133,7 +133,26 @@ router.get(
   '/quantityCheck',
   authController.isLoggedIn,
   userController.checkQuantity
+); // check if the product selected has enough stocks
+
+// checkout
+router.get('/checkout', authController.isLoggedIn, userController.viewCheckout); // show checkout page
+router.post(
+  '/checkout',
+  authController.isLoggedIn,
+  catchErrors(userController.checkout)
+); // place order
+
+// orders
+router.get(
+  '/orders',
+  authController.isLoggedIn,
+  catchErrors(userController.viewOrders)
 );
-router.get('/checkout', authController.isLoggedIn, userController.viewCheckout);
+router.get(
+  '/order/:id',
+  authController.isLoggedIn,
+  userController.getOrderedProduct
+);
 
 module.exports = router;

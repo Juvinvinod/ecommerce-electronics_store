@@ -20,10 +20,13 @@ const orderSchema = new Schema({
       quantity: Number,
     },
   ],
-  address: String,
+  address: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'Address',
+  },
   status: {
     type: String,
-    default: 'Pending',
+    default: 'pending',
   },
   total_amount: Number,
   payment_method: String,

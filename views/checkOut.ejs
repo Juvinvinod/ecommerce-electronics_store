@@ -3,7 +3,8 @@
 
         <div class="checkout-main">
             <div class="container">
-                <form action="/checkout" method="post" class="row">
+                <form method="post" class="row" id="checkout-form">
+                    <input type="hidden" value="<%= total %>" name="totalAmount" />
                     <div class="col-12 col-md-7">
                         <h3 class="mt-5 d-flex justify-content-between">
                             <div>Choose Address</div> <a href="/addAddress?redirect=checkOut"
@@ -32,7 +33,7 @@
                                     </b>
                                 </div>
                                 <div class="address-radio">
-                                    <input type="radio" value="" name="address" id="" required>
+                                    <input type="radio" value="<%= item._id %>" name="address" id="" required>
                                 </div>
                             </label>
                             <% }) %>
@@ -83,7 +84,7 @@
                             </div>
 
                             <div class="pay-option mt-4">
-                                <a href="/ordered-product">
+                                <a onclick="orderProduct()">
                                     <button type="submit">Place Order</button>
                                 </a>
                             </div>
@@ -93,6 +94,31 @@
                 </form>
             </div>
         </div>
-
         <%- include('./layout/userFooterbar.ejs') %>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                function orderProduct() {
+                    const form = new FormData(document.getElementById("checkout-form"));
+                    const url = window.location.origin;
+                    fetch(`${url}/checkout`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Accept': 'application/json',
+                        },
+                        body: form,
+                    }).then((res) => (res.json())).then((res) => {
+                        console.log(res)
+                        // Redirect to home page with success message as a URL parameter
+                        window.location.href = `${url}?message=Order+placed`;
+                    }).catch((error) => {
+                        console.error('Error:', error);
+                        // Redirect to home page with error message as a URL parameter
+                        window.location.href = `${url}?message=Order+failed`;
+                    });
+                }
+            </script>
+
+
+
             <%- include('./layout/footer.ejs') %>

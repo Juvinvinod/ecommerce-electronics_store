@@ -4,6 +4,7 @@ const Product = mongoose.model('Product');
 const Category = mongoose.model('Category');
 const Address = mongoose.model('Address');
 const Cart = mongoose.model('Cart');
+const Order = mongoose.model('Order');
 
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
@@ -89,7 +90,6 @@ const signup = async (req, res, next) => {
 const productDetails = async (req, res) => {
   const categories = await Category.find({});
   const document = await Product.find({ _id: req.params.id });
-  console.log(document);
   res.render('productDetails', { categories, document });
 };
 
@@ -119,7 +119,6 @@ const viewEditProfile = async (req, res) => {
 const updateName = async (req, res) => {
   const { id } = req.query;
   const newName = req.body.name;
-  console.log(newName);
   await User.findByIdAndUpdate(id, { name: newName });
   res.redirect('/userprofile');
 };
@@ -288,13 +287,13 @@ const decQuantity = async (req, res) => {
   let quantityZero = false;
   await Cart.findOneAndUpdate({ _id: cartId }, { $inc: { quantity: -1 } });
   const carts = await Cart.find({ user: req.user._id }).populate('product');
-  const count = await Cart.find({ user: req.user._id }).count();
   const total = totalAmount(carts);
   const product = await Cart.findOne({ _id: cartId }).populate('product');
   if (product.quantity <= 0) {
     await Cart.deleteOne({ _id: cartId });
     quantityZero = true;
   }
+  const count = await Cart.find({ user: req.user._id }).count();
   const newPrice = parseInt(product.product.price * product.quantity);
   res.send({
     data: 'this is data',
@@ -352,6 +351,65 @@ const viewCheckout = async (req, res) => {
   res.render('checkOut', { categories, address, total });
 };
 
+const checkout = async (req, res) => {
+  if (req.body.payment === 'cod') {
+    const userId = req.user._id;
+    const cartItems = await Cart.find({ user: userId });
+    const productArray = cartItems.map((item) => ({
+      product_id: item.product,
+      quantity: item.quantity,
+    }));
+    const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
+    let orderId = 'EMRT000001';
+    if (lastOrder.length > 0) {
+      const lastOrderId = lastOrder[0].order_id;
+      const orderIdNumber = parseInt(lastOrderId.slice(4));
+      orderId = `EMRT${`000000${orderIdNumber + 1}`.slice(-6)}`;
+    }
+    const newOrder = new Order({
+      order_id: orderId,
+      user: userId,
+      product: productArray,
+      address: req.body.address,
+      total_amount: req.body.totalAmount,
+      payment_method: 'COD',
+    });
+    await newOrder.save();
+    await Cart.deleteMany({ user: userId });
+  }
+  return res.json({
+    msg: 'Order placed',
+  });
+};
+
+const viewOrders = async (req, res) => {
+  const userId = req.user._id;
+  const categories = await Category.find({});
+  const orders = await Order.find({ user: userId })
+    .populate({
+      path: 'product.product_id',
+      model: 'Product',
+    })
+    .sort({ orderTime: -1 });
+  res.render('orderHistory', { categories, orders });
+};
+
+const getOrderedProduct = async (req, res) => {
+  const categories = await Category.find({});
+  const userId = req.user._id;
+  const orderId = req.params.id;
+  const order = await Order.findOne({ _id: orderId, user: userId })
+    .populate({
+      path: 'product.product_id',
+      model: 'Product',
+    })
+    .populate({
+      path: 'address',
+      model: 'Address',
+    });
+  res.render('orderedProduct', { categories, order });
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -378,4 +436,7 @@ module.exports = {
   incQuantity,
   viewCheckout,
   checkQuantity,
+  checkout,
+  viewOrders,
+  getOrderedProduct,
 };

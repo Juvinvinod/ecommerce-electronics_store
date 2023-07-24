@@ -1,0 +1,46 @@
+<%- include('./layout/header.ejs') %>
+    <%- include('./layout/userNavbar.ejs') %>
+
+        <div>
+            <div class="container mt-3">
+                <h3 class="wish-head">Order History <i class="fa fa-shopping-bag"></i></h3>
+                <div class="row">
+
+                    <% orders.forEach((item)=>{ %>
+                        <% item.product.forEach((productItem)=> { %>
+                            <div class="col-12">
+                                <div class="wish-item">
+                                    <a href="/order/<%=item._id%>" class="order-img text-dark ps-2">
+                                        <img src=".././uploads/<%=productItem.product_id.product_image1 %>" alt="">
+                                    </a>
+                                    <a href="/order/<%=item._id%>" class="order-detail text-dark text-decoration-none">
+                                        <b>
+                                            <%= productItem.product_id.product_name %>
+                                        </b>
+                                        <% }) %>
+                                            <h5 class="mt-2">₹<%= item.total_amount %>
+                                            </h5>
+                                    </a>
+                                    <div class="order-status d-flex">
+                                        <div class="<%=item.status%>">
+                                            <%=item.status %>
+                                        </div>
+                                        <!-- <button>Cancel</button> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+
+                </div>
+                <% if(!orders[0]){ %>
+                    <div class=" d-flex flex-column justify-content-center align-items-center" style="gap:10px">
+                        <img src="/img/noOrders.png" style="width: 300px;" alt="">
+                        <h3>No Orders found!</h3>
+                        <p class="text-center">Looks like you haven't ordered anything yet</p>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+
+        <%- include('./layout/userFooterbar.ejs') %>
+            <%- include('./layout/footer.ejs') %>

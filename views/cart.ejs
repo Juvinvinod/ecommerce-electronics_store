@@ -179,6 +179,10 @@
                             if (data.quantityZero == true) {
                                 document.getElementById(`cart${data.product.product._id}`).remove()
                             }
+                            if (data.count == 0) {
+                                document.getElementById('showCards').style.display = 'none'
+                                document.getElementById('showEmpty').style.display = 'block'
+                            }
                         })
                 }
 
@@ -227,6 +231,7 @@
                                 document.getElementById(`cart${data.product.product._id}`).remove()
                                 // document.getElementById('count').innerText = data.count
                                 document.getElementById('totalPrice').innerText = data.total
+
                             })
                         }
                     })
