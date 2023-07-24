@@ -2,7 +2,7 @@
     <%- include('./layout/userNavbar.ejs') %>
 
         <div class="container d-flex justify-content-center align-items-center mt-5">
-            <form action="/addAddress" method="POST" class=" formSize">
+            <form action="/addAddress?redirect=<%=redirect%>" method="POST" class=" formSize">
                 <h1 class="text-center py-3 fw-bold ">ADD ADDRESS</h1>
                 <% if (flashes.error) { %>
                     <div class="container alert alert-danger alert-dismissible fade show" role="alert">

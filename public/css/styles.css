@@ -85,10 +85,12 @@
 }
 
 /* carousal home */
-.carousel-inner {
-    max-height: 300px;
+.carousel-item {
     margin-top: 10px;
-    /* Adjust the height value as needed */
+    background-position: center;
+    background-size: cover;
+    color: white;
+    object-fit: contain;
 }
 
 
@@ -555,4 +557,79 @@ a {
     .cart-quantity {
         flex: 20%;
     }
+}
+
+/* checkout page */
+.checkout-main {
+    /* width: 100vw; */
+    background-color: var(--lightGrey);
+    min-height: 100vh;
+}
+
+.address-box {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #dde7ed;
+
+}
+
+.address-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.address-box input {
+    width: 15px;
+    height: 15px;
+}
+
+.checkout-payment {
+    background-color: #fff;
+    padding: 20px;
+}
+
+.pay-option button {
+    width: 100%;
+    height: 50px;
+    border: none;
+    outline: none;
+    background-color: #FBBB24;
+    color: black;
+    font-weight: 500;
+}
+
+.pay-option input {
+    margin-right: 10px;
+}
+
+.checkout-wallet {
+    display: flex;
+    /* width: 100%; */
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(128, 128, 128, 0.233);
+    height: 60px;
+    padding: 20px;
+    background-color: var(--lightWhite);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.checkout-wallet i {
+    font-weight: 650;
+    position: relative;
+    top: 3px;
+
+}
+
+.cw-cash {
+    display: flex;
+    gap: 10px;
+}
+
+.cw-cash input {
+    width: 20px;
 }

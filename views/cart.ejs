@@ -15,7 +15,7 @@
 
                         </div>
                         <% if(count===0) { %>
-                            <div class="row">
+                            <div class="row" id="showEmpty">
                                 <div class="empty-container w-100 h-50 d-flex flex-column justify-content-center align-items-center"
                                     style="gap:10px">
                                     <img src="img/emptyCart.png" height="300px" alt="">
@@ -24,7 +24,7 @@
                                 </div>
                             </div>
                             <% } else { %>
-                                <div class="row">
+                                <div id="showCards" class="row">
                                     <% if (flashes.message) { %>
                                         <div class="container alert alert-success alert-dismissible fade show"
                                             role="alert">
@@ -61,7 +61,7 @@
                                                             </strike> -->
                                                                 </div>
                                                                 </h5>
-                                                                <% if(cart?.product?.stock===0) { %>
+                                                                <% if(cart?.product?.stock < cart.quantity) { %>
                                                                     <b id="" class="text-danger">
 
                                                                         Out Of Stock
@@ -81,7 +81,7 @@
                                                             </div>
                                                             <div class="cart-cancel"><a class="delete"
                                                                     style="color: black;"
-                                                                    href="/cartDelete/<%=cart?._id %>">
+                                                                    onclick="removeProduct('<%=cart._id %>')">
                                                                     <i class="fa fa-times "></i>
                                                                 </a>
                                                             </div>
@@ -115,14 +115,21 @@
                                                                 </span> </b>
                                                         </div>
                                                         <div class="price-item">
-                                                            <button class="w-100"
-                                                                onclick="checkQuantity()">Checkout</button>
+                                                            <button class="w-100" onclick="checkout()">Checkout</button>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                             </div>
 
+                                </div>
+                                <div class="row" id="showEmpty" style="display: none;">
+                                    <div class="empty-container w-100 h-50 d-flex flex-column justify-content-center align-items-center"
+                                        style="gap:10px">
+                                        <img src="img/emptyCart.png" height="300px" alt="">
+                                        <h3>Your Cart is empty!</h3>
+                                        <p>Looks like you haven't added anything to your cart </p>
+                                    </div>
                                 </div>
                                 <% } %>
             </div>
@@ -132,7 +139,7 @@
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
+            <!-- <script>
                 $(document).ready(() => {
                     $('.delete').on('click', function (e) {
                         e.preventDefault();
@@ -153,7 +160,7 @@
                         });
                     });
                 });
-            </script>
+            </script> -->
             <script>
                 function decQuantity(cartId) {
                     const url = window.location.origin;
@@ -177,6 +184,7 @@
 
                 function incQuantity(cartId) {
                     const url = window.location.origin;
+
                     fetch(`${url}/productInc?cartId=${cartId}`, {
                         method: 'PUT',
                         headers: {
@@ -192,6 +200,57 @@
                         })
                 }
 
+                function removeProduct(cartId) {
+                    const url = window.location.origin
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, remove it!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
 
+                            fetch(`${url}/cartDelete/${cartId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    "Content-Type": "application/json",
+                                }
+                            }).then((response) => response.json()).then((data) => {
+                                if (data.count == 0) {
+                                    document.getElementById('showCards').style.display = 'none'
+                                    document.getElementById('showEmpty').style.display = 'block'
+                                }
+                                document.getElementById('totalAmount').innerText = data.total
+                                document.getElementById(`cart${data.product.product._id}`).remove()
+                                // document.getElementById('count').innerText = data.count
+                                document.getElementById('totalPrice').innerText = data.total
+                            })
+                        }
+                    })
+                }
+
+                function checkout() {
+                    const url = window.location.origin
+                    fetch(`${url}/quantityCheck`, {
+                        method: 'GET',
+                        headers: {
+                            "Content-Type": "application/json",
+                        }
+                    }).then((response) => response.json()).then((data) => {
+                        if (data.insufficientStock == true) {
+                            Swal.fire({
+                                title: 'Sorry',
+                                text: "Out of stock product present in cart",
+                                icon: 'warning',
+                                showConfirmButton: true,
+                            })
+                        } else {
+                            window.location.href = `${url}/checkout`;
+                        }
+                    })
+                }
             </script>
             <%- include('./layout/footer.ejs') %>

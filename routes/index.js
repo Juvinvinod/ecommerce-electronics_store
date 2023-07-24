@@ -107,26 +107,33 @@ router.get(
 ); // delete user address
 
 // cart
-router.get(
+router.post(
   '/addToCart',
   authController.isLoggedIn,
   catchErrors(userController.addToCart)
 ); // add product to user cart
 router.get('/cart', userController.displayCart); // display user cart
-router.get(
+router.put(
   '/cartDelete/:id',
   authController.isLoggedIn,
   userController.deleteCartItem
-);
+); // delete the card in cart and update data
 router.put(
   '/productDec',
   authController.isLoggedIn,
   catchErrors(userController.decQuantity)
-);
+); // decrease the number of products in cart
 router.put(
   '/productInc',
   authController.isLoggedIn,
   catchErrors(userController.incQuantity)
+); // increase the number of products in cart
+
+router.get(
+  '/quantityCheck',
+  authController.isLoggedIn,
+  userController.checkQuantity
 );
+router.get('/checkout', authController.isLoggedIn, userController.viewCheckout);
 
 module.exports = router;

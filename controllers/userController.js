@@ -167,14 +167,16 @@ const updatePassword = async (req, res) => {
 
 // display add address page
 const viewAddressPage = async (req, res) => {
+  const { redirect } = req.query;
   const validationHelper = helpers.validationChecker;
   const { user } = req;
   const categories = await Category.find({});
-  res.render('addAddress', { categories, user, validationHelper });
+  res.render('addAddress', { categories, user, validationHelper, redirect });
 };
 
 // if validation errors,display it. else, add the address to database
 const addAddress = async (req, res) => {
+  const { redirect } = req.query;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('errorObject', errors.array());
@@ -190,7 +192,7 @@ const addAddress = async (req, res) => {
     user_id: req.user.id,
   });
   await newAddress.save();
-  res.redirect('/userProfile');
+  res.redirect(`/${redirect}`);
 };
 
 // display edit address page
@@ -221,23 +223,27 @@ const deleteAddress = async (req, res) => {
 
 // add products to cart
 const addToCart = async (req, res) => {
+  const userId = req.user.id;
+  const productId = req.body.id;
   const existingProduct = await Cart.findOne({
-    user: req.user.id,
-    product: req.query.id,
+    user: userId,
+    product: productId,
   });
   if (existingProduct) {
     await Cart.findOneAndUpdate(
-      { user: req.user.id, product: req.query.id },
+      { user: userId, product: productId },
       { $inc: { quantity: 1 } }
     );
   } else {
     const newCart = new Cart({
-      user: req.user.id,
-      product: req.query.id,
+      user: userId,
+      product: productId,
     });
     await newCart.save();
   }
-  res.redirect('back');
+  return res.json({
+    msg: 'Added to cart',
+  });
 };
 
 function totalAmount(products) {
@@ -263,7 +269,18 @@ const displayCart = async (req, res) => {
 };
 
 const deleteCartItem = async (req, res) => {
-  await Cart.findByIdAndDelete(req.params.id);
+  const cartId = req.params.id;
+  const product = await Cart.findOne({ _id: cartId }).populate('product');
+  await Cart.findByIdAndDelete(cartId);
+  const carts = await Cart.find({ user: req.user._id }).populate('product');
+  const count = await Cart.find({ user: req.user._id }).count();
+  const total = totalAmount(carts);
+  res.send({
+    data: 'this is data',
+    count,
+    total,
+    product,
+  });
 };
 
 const decQuantity = async (req, res) => {
@@ -291,21 +308,48 @@ const decQuantity = async (req, res) => {
 };
 
 const incQuantity = async (req, res) => {
+  const userId = req.user._id;
   const { cartId } = req.query;
   await Cart.findOneAndUpdate({ _id: cartId }, { $inc: { quantity: 1 } });
-  const carts = await Cart.find({ user: req.user._id }).populate('product');
-  const count = await Cart.find({ user: req.user._id }).count();
+  const carts = await Cart.find({ user: userId }).populate('product');
+  const count = await Cart.find({ user: userId }).count();
   const total = totalAmount(carts);
   const product = await Cart.findOne({ _id: cartId }).populate('product');
 
   const newPrice = parseInt(product.product.price * product.quantity);
   res.send({
-    data: carts,
+    data: 'this is data',
+    carts,
     count,
     total,
     newPrice,
     product,
   });
+};
+
+const checkQuantity = async (req, res) => {
+  const carts = await Cart.find({ user: req.user._id }).populate('product');
+  let insufficientStock = false;
+  carts.forEach((document) => {
+    if (document.quantity > document.product.stock) {
+      insufficientStock = true;
+    }
+  });
+  // if (insufficientStock) {
+  //   req.flash('message', 'Product with no stock selected');
+  //   return res.redirect('/cart');
+  // }
+  // res.redirect('/checkOut');
+  res.send({ data: 'this is data', insufficientStock });
+};
+
+const viewCheckout = async (req, res) => {
+  const userId = req.user._id;
+  const address = await Address.find({ user_id: userId });
+  const carts = await Cart.find({ user: userId }).populate('product');
+  const categories = await Category.find({});
+  const total = totalAmount(carts);
+  res.render('checkOut', { categories, address, total });
 };
 
 module.exports = {
@@ -332,4 +376,6 @@ module.exports = {
   deleteCartItem,
   decQuantity,
   incQuantity,
+  viewCheckout,
+  checkQuantity,
 };
