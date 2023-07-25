@@ -154,5 +154,15 @@ router.get(
   authController.isLoggedIn,
   userController.getOrderedProduct
 );
+router.put(
+  '/cancelOrder/:id',
+  authController.isLoggedIn,
+  userController.cancelOrder
+);
+router.put(
+  '/returnOrder/:id',
+  authController.isLoggedIn,
+  userController.returnOrder
+);
 
 module.exports = router;

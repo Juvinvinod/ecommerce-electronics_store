@@ -17,9 +17,8 @@
                                         <b>
                                             <%= productItem.product_id.product_name %>
                                         </b>
-                                        <% }) %>
-                                            <h5 class="mt-2">₹<%= item.total_amount %>
-                                            </h5>
+                                        <h5 class="mt-2">₹<%= item.total_amount %>
+                                        </h5>
                                     </a>
                                     <div class="order-status d-flex">
                                         <div class="<%=item.status%>">
@@ -28,8 +27,9 @@
                                         <!-- <button>Cancel</button> -->
                                     </div>
                                 </div>
+                                <% }) %>
+                                    <% }) %>
                             </div>
-                            <% }) %>
 
                 </div>
                 <% if(!orders[0]){ %>

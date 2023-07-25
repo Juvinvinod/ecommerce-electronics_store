@@ -3,17 +3,17 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Category = mongoose.model('Category');
 const Product = mongoose.model('Product');
+const Order = mongoose.model('Order');
+
 const fs = require('fs');
 
 // display dashboard
 const dashBoard = (req, res) => {
-  const admin = req.user;
-  res.render('admin/adminHome', { admin });
+  res.render('admin/adminHome');
 };
 
 // display all the customers and search option
 const allCustomers = async (req, res) => {
-  const admin = req.user;
   if (req.query.search) {
     const { search } = req.query;
     await User.find({
@@ -31,7 +31,6 @@ const allCustomers = async (req, res) => {
     await User.find({ isAdmin: false }).then((result) => {
       res.render('admin/customers', {
         userList: result,
-        admin,
       });
     });
   }
@@ -47,17 +46,15 @@ const changeAccess = async (req, res) => {
 
 // find all documents and render categories page
 const displayCategory = async (req, res) => {
-  const admin = req.user;
   await Category.find({}).then((result) => {
-    res.render('admin/categories', { result, admin });
+    res.render('admin/categories', { result });
   });
 };
 
 // using the query send,find the document & render editCategory page
 const viewEditCategory = async (req, res) => {
-  const admin = req.user;
   await Category.findById(req.query.id).then((result) => {
-    res.render('admin/editCategories', { result, admin });
+    res.render('admin/editCategories', { result });
   });
 };
 
@@ -82,8 +79,7 @@ const editCategory = async (req, res, next) => {
 
 // view addCategories page
 const viewAddCategory = (req, res) => {
-  const admin = req.user;
-  res.render('admin/addCategories', { admin });
+  res.render('admin/addCategories');
 };
 
 // check whether the category already exists,if not add it to the database
@@ -105,17 +101,15 @@ const addCategory = async (req, res, next) => {
 
 // find all documents and render products page
 const displayProducts = async (req, res) => {
-  const admin = req.user;
   await Product.find({}).then((result) => {
-    res.render('admin/products', { result, admin });
+    res.render('admin/products', { result });
   });
 };
 
 // view addProducts page
 const viewAddProducts = async (req, res) => {
-  const admin = req.user;
   await Category.find({}).then((result) => {
-    res.render('admin/addProducts', { result, admin });
+    res.render('admin/addProducts', { result });
   });
 };
 
@@ -151,9 +145,8 @@ const addProducts = async (req, res, next) => {
 
 // using the query send,find the document and render editProducts page
 const viewEditProducts = async (req, res) => {
-  const admin = req.user;
   await Product.findById(req.query.id).then((result) => {
-    res.render('admin/editProducts', { result, admin });
+    res.render('admin/editProducts', { result });
   });
 };
 
@@ -221,6 +214,24 @@ const changeStatus = async (req, res) => {
   res.redirect('/admin/products');
 };
 
+// list all the orders placed by customers
+const listOrders = async (req, res) => {
+  const orders = await Order.find({})
+    .populate({
+      path: 'product.product_id',
+      model: 'Product',
+    })
+    .populate({
+      path: 'address',
+      model: 'Address',
+      populate: {
+        path: 'user_id',
+        model: 'User',
+      },
+    });
+  res.render('admin/orders', { orders });
+};
+
 module.exports = {
   dashBoard,
   allCustomers,
@@ -237,4 +248,5 @@ module.exports = {
   updateImages,
   updateProducts,
   changeStatus,
+  listOrders,
 };

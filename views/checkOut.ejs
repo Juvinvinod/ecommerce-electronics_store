@@ -3,7 +3,7 @@
 
         <div class="checkout-main">
             <div class="container">
-                <form method="post" class="row" id="checkout-form">
+                <form class="row form" id="checkout-form">
                     <input type="hidden" value="<%= total %>" name="totalAmount" />
                     <div class="col-12 col-md-7">
                         <h3 class="mt-5 d-flex justify-content-between">
@@ -84,9 +84,9 @@
                             </div>
 
                             <div class="pay-option mt-4">
-                                <a onclick="orderProduct()">
-                                    <button type="submit">Place Order</button>
-                                </a>
+
+                                <button type="submit">Place Order</button>
+
                             </div>
 
                         </div>
@@ -97,26 +97,35 @@
         <%- include('./layout/userFooterbar.ejs') %>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
-                function orderProduct() {
-                    const form = new FormData(document.getElementById("checkout-form"));
-                    const url = window.location.origin;
+                const formEl = document.querySelector('.form')
+                const url = window.location.origin;
+                formEl.addEventListener('submit', event => {
+                    event.preventDefault();
+                    const formData = new FormData(formEl);
+                    const data = Object.fromEntries(formData);
                     fetch(`${url}/checkout`, {
                         method: 'POST',
                         headers: {
                             "Content-Type": "application/json",
                             'Accept': 'application/json',
                         },
-                        body: form,
+                        body: JSON.stringify(data),
                     }).then((res) => (res.json())).then((res) => {
                         console.log(res)
-                        // Redirect to home page with success message as a URL parameter
-                        window.location.href = `${url}?message=Order+placed`;
-                    }).catch((error) => {
-                        console.error('Error:', error);
-                        // Redirect to home page with error message as a URL parameter
-                        window.location.href = `${url}?message=Order+failed`;
-                    });
-                }
+                        Swal.fire({
+                            title: 'Success',
+                            text: "Order successfully placed",
+                            icon: 'success',
+                            showConfirmButton: false,
+                        })
+                    })
+                    setTimeout(() => {
+                        Swal.close(); // Close the alert
+                        window.location.href = `${url}`;
+                    }, 1500);
+                    // Redirect to home page with success message as a URL parameter
+                })
+
             </script>
 
 

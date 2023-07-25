@@ -240,7 +240,7 @@ const addToCart = async (req, res) => {
     });
     await newCart.save();
   }
-  return res.json({
+  res.json({
     msg: 'Added to cart',
   });
 };
@@ -359,6 +359,14 @@ const checkout = async (req, res) => {
       product_id: item.product,
       quantity: item.quantity,
     }));
+    for (const item of productArray) {
+      const id = item.product_id;
+      const { quantity } = item;
+      await Product.findOneAndUpdate(
+        { _id: id },
+        { $inc: { stock: -quantity } }
+      );
+    }
     const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
     let orderId = 'EMRT000001';
     if (lastOrder.length > 0) {
@@ -377,7 +385,7 @@ const checkout = async (req, res) => {
     await newOrder.save();
     await Cart.deleteMany({ user: userId });
   }
-  return res.json({
+  res.status(200).send({
     msg: 'Order placed',
   });
 };
@@ -410,6 +418,36 @@ const getOrderedProduct = async (req, res) => {
   res.render('orderedProduct', { categories, order });
 };
 
+const cancelOrder = async (req, res) => {
+  const _id = req.params.id;
+  await Order.updateOne(
+    { _id },
+    {
+      $set: {
+        status: 'cancelled',
+      },
+    }
+  );
+  return res.json({
+    msg: 'status changed',
+  });
+};
+
+const returnOrder = async (req, res) => {
+  const _id = req.params.id;
+  await Order.updateOne(
+    { _id },
+    {
+      $set: {
+        status: 'returnProcessing',
+      },
+    }
+  );
+  return res.json({
+    msg: 'status changed',
+  });
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -439,4 +477,6 @@ module.exports = {
   checkout,
   viewOrders,
   getOrderedProduct,
+  cancelOrder,
+  returnOrder,
 };

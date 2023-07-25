@@ -1,0 +1,56 @@
+<%- include('../layout/header.ejs') %>
+    <%- include('../layout/adminNavbar.ejs') %>
+
+        <div class="row mt-2 p-3">
+            <div class="orders-table">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Order ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Payment Status</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach((item,index)=>{ %>
+                            <% item.product.forEach((productItem)=> { %>
+                                <tr>
+                                    <th scope="row">
+                                        <%= item.order_id %>
+                                    </th>
+                                    <th scope="row">
+                                        <a href="/admin/order-details/<%=item._id%>">
+                                            <%=productItem.product_id.product_name %>
+                                        </a>
+                                    </th>
+                                    <td>
+                                        <%=item.address.user_id.name %>
+                                    </td>
+                                    <td>
+                                        <div class="del-status <%= item.status  %> ">
+                                            <%= item.status %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <%=productItem.quantity %>
+                                    </td>
+                                    <td>
+                                        <%=item.total_amount %>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-outline-dark" href="/admin/editOrder/<%=item._id%>">Edit</a>
+                                    </td>
+                                </tr>
+                                <%}) %>
+                                    <%}) %>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <%- include('../layout/footer.ejs') %>

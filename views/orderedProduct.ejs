@@ -92,6 +92,7 @@
             <script>
 
                 function cancelOrder() {
+                    const url = window.location.origin
                     Swal.fire({
                         title: 'Are you sure?',
                         text: "You won't be able to revert this!",
@@ -100,6 +101,61 @@
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Yes, Cancel it!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            fetch(`${url}/cancelOrder/<%=order._id %>`, {
+                                method: 'PUT',
+                                headers: {
+                                    "Content-Type": "application/json",
+                                }
+                            }).then(() => {
+                                Swal.fire({
+                                    title: 'Cancelled',
+                                    text: " Your order has been cancelled",
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                })
+                                setTimeout(() => {
+                                    Swal.close(); // Close the alert
+                                    window.location.href = `${url}/orders`;
+                                }, 1500);
+                            })
+                        }
+                    })
+                }
+
+                function returnOrder() {
+                    const url = window.location.origin
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, return it!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            fetch(`${url}/returnOrder/<%=order._id %>`, {
+                                method: 'PUT',
+                                headers: {
+                                    "Content-Type": "application/json",
+                                }
+                            }).then(() => {
+                                Swal.fire({
+                                    title: 'Get back to you soon',
+                                    text: " Your order is being processed for returning",
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                })
+                                setTimeout(() => {
+                                    Swal.close(); // Close the alert
+                                    window.location.href = `${url}/orders`;
+                                }, 1500);
+                            })
+                        }
                     })
                 }
             </script>

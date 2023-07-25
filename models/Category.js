@@ -7,13 +7,14 @@ const categoriesSchema = new Schema({
     type: String,
     required: true,
   },
-  category_image: {
-    type: String,
-    // required: true,
-  },
+  // category_image: {
+  //   type: String,
+  //   required: true,
+  // },
   product: {
     type: Schema.Types.ObjectId,
     ref: 'Product',
+    required: true,
   },
 });
 

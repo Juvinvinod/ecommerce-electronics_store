@@ -67,5 +67,6 @@ router.post(
 ); // change existing image of a product
 router.post('/editProducts', catchErrors(adminController.updateProducts)); // update existing data of a product
 router.post('/products', adminController.changeStatus); // block/unblock products
+router.get('/orders', authController.adminChecker, adminController.listOrders); // list all orders made by users
 
 module.exports = router;
