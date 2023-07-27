@@ -88,16 +88,49 @@ const signup = async (req, res, next) => {
 
 // detailed view of a product
 const productDetails = async (req, res) => {
+  const { id } = req.params;
+  let wish = false;
   const categories = await Category.find({});
-  const document = await Product.find({ _id: req.params.id });
-  res.render('productDetails', { categories, document });
+  const document = await Product.find({ _id: id });
+  if (req?.user?.wishlist?.includes(id)) {
+    wish = true;
+  }
+  res.render('productDetails', { categories, document, wish });
 };
 
 // Display different categories
 const viewCategories = async (req, res) => {
-  const products = await Product.find({ category_id: req.params.id });
+  const { category } = req.query;
+  const products = await Product.find({ category_id: category });
   const categories = await Category.find({});
-  res.render('categories', { categories, products });
+  res.render('categories', { categories, products, category });
+};
+
+const getRadioProducts = async (req, res) => {
+  const { category } = req.query;
+  const { filter } = req.query;
+  if (category && filter === '') {
+    const products = await Product.find({ category_id: category }).lean();
+    res.send({
+      data: 'this is data',
+      products,
+    });
+  }
+  if (category && filter) {
+    const products = await Product.find({ category_id: category })
+      .sort({ price: filter })
+      .lean();
+    res.send({
+      data: 'this is data',
+      products,
+    });
+  } else {
+    const products = await Product.find({}).sort({ price: filter }).lean();
+    res.send({
+      data: 'this is data',
+      products,
+    });
+  }
 };
 
 // display userprofile page
@@ -448,6 +481,15 @@ const returnOrder = async (req, res) => {
   });
 };
 
+const viewWishList = async (req, res) => {
+  const wishlist = req?.user?.wishlist ?? [];
+  const categories = await Category.find({});
+  const products = await Product.find({
+    _id: { $in: wishlist },
+  }).lean();
+  res.render('wishList', { categories, products });
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -479,4 +521,6 @@ module.exports = {
   getOrderedProduct,
   cancelOrder,
   returnOrder,
+  getRadioProducts,
+  viewWishList,
 };

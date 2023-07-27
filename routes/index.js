@@ -32,7 +32,7 @@ router.post('/login', authController.login); // check if the user entered the co
 router.get('/logout', authController.logout); // logout the current user
 
 // product
-router.get('/productDetails/:id', userController.productDetails);
+router.get('/productDetails/:id', userController.productDetails); // show product detail
 
 // forgot password
 router.get('/forgotPassword', authController.viewForgotPass); // view forgot password page
@@ -46,7 +46,10 @@ router.post(
 ); // reset the password of user
 
 // product categories
-router.get('/categories/:id', userController.viewCategories);
+router.get('/categories', userController.viewCategories);
+
+// filter products by radio button
+router.get('/getProducts', catchErrors(userController.getRadioProducts));
 
 // user profile
 router.get(
@@ -148,21 +151,24 @@ router.get(
   '/orders',
   authController.isLoggedIn,
   catchErrors(userController.viewOrders)
-);
+); // view all orders placed by user
 router.get(
   '/order/:id',
   authController.isLoggedIn,
   userController.getOrderedProduct
-);
+); // display individual order
 router.put(
   '/cancelOrder/:id',
   authController.isLoggedIn,
   userController.cancelOrder
-);
+); // change status of order to cancelled
 router.put(
   '/returnOrder/:id',
   authController.isLoggedIn,
   userController.returnOrder
-);
+); // change status of order to delivered
+
+// wishlist
+router.get('/wishlist', authController.isLoggedIn, userController.viewWishList);
 
 module.exports = router;

@@ -89,8 +89,9 @@ const logout = function (req, res, next) {
 };
 
 // display verify email page
-const verifyEmail = (req, res) => {
-  res.render('verifyEmail');
+const verifyEmail = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('verifyEmail', { categories });
 };
 
 // mail verification by changing isVerified  to true when user enters the link send to them
@@ -100,7 +101,8 @@ const emailVerifySuccess = async (req, res) => {
     { name: userName },
     { $set: { isVerified: true } }
   );
-  res.render('verifyEmailSuccess');
+  const categories = await Category.find({});
+  res.render('verifyEmailSuccess', { categories });
 };
 
 // display otp page

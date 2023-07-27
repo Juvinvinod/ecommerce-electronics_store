@@ -1,0 +1,94 @@
+<%- include('../layout/header.ejs') %>
+    <%- include('../layout/adminNavbar.ejs') %>
+
+        <div class="container my-5 card">
+            <div class="card-body">
+                <form action="/admin/editOrder/<%=order._id%>" method="post" class="form">
+                    <div class="container bg-white p-4 mb-4">
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="name">Order ID</label>
+
+                            <input type="text" id="orderId" name="orderId" class="form-control"
+                                value="<%=order.order_id%>" visibility: hidden; disabled />
+                        </div>
+                        <label for="Name">User</label>
+                        <input type="text" placeholder="category" value="<%= order.address.user_id.name %>" disabled>
+                        <label for="Name">Product</label>
+                        <% order.product.forEach((item)=>{ %>
+                            <input type="text" placeholder="category" disabled
+                                value="<%= item.product_id.product_name %>">
+                            <%}) %>
+                                <label for="Name">Order Status</label>
+                                <select name="status" value="<%=order.status%>">
+                                    <% if(order.status=="returned" ){ %>
+                                        <% }else if(order.status=="returnProcessing" ){ %>
+                                            <option value="returnProcessing">Return Processing</option>
+                                            <option value="returned">Returned</option>
+                                            <% }else{ %>
+                                                <option value="pending">Pending</option>
+                                                <option value="delivered">Delivered</option>
+                                                <option value="outForDelivery">Out For Delivery</option>
+                                                <% } %>
+                                </select>
+                    </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-block mb-4 col-lg-3" style="background-color: #FFD333">
+                    UPDATE
+                </button>
+            </div>
+            </form>
+        </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <%- include('../layout/footer.ejs') %>
+
+
+
+
+
+            <!-- <div class="add-product-main">
+            <h3>Add Category</h3>
+            <form action="/admin/edit-order" method="post" class="add-product-container mt-3">
+                <input type="text" name="_id" value="<%=order._id%>" style="height: 0px; visibility: hidden;">
+                <div class="a-p-form-row">
+                    <div class="a-p-form-col">
+                        <label for="Name">User</label>
+                        <input type="text" placeholder="category" value="<%= order.address.user_id.name %>" disabled>
+
+                    </div>
+                </div>
+                <div class="a-p-form-row">
+                    <div class="a-p-form-col">
+                        <label for="Name">Product</label>
+                        <% order.product.forEach((item)=>{ %>
+                            <input type="text" placeholder="category" disabled
+                                value="<%= item.product_id.product_name %>">
+                            <%}) %>
+                    </div>
+                </div>
+                <div class="a-p-form-row">
+                    <div class="a-p-form-col">
+                        <label for="Name">Order Status</label>
+                        <select name="status" value="<%=order.status%>">
+                            <% if(order.status=="returned" ){ %>
+                                <% }else if(order.status=="returnProcessing" ){ %>
+                                    <option value="returnProcessing">Return Processing</option>
+                                    <option value="returned">Returned</option>
+                                    <% }else{ %>
+                                        <option value="pending">Pending</option>
+                                        <option value="delivered">Delivered</option>
+                                        <option value="outForDelivery">Out For Delivery</option>
+                                        <% } %>
+
+
+                        </select>
+                    </div>
+                </div>
+                <div class="a-p-form-row">
+                    <button type="submit">UPDATE</button>
+                </div>
+            </form>
+        </div> -->

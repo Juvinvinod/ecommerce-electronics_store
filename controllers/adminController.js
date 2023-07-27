@@ -232,6 +232,93 @@ const listOrders = async (req, res) => {
   res.render('admin/orders', { orders });
 };
 
+const orderDetails = async (req, res) => {
+  const { id } = req.params;
+  const order = await Order.findOne({ _id: id })
+    .populate({
+      path: 'product.product_id',
+      model: 'Product',
+    })
+    .populate({
+      path: 'address',
+      model: 'Address',
+      populate: {
+        path: 'user_id',
+        model: 'User',
+      },
+    });
+  res.render('admin/orderDetails', { order });
+};
+
+const editOrder = async (req, res) => {
+  const { status } = req.body;
+  const { id } = req.params;
+  console.log(status);
+  console.log(id);
+  if (!status) {
+    req.flash('message', 'Status not selected');
+    return res.redirect('/admin/orders');
+  }
+  if (status === 'returned') {
+    await Order.updateOne(
+      { _id: id },
+      {
+        $set: {
+          status,
+        },
+      }
+    );
+    req.flash('message', 'Status changed to returned');
+    return res.redirect('/admin/orders');
+  }
+  if (status === 'outForDelivery') {
+    await Order.updateOne(
+      { _id: id },
+      {
+        $set: {
+          status,
+        },
+      }
+    );
+    req.flash('message', 'Status changed to out for delivery');
+    return res.redirect('/admin/orders');
+  }
+  if (status === 'returnProcessing') {
+    await Order.updateOne(
+      { _id: id },
+      {
+        $set: {
+          status,
+        },
+      }
+    );
+    req.flash('message', 'Status changed to return Processing');
+    return res.redirect('/admin/orders');
+  }
+  if (status === 'delivered') {
+    await Order.updateOne(
+      { _id: id },
+      {
+        $set: {
+          status,
+        },
+      }
+    );
+    req.flash('message', 'Status changed to delivered');
+    return res.redirect('/admin/orders');
+  }
+  await Order.updateOne(
+    { _id: id },
+    {
+      $set: {
+        status,
+      },
+    }
+  );
+  req.flash('message', 'Status changed to pending');
+  return res.redirect('/admin/orders');
+};
+
 module.exports = {
   dashBoard,
   allCustomers,
@@ -249,4 +336,6 @@ module.exports = {
   updateProducts,
   changeStatus,
   listOrders,
+  orderDetails,
+  editOrder,
 };

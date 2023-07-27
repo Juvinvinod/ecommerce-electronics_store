@@ -68,5 +68,14 @@ router.post(
 router.post('/editProducts', catchErrors(adminController.updateProducts)); // update existing data of a product
 router.post('/products', adminController.changeStatus); // block/unblock products
 router.get('/orders', authController.adminChecker, adminController.listOrders); // list all orders made by users
-
+router.get(
+  '/editOrder/:id',
+  authController.adminChecker,
+  adminController.orderDetails
+); // list all the orders placed by customers
+router.post(
+  '/editOrder/:id',
+  authController.adminChecker,
+  adminController.editOrder
+); // update the status of placed order
 module.exports = router;

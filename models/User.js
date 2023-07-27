@@ -38,6 +38,10 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  wishlist: {
+    type: Array,
+    default: [],
+  },
 });
 
 userSchema.plugin(passportLocalMongoose, {
