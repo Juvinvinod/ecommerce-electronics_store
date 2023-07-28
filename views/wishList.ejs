@@ -9,19 +9,19 @@
                         <div class="col-12 col-md-6" id="<%='wish'+item._id%>">
                             <div class="wish-item">
                                 <a href="/product/<%=item._id %>" class="wish-img">
-                                    <img src="<%=item.mainImage.url  %>" alt="">
+                                    <img src=".././uploads/<%=item.product_image1  %>" alt="">
                                 </a>
                                 <div class="wish-detail">
                                     <b>
-                                        <%=item.name %>
+                                        <%=item.product_name %>
                                     </b>
                                     <h5>₹<%= item.price %>
                                             </h4>
                                 </div>
                                 <div class="wish-cancel">
-                                    <a href="/add-to-cart/<%=item._id %>" class="btn btn-dark rounded-0 me-2"
+                                    <a href="/add-to-cart/<%=item._id %>" class="btn loginButton"
                                         style="width: 110px;">Add to cart</a>
-                                    <i class="ri-close-line" onclick="removeFromWishlist('<%=item._id%>')"></i>
+                                    <i class="fa fa-times px-3" onclick="removeFromWishlist('<%=item._id%>')"></i>
                                 </div>
                             </div>
 
@@ -42,4 +42,37 @@
         </div>
 
         <%- include('./layout/userFooterbar.ejs') %>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+
+                function removeFromWishlist(id) {
+                    fetch('/removeFromWishlist/' + id, { method: 'DELETE' })
+                        .then((res) => (res.json())).then((res) => {
+                            console.log(res)
+                            Swal.fire({
+                                title: 'Removed',
+                                text: " Removed from Wishlist",
+                                icon: 'info',
+                                showConfirmButton: false,
+                            })
+                            setTimeout(() => {
+                                document.getElementById('wish' + id).style.display = "none"
+                                Swal.close();
+                                if (res.wishlistSize <= 0) {
+                                    document.getElementById('emptyWishlist').innerHTML = `
+           <div class="empty-container w-100 h-50 d-flex flex-column justify-content-center align-items-center" style="gap:10px">
+           <img src="img/emptyWishlist.png" height="250px" alt="">
+           <h3>Your wishlist is empty!</h3>
+           <p>Tap Heart button to start saving your favorites</p>
+         </div>
+           `
+                                }
+                            }, 1500);
+                        }
+                        )
+
+                }
+
+            </script>
+
             <%- include('./layout/footer.ejs') %>

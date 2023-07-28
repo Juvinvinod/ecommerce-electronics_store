@@ -490,6 +490,21 @@ const viewWishList = async (req, res) => {
   res.render('wishList', { categories, products });
 };
 
+const addToWishlist = async (req, res) => {
+  const _id = req.user.id;
+  const productId = req.params.id;
+  await User.updateOne({ _id }, { $addToSet: { wishlist: productId } });
+  res.json({ success: true });
+};
+
+const removeFromWishlist = async (req, res) => {
+  const _id = req.user.id;
+  const productId = req.params.id;
+  const wishlistSize = req.user.wishlist.length - 1;
+  await User.updateOne({ _id }, { $pull: { wishlist: productId } });
+  res.json({ success: true, wishlistSize });
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -523,4 +538,6 @@ module.exports = {
   returnOrder,
   getRadioProducts,
   viewWishList,
+  addToWishlist,
+  removeFromWishlist,
 };
