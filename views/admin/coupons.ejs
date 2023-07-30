@@ -1,0 +1,83 @@
+<%- include('../layout/header.ejs') %>
+    <%- include('../layout/adminNavbar.ejs') %>
+
+
+
+        <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
+            <div class="container pt-3 d-flex justify-content-end ">
+                <div class="addCategoryButtonSetup">
+                    <a class="btn loginButton mr-3  addCategoryButton" href="addCoupons">Add
+                        Coupons</a>
+                </div>
+            </div>
+            <% if (flashes.success) { %>
+                <div class="container alert alert-success alert-dismissible fade show" role="alert">
+                    <%= flashes.success %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+                    <table class="table table-primary table-striped table-bordered align-middle table-hover ">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Coupon Code</th>
+                                <th scope="col">Discount</th>
+                                <th scope="col">Max Discount</th>
+                                <th scope="col">Min-Amount</th>
+                                <th scope="col">Expiry</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <% coupons.forEach((item)=>{ %>
+                            <tr>
+                                <td>
+                                    <%=item.name %>
+                                </td>
+                                <td>
+                                    <%=item.code %>
+                                </td>
+                                <td>
+                                    <%=item.minAmount %>
+                                </td>
+                                <td>
+                                    <%=item.discount %>
+                                </td>
+                                <td>
+                                    <%=item.maxDiscountAmount %>
+                                </td>
+                                <td>
+                                    <% if(new Date(item.expiry) < new Date()) { %>
+                                        Expired
+                                        <% } else { %>
+                                            <%= item.expiry.toLocaleDateString() %>
+                                                <% } %>
+                                </td>
+                                <td>
+                                    <% if(item.unlist) { %>
+                                        Unlist
+                                        <% } else { %>
+                                            List
+                                            <% } %>
+                                </td>
+                            </tr>
+                            <% }) %>
+
+
+
+
+                    </table>
+
+        </div>
+        <script>
+            function listThis(id) {
+                if (confirm("Are You Sure List this Coupon ")) {
+                    window.location.href = `/admin/list-coupon/${id}`
+                }
+            }
+            function unListThis(id) {
+                if (confirm("Are You Sure Unlist this coupon")) {
+                    window.location.href = `/admin/unlist-coupon/${id}`
+                }
+            }
+        </script>

@@ -78,4 +78,18 @@ router.post(
   authController.adminChecker,
   adminController.editOrder
 ); // update the status of placed order
+
+// coupons
+router.get(
+  '/coupons',
+  authController.adminChecker,
+  adminController.viewCoupons
+); // display all coupons
+router.get(
+  '/addCoupons',
+  authController.adminChecker,
+  adminController.viewAddCoupons
+); // display add coupon page
+router.post('/addCoupons', catchErrors(adminController.addCoupon));
+
 module.exports = router;

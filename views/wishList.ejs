@@ -19,7 +19,7 @@
                                             </h4>
                                 </div>
                                 <div class="wish-cancel">
-                                    <a href="/add-to-cart/<%=item._id %>" class="btn loginButton"
+                                    <a onclick="addToCart('<%=item._id%>')" class="btn loginButton"
                                         style="width: 110px;">Add to cart</a>
                                     <i class="fa fa-times px-3" onclick="removeFromWishlist('<%=item._id%>')"></i>
                                 </div>
@@ -71,6 +71,40 @@
                         }
                         )
 
+                }
+
+                function addToCart(productId) {
+                    const url = window.location.origin;
+                    fetch(`${url}/addToCart`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ "id": productId }),
+                    }).then((res) => (res.json())).then((res) => {
+
+                        console.log(res)
+                        Swal.fire({
+                            title: 'Added',
+                            text: " Added To Cart",
+                            icon: 'success',
+                            showConfirmButton: false,
+                        })
+                        setTimeout(() => {
+                            document.getElementById('wish' + productId).style.display = "none"
+                            Swal.close(); // Close the alert
+                            if (res.wishlistSize <= 0) {
+                                document.getElementById('emptyWishlist').innerHTML = `
+               <div class="empty-container w-100 h-50 d-flex flex-column justify-content-center align-items-center" style="gap:10px">
+               <img src="img/emptyWishlist.png" height="250px" alt="">
+               <h3>Your wishlist is empty!</h3>
+               <p>Tap Heart button to start saving your favorites</p>
+             </div>
+               `
+                            }
+                        }, 1500);
+                    })
                 }
 
             </script>

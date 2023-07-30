@@ -16,6 +16,7 @@ require('./models/Product');
 require('./models/Address');
 require('./models/Cart');
 require('./models/Order');
+require('./models/Coupon');
 
 // Start our app!
 const app = require('./app');

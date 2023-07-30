@@ -34,7 +34,9 @@
 
                 <div class="container my-5 productContainer">
                         <div class="container mt-100">
-
+                                <header class="mb-3">
+                                        <h3>Categories</h3>
+                                </header>
 
 
 
@@ -43,19 +45,19 @@
 
                                                 <div class="col-md-4 col-sm-6">
                                                         <div class="card mb-30 categoryCard">
-                                                                <a class="card-img-tiles" href="#" data-abc="true">
+                                                                <a class="card-img-tiles" data-abc="true">
                                                                         <div class="inner">
-                                                                                <% products.forEach((object1)=> { %>
-                                                                                        <% if (object1.category_id===object._id)
+                                                                                <% pictures.forEach((object1)=> { %>
+                                                                                        <% if (object1.firstDocument.category_name===object.category_name)
                                                                                                 { %>
                                                                                                 <div class="main-img">
-                                                                                                        <img src=".././uploads/<%= object1.product_image1 %>"
+                                                                                                        <img src=".././uploads/<%= object1.firstDocument.product_image1 %>"
                                                                                                                 alt="Category">
                                                                                                 </div>
                                                                                                 <div class="thumblist">
-                                                                                                        <img src=".././uploads/<%= object1.product_image2 %>"
+                                                                                                        <img src=".././uploads/<%= object1.firstDocument.product_image2 %>"
                                                                                                                 alt="Category">
-                                                                                                        <img src=".././uploads/<%= object1.product_image3 %>"
+                                                                                                        <img src=".././uploads/<%= object1.firstDocument.product_image3 %>"
                                                                                                                 alt="Category">
                                                                                                 </div>
                                                                                                 <% } %>
@@ -79,6 +81,7 @@
 
                         </div>
                 </div>
+
                 <section>
                         <div class="container my-5 ">
 
@@ -105,14 +108,15 @@
                                                                         </p>
                                                                         <div
                                                                                 class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                                                                <a href="#!"
-                                                                                        class="btn btn-primary shadow-0 me-1">Add
-                                                                                        to cart</a>
-                                                                                <a href="#!"
-                                                                                        class="btn btn-light border px-2 pt-2 icon-hover">
-                                                                                        <i
-                                                                                                class="fas fa-heart fa-lg text-secondary px-1"></i>
-                                                                                </a>
+                                                                                <% if(user) { %>
+                                                                                        <a onclick="addToCart('<%=object._id%>')"
+                                                                                                class="btn btn-primary shadow-0 me-1">Add
+                                                                                                to cart</a>
+                                                                                        <% } else { %>
+                                                                                                <a onclick="addToCart('<%=object._id%>')"
+                                                                                                        class="btn btn-primary shadow-0 me-1">Add
+                                                                                                        to cart</a>
+                                                                                                <% } %>
                                                                         </div>
                                                                 </div>
                                                         </div>
@@ -351,5 +355,41 @@
 
 
                 <%- include('./layout/userFooterbar.ejs') %>
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <script>
+                                let wishList = document.getElementById('wishList');
+                                let wishListRemove = document.getElementById('wishListRemove');
+
+                                function addToCart(productId) {
+                                        const url = window.location.origin;
+                                        fetch(`${url}/addToCart`, {
+                                                method: 'POST',
+                                                headers: {
+                                                        "Content-Type": "application/json",
+                                                        'Accept': 'application/json',
+                                                },
+                                                body: JSON.stringify({ "id": productId }),
+                                        }).then((res) => (res.json())).then((res) => {
+
+                                                console.log(res)
+                                                Swal.fire({
+                                                        title: 'Added',
+                                                        text: " Added To Cart",
+                                                        icon: 'success',
+                                                        showConfirmButton: false,
+                                                })
+                                                setTimeout(() => {
+
+                                                        Swal.close(); // Close the alert
+
+                                                }, 1500);
+                                        })
+                                }
+
+
+
+
+
+                        </script>
 
                         <%- include('./layout/footer.ejs') %>

@@ -9,6 +9,7 @@ const Order = mongoose.model('Order');
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
 const { body, validationResult } = require('express-validator');
+const Razorpay = require('razorpay');
 const mail = require('../handlers/mail');
 const helpers = require('../helper');
 
@@ -16,10 +17,13 @@ const helpers = require('../helper');
 const homePage = async (req, res) => {
   const categories = await Category.find({});
   const products = await Product.find({});
+  const pictures = await Product.aggregate([
+    { $group: { _id: '$category_name', firstDocument: { $first: '$$ROOT' } } },
+  ]);
   await Product.find({ status: true })
     .limit(8)
     .then((result) => {
-      res.render('home', { result, categories, products });
+      res.render('home', { result, categories, products, pictures });
     });
 };
 
@@ -257,6 +261,10 @@ const deleteAddress = async (req, res) => {
 const addToCart = async (req, res) => {
   const userId = req.user.id;
   const productId = req.body.id;
+  if (req.user.wishlist) {
+    await User.updateOne({ _id: userId }, { $pull: { wishlist: productId } });
+  }
+  const wishlistSize = req.user.wishlist.length - 1;
   const existingProduct = await Cart.findOne({
     user: userId,
     product: productId,
@@ -273,9 +281,7 @@ const addToCart = async (req, res) => {
     });
     await newCart.save();
   }
-  res.json({
-    msg: 'Added to cart',
-  });
+  res.json({ success: true, wishlistSize });
 };
 
 function totalAmount(products) {
@@ -417,10 +423,51 @@ const checkout = async (req, res) => {
     });
     await newOrder.save();
     await Cart.deleteMany({ user: userId });
+    res.status(200).send({
+      msg: 'Order placed',
+    });
   }
-  res.status(200).send({
-    msg: 'Order placed',
-  });
+
+  if (req.body.payment === 'online') {
+    try {
+      const userId = req.user._id;
+      const cartItems = await Cart.find({ user: userId });
+      const productArray = cartItems.map((item) => ({
+        productId: item.product,
+        quantity: item.quantity,
+      }));
+      const carts = await Cart.find({ user: userId }).populate('product');
+      const amount = totalAmount(carts);
+      const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
+      let orderId = 'EMRT000001';
+      if (lastOrder.length > 0) {
+        const lastOrderId = lastOrder[0].order_id;
+        const orderIdNumber = parseInt(lastOrderId.slice(4));
+        orderId = `EMRT${`000000${orderIdNumber + 1}`.slice(-6)}`;
+      }
+      const razorpayInstance = new Razorpay({
+        key_id: '',
+        key_secret: process.env.razorpaySecret,
+      });
+
+      const options = await razorpayInstance.orders.create({
+        amount: amount * 100,
+        currency: 'INR',
+        receipt: orderId,
+      });
+      res.status(201).json({
+        success: true,
+        options,
+        amount,
+      });
+    } catch (err) {
+      console.error(`Error Online Payment:`, err);
+      res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+      });
+    }
+  }
 };
 
 const viewOrders = async (req, res) => {

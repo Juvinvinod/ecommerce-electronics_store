@@ -31,9 +31,6 @@ router.get('/login', authController.isLoggedIn, userController.homePage); // dis
 router.post('/login', authController.login); // check if the user entered the correct credentials
 router.get('/logout', authController.logout); // logout the current user
 
-// product
-router.get('/productDetails/:id', userController.productDetails); // show product detail
-
 // forgot password
 router.get('/forgotPassword', authController.viewForgotPass); // view forgot password page
 router.post('/forgotPassword', authController.forgotPass); // check the entered email address
@@ -44,6 +41,9 @@ router.post(
   authController.validateResetPass,
   authController.changePassword
 ); // reset the password of user
+
+// product
+router.get('/productDetails/:id', userController.productDetails); // show product detail
 
 // product categories
 router.get('/categories', userController.viewCategories);

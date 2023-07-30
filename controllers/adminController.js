@@ -4,6 +4,7 @@ const User = mongoose.model('User');
 const Category = mongoose.model('Category');
 const Product = mongoose.model('Product');
 const Order = mongoose.model('Order');
+const Coupon = mongoose.model('Coupon');
 
 const fs = require('fs');
 
@@ -319,6 +320,35 @@ const editOrder = async (req, res) => {
   return res.redirect('/admin/orders');
 };
 
+const viewCoupons = async (req, res) => {
+  const coupons = await Coupon.find({});
+  res.render('admin/coupons', { coupons });
+};
+
+const viewAddCoupons = (req, res) => {
+  res.render('admin/addCoupons');
+};
+
+const addCoupon = async (req, res) => {
+  const { name } = req.body;
+  const { code } = req.body;
+  const { minAmount } = req.body;
+  const { discount } = req.body;
+  const { maxDiscountAmount } = req.body;
+  const { expiry } = req.body;
+  const coupon = new Coupon({
+    name,
+    code,
+    discount,
+    maxDiscountAmount,
+    minAmount,
+    expiry,
+  });
+  await coupon.save();
+  req.flash('success', 'Coupon added');
+  return res.redirect('/admin/coupons');
+};
+
 module.exports = {
   dashBoard,
   allCustomers,
@@ -338,4 +368,7 @@ module.exports = {
   listOrders,
   orderDetails,
   editOrder,
+  viewCoupons,
+  viewAddCoupons,
+  addCoupon,
 };
