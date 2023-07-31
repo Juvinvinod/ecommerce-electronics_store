@@ -145,6 +145,7 @@ router.post(
   authController.isLoggedIn,
   catchErrors(userController.checkout)
 ); // place order
+router.put('/verifyOnlinePayment', userController.verifyOnlinePayment);
 
 // orders
 router.get(

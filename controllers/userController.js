@@ -10,6 +10,7 @@ const User = mongoose.model('User');
 const promisify = require('es6-promisify');
 const { body, validationResult } = require('express-validator');
 const Razorpay = require('razorpay');
+const crypto = require('crypto');
 const mail = require('../handlers/mail');
 const helpers = require('../helper');
 
@@ -431,11 +432,8 @@ const checkout = async (req, res) => {
   if (req.body.payment === 'online') {
     try {
       const userId = req.user._id;
-      const cartItems = await Cart.find({ user: userId });
-      const productArray = cartItems.map((item) => ({
-        productId: item.product,
-        quantity: item.quantity,
-      }));
+      const { address } = req.body;
+
       const carts = await Cart.find({ user: userId }).populate('product');
       const amount = totalAmount(carts);
       const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
@@ -446,7 +444,7 @@ const checkout = async (req, res) => {
         orderId = `EMRT${`000000${orderIdNumber + 1}`.slice(-6)}`;
       }
       const razorpayInstance = new Razorpay({
-        key_id: '',
+        key_id: 'rzp_test_ceFacoW5d4WL7R',
         key_secret: process.env.razorpaySecret,
       });
 
@@ -455,10 +453,14 @@ const checkout = async (req, res) => {
         currency: 'INR',
         receipt: orderId,
       });
+      const userDetails = await User.findOne({ _id: userId });
+
       res.status(201).json({
         success: true,
         options,
         amount,
+        userDetails,
+        address,
       });
     } catch (err) {
       console.error(`Error Online Payment:`, err);
@@ -467,6 +469,50 @@ const checkout = async (req, res) => {
         error: 'Internal server error',
       });
     }
+  }
+};
+
+const verifyOnlinePayment = async (req, res) => {
+  try {
+    const { payment } = req.body;
+    const orderDetails = req.body.order;
+    let hmac = crypto.createHmac('sha256', process.env.razorpaySecret);
+    hmac.update(`${payment.razorpay_order_id}|${payment.razorpay_payment_id}`);
+    hmac = hmac.digest('hex');
+    if (hmac === req.body.payment.razorpay_signature) {
+      const { userId } = req.body;
+      const cartItems = await Cart.find({ user: userId });
+      const productArray = cartItems.map((item) => ({
+        productId: item.product,
+        quantity: item.quantity,
+      }));
+      for (const item of productArray) {
+        const id = item.product_id;
+        const { quantity } = item;
+        await Product.findOneAndUpdate(
+          { _id: id },
+          { $inc: { stock: -quantity } }
+        );
+      }
+      const newOrder = new Order({
+        order_id: orderDetails.receipt,
+        user: userId,
+        product: productArray,
+        address: req.body.address,
+        total_amount: orderDetails.amount / 100,
+        payment_method: 'Online',
+      });
+      await newOrder.save();
+      await Cart.deleteMany({ user: userId });
+      const orderId = orderDetails.receipt;
+      res.status(200).send({ orderId });
+    }
+  } catch (err) {
+    console.error(`Error Verify Online Payment:`, err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
   }
 };
 
@@ -587,4 +633,5 @@ module.exports = {
   viewWishList,
   addToWishlist,
   removeFromWishlist,
+  verifyOnlinePayment,
 };

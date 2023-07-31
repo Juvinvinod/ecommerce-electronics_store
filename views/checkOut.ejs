@@ -95,6 +95,7 @@
             </div>
         </div>
         <%- include('./layout/userFooterbar.ejs') %>
+            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
                 const formEl = document.querySelector('.form')
@@ -111,20 +112,82 @@
                         },
                         body: JSON.stringify(data),
                     }).then((res) => (res.json())).then((res) => {
-                        console.log(res)
+                        if (res.msg) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: "Order successfully placed",
+                                icon: 'success',
+                                showConfirmButton: false,
+                            })
+                            setTimeout(() => {
+                                Swal.close(); // Close the alert
+                                window.location.href = `${url}`;
+                            }, 1500);
+                            // Redirect to home page with success message as a URL parameter
+                        }
+                        console.log({ res })
+                        let orderData = res
+                        var options = {
+                            key: "rzp_test_ceFacoW5d4WL7R",
+                            amount: orderData.amount,
+                            currency: "INR",
+                            name: "E-mart",
+                            description: "Test Transaction",
+                            image: "img/logo.png",
+                            order_id: orderData.options.id,
+                            handler: function (response) {
+                                storeOrderData(response, orderData.options, orderData.userDetails, orderData.address);
+                            },
+                            prefill: {
+                                name: orderData.userDetails.name,
+                                email: orderData.userDetails.email,
+                                contact: orderData.userDetails.number
+                            },
+                            theme: {
+                                color: "#ffb30e"
+                            }
+                        };
+                        var rzp1 = new Razorpay(options);
+                        rzp1.open();
+                    })
+                })
+
+                function storeOrderData(payment, order, userId, address) {
+                    const url = window.location.origin;
+                    console.log(url);
+                    fetch(`${url}/verifyOnlinePayment`, {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            payment,
+                            order,
+                            userId,
+                            address,
+                        })
+                    }).then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Network response was not ok');
+                    }).then((res) => {
+
                         Swal.fire({
                             title: 'Success',
                             text: "Order successfully placed",
                             icon: 'success',
                             showConfirmButton: false,
                         })
+                        setTimeout(() => {
+                            Swal.close(); // Close the alert
+                            window.location.href = `${url}`;
+                        }, 1500);
+                        // Redirect to home page with success message as a URL parameter
+
                     })
-                    setTimeout(() => {
-                        Swal.close(); // Close the alert
-                        window.location.href = `${url}`;
-                    }, 1500);
-                    // Redirect to home page with success message as a URL parameter
-                })
+                }
 
             </script>
 

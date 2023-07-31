@@ -17,16 +17,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="btns">
-                                <% if(order.status=='pending' ){ %>
-                                    <button class="btn-ad-cart w-75" onclick="cancelOrder()">Cancel</button>
-                                    <% } else if(order.status=='delivered' ){ %>
-                                        <button class="btn-ad-cart w-75" onclick="returnOrder()">Return
-                                            product</button>
-                                        <%} else { %>
-                                            <button class="btn-ad-cart w-75" disabled>Cancel</button>
-                                            <% } %>
-                            </div>
+
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="product-container">
@@ -83,6 +74,16 @@
                         </div>
                         <% }) %>
                 </div>
+            </div>
+            <div class="btns">
+                <% if(order.status=='pending' ){ %>
+                    <button class="btn-ad-cart w-75" onclick="cancelOrder()">Cancel</button>
+                    <% } else if(order.status=='delivered' ){ %>
+                        <button class="btn-ad-cart w-75" onclick="returnOrder()">Return
+                            product</button>
+                        <%} else { %>
+                            <button class="btn-ad-cart w-75" disabled>Cancel</button>
+                            <% } %>
             </div>
         </div>
 
