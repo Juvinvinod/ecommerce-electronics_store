@@ -349,6 +349,42 @@ const addCoupon = async (req, res) => {
   return res.redirect('/admin/coupons');
 };
 
+const listCoupons = async (req, res) => {
+  const _id = req.body.id;
+  await Coupon.updateOne({ _id }, { $set: { un_list: false } });
+  res.status(200).send({ message: 'Coupon Removed' });
+};
+
+const unListCoupons = async (req, res) => {
+  const _id = req.body.id;
+  await Coupon.updateOne({ _id }, { $set: { un_list: true } });
+  res.status(200).send({ message: 'Coupon added' });
+};
+
+const viewEditCoupons = async (req, res) => {
+  const _id = req.params.id;
+  const coupon = await Coupon.find({ _id });
+  res.render('admin/editCoupons', { coupon });
+};
+
+const editCoupons = async (req, res) => {
+  const { name, discount, maxDiscountAmount, minAmount, expiry, code, _id } =
+    req.body;
+
+  await Coupon.findByIdAndUpdate(_id, {
+    $set: {
+      name,
+      discount,
+      maxDiscountAmount,
+      minAmount,
+      expiry,
+      code,
+    },
+  });
+  req.flash('success', 'Coupon updated');
+  res.redirect('/admin/coupons');
+};
+
 module.exports = {
   dashBoard,
   allCustomers,
@@ -371,4 +407,8 @@ module.exports = {
   viewCoupons,
   viewAddCoupons,
   addCoupon,
+  listCoupons,
+  unListCoupons,
+  viewEditCoupons,
+  editCoupons,
 };

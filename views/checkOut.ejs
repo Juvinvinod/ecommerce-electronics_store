@@ -4,7 +4,6 @@
         <div class="checkout-main">
             <div class="container">
                 <form class="row form" id="checkout-form">
-                    <input type="hidden" value="<%= total %>" name="totalAmount" />
                     <div class="col-12 col-md-7">
                         <h3 class="mt-5 d-flex justify-content-between">
                             <div>Choose Address</div> <a href="/addAddress?redirect=checkOut"
@@ -64,6 +63,18 @@
                                         <input type="checkbox" id="wallet" name="wallet" value=true>
                                     </div>
                                 </label>
+                                <div id="couponMessage" class="mt-2">
+                                </div>
+                                <div id=" couponInputBox" class="input-group my-3">
+                                    <input type="text" id="couponName" class="form-control text-uppercase rounded"
+                                        placeholder="Coupon name" aria-label="Recipient's username"
+                                        aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn loginButton" type="button"
+                                            onclick="applyCoupon()">Apply</button>
+                                    </div>
+                                </div>
+
                                 <div class="mt-3">
                                     <span class="me-2">Amount Payable</span>
                                     <b>
@@ -104,6 +115,12 @@
                     event.preventDefault();
                     const formData = new FormData(formEl);
                     const data = Object.fromEntries(formData);
+                    const orderTotalAmount = document.getElementById('totalAmount').innerText;
+                    data.totalAmount = orderTotalAmount;
+                    if (couponApply) {
+                        couponName = document.getElementById('couponName').value;
+                        data.couponName = couponName;
+                    }
                     fetch(`${url}/checkout`, {
                         method: 'POST',
                         headers: {
@@ -188,6 +205,108 @@
 
                     })
                 }
+
+                function applyCoupon() {
+                    const couponName = document.getElementById('couponName').value;
+                    const couponMessage = document.getElementById('couponMessage');
+                    const url = window.location.origin;
+                    fetch(`${url}/applyCoupon`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            couponName,
+                        })
+                    }).then((response) => {
+                        if (response.status === 200) {
+                            return response.json().then((data) => {
+                                couponApply = true
+                                const discountTotal = parseInt(data.discountTotal)
+                                const discountAmount = parseInt(data.discountAmount)
+                                couponMessage.innerHTML =
+                                    `<div class="alert alert-success alert-dismissible fade show d-flex " role="alert" >
+    <strong style="flex: 1;" >${data.message}</strong>
+    
+        <div ><a class="delete"
+                                                                    style="color: black;"
+                                                                    onclick="deleteCoupon()">
+                                                                    <i class="fa fa-times "></i>
+                                                                </a>
+                                                            </div>
+    </div>
+    
+`
+
+
+
+                                document.getElementById('totalAmount').innerText = discountTotal
+                                document.getElementById('discount').innerHTML =
+                                    `<div id="discountAmount"><span id="discountText" class="text-success">
+                                   Discount : ₹ ${discountAmount}
+                                </span>
+                                <hr>
+                            </div>`
+                            })
+                        } else if (response.status === 400) {
+                            return response.json().then((data) => {
+                                couponApply = false
+                                couponMessage.innerHTML =
+                                    `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>${data.message}</strong>
+
+                        </div>`
+
+                                setTimeout(() => {
+                                    couponMessage.innerHTML = `<div></div>`
+                                }, 5000);
+                                document.getElementById('discountAmount').style.display = "none"
+
+
+                            })
+                        }
+                    })
+                }
+
+                function deleteCoupon() {
+                    const couponName = document.getElementById('couponName').value;
+                    const couponMessage = document.getElementById('couponMessage');
+                    const url = window.location.origin;
+                    fetch(`${url}/deleteCoupon`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            couponName,
+                        })
+                    }).then((response) => response.json())
+                        .then((data) => {
+                            couponApply = false
+                            couponMessage.innerHTML =
+                                `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>${data.message}</strong>
+                        </div>`
+
+                            setTimeout(() => {
+                                couponMessage.innerHTML = `<div></div>`
+                            }, 3000);
+                            document.getElementById('totalAmount').innerText = data.newTotalAmount
+                            document.getElementById('discountAmount').style.display = "none"
+
+                            document.getElementById('couponInputBox').innerHTML =
+                                `<input type="text" id="couponName" class="form-control text-uppercase rounded"
+                                            placeholder="Coupon name" aria-label="Recipient's username"
+                                            aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-warning" type="button"
+                                            onclick="applyCoupon()">Apply</button>
+                                        </div>`
+                        })
+                }
+
 
             </script>
 

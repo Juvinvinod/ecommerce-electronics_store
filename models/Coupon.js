@@ -31,6 +31,12 @@ const couponSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    users: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   { timestamps: true }
 );

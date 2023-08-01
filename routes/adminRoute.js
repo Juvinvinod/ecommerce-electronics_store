@@ -90,6 +90,9 @@ router.get(
   authController.adminChecker,
   adminController.viewAddCoupons
 ); // display add coupon page
-router.post('/addCoupons', catchErrors(adminController.addCoupon));
-
+router.post('/addCoupons', catchErrors(adminController.addCoupon)); // add new coupons with the data
+router.put('/listCoupons', catchErrors(adminController.listCoupons)); // change status to list-true
+router.put('/unListCoupons', catchErrors(adminController.unListCoupons)); // change status to list-false
+router.get('/editCoupons/:id', adminController.viewEditCoupons); // display editCoupon page
+router.post('/editCoupons', catchErrors(adminController.editCoupons)); // update the coupons with submitted data
 module.exports = router;

@@ -174,4 +174,7 @@ router.get('/wishlist', authController.isLoggedIn, userController.viewWishList);
 router.get('/addToWishlist/:id', userController.addToWishlist);
 router.delete('/removeFromWishlist/:id', userController.removeFromWishlist);
 
+router.post('/applyCoupon', userController.applyCoupon);
+router.delete('/deleteCoupon', userController.deleteCoupon);
+
 module.exports = router;

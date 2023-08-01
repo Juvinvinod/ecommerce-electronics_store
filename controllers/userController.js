@@ -5,6 +5,7 @@ const Category = mongoose.model('Category');
 const Address = mongoose.model('Address');
 const Cart = mongoose.model('Cart');
 const Order = mongoose.model('Order');
+const Coupon = mongoose.model('Coupon');
 
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
@@ -142,7 +143,7 @@ const getRadioProducts = async (req, res) => {
 const viewUserProfile = async (req, res) => {
   const { user } = req;
   const categories = await Category.find({});
-  const address = await Address.find({});
+  const address = await Address.find({ user_id: user._id });
   res.render('userProfile', { categories, user, address });
 };
 
@@ -394,6 +395,15 @@ const viewCheckout = async (req, res) => {
 const checkout = async (req, res) => {
   if (req.body.payment === 'cod') {
     const userId = req.user._id;
+    const { couponName } = req.body;
+    if (couponName) {
+      const couponInfo = await Coupon.findOne({ code: couponName });
+      if (!couponInfo) {
+        return res.status(400).send({ message: 'Coupon name not valid' });
+      }
+      couponInfo.users.push(userId);
+      await couponInfo.save();
+    }
     const cartItems = await Cart.find({ user: userId });
     const productArray = cartItems.map((item) => ({
       product_id: item.product,
@@ -598,6 +608,83 @@ const removeFromWishlist = async (req, res) => {
   res.json({ success: true, wishlistSize });
 };
 
+const applyCoupon = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { couponName } = req.body;
+    const carts = await Cart.find({ user: userId }).populate('product');
+    const couponInfo = await Coupon.findOne({ code: couponName });
+    const newTotalAmount = totalAmount(carts);
+
+    if (!couponName) {
+      return res
+        .status(400)
+        .send({ message: 'Add Coupon Name', newTotalAmount });
+    }
+
+    if (!couponInfo) {
+      return res
+        .status(400)
+        .send({ message: 'Coupon name not valid', newTotalAmount });
+    }
+
+    const currentDate = new Date();
+
+    if (couponInfo.expiry < currentDate) {
+      return res
+        .status(400)
+        .send({ message: 'Coupon has expired', newTotalAmount });
+    }
+
+    if (couponInfo.users.includes(userId)) {
+      return res.status(400).send({
+        message: 'You have already used this coupon',
+        newTotalAmount,
+      });
+    }
+
+    if (req.body.total < couponInfo.minAmount) {
+      return res.status(400).send({
+        message: 'Total is below the minimum required to use this coupon',
+        newTotalAmount,
+      });
+    }
+
+    const discountPercentage = couponInfo.discount / 100;
+    let discountAmount = newTotalAmount * discountPercentage;
+
+    if (discountAmount > couponInfo.maxDiscountAmount) {
+      discountAmount = couponInfo.maxDiscountAmount;
+    }
+
+    const discountTotal = newTotalAmount - discountAmount;
+
+    couponInfo.users.push(req.body.userId);
+    await couponInfo.save();
+    res.status(200).send({
+      message: 'Coupon added',
+      discountTotal,
+      newTotalAmount,
+      discountAmount,
+    });
+  } catch (err) {
+    console.error(`Error Render Cart Page : ${err}`);
+    res.redirect('/');
+  }
+};
+
+const deleteCoupon = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const carts = await Cart.find({ user: userId }).populate('product');
+    const newTotalAmount = totalAmount(carts);
+    res.status(200).send({ message: 'Coupon Removed', newTotalAmount });
+  } catch (err) {
+    console.error(`Error Render Cart Page : ${err}`);
+    res.redirect('/');
+  }
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -634,4 +721,6 @@ module.exports = {
   addToWishlist,
   removeFromWishlist,
   verifyOnlinePayment,
+  applyCoupon,
+  deleteCoupon,
 };

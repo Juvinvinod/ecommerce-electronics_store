@@ -53,12 +53,31 @@
                                             <%= item.expiry.toLocaleDateString() %>
                                                 <% } %>
                                 </td>
-                                <td>
-                                    <% if(item.unlist) { %>
-                                        Unlist
+                                <td id="listTag<%=item._id%>">
+                                    <% if(item.un_list) { %>
+                                        Unlisted
                                         <% } else { %>
-                                            List
+                                            Listed
                                             <% } %>
+                                </td>
+                                <td>
+
+
+                                    <a class="btn btn-info" href="/admin/editCoupons/<%=item._id %> "
+                                        style="width:4rem">Edit</a>
+
+
+                                    <a id="listButton<%=item._id%>" class=<% if(item.un_list){ %>"btn btn-success"<%
+                                            }else{ %>"btn
+                                            btn-danger"<% } %>
+                                                <% if(item.un_list){ %> onclick="listThis('<%=item._id%>')" <% }else{ %>
+                                                            onclick="unListThis('<%=item._id%>')" <% } %>
+                                                                    style="width:4rem"
+                                                                    > <% if(item.un_list){ %> List <% }else{ %> Unlist
+                                                                            <% } %></a>
+
+
+
                                 </td>
                             </tr>
                             <% }) %>
@@ -71,13 +90,56 @@
         </div>
         <script>
             function listThis(id) {
-                if (confirm("Are You Sure List this Coupon ")) {
-                    window.location.href = `/admin/list-coupon/${id}`
-                }
+                const listButton = document.getElementById("listButton" + id)
+                const listTag = document.getElementById("listTag" + id)
+                fetch('/admin/listCoupons', {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id,
+                    })
+                }).then((res) => {
+                    if (res.status === 200) {
+                        return res.json().then((res) => {
+                            listButton.onclick = function () { unListThis(id); };
+                            listButton.classList.remove("btn-success");
+                            listButton.classList.add("btn-danger");
+                            listButton.innerText = "Unlist"
+                            listTag.innerText = "listed"
+                        })
+                    }
+                })
             }
+
+
+
             function unListThis(id) {
-                if (confirm("Are You Sure Unlist this coupon")) {
-                    window.location.href = `/admin/unlist-coupon/${id}`
-                }
+                const listButton = document.getElementById("listButton" + id)
+                const listTag = document.getElementById("listTag" + id)
+                fetch('/admin/unListCoupons', {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id,
+                    })
+                }).then((res) => {
+                    if (res.status === 200) {
+                        return res.json().then((res) => {
+                            listButton.onclick = function () { listThis(id); };
+                            listButton.classList.remove("btn-danger");
+                            listButton.classList.add("btn-success");
+                            listButton.innerText = "list"
+                            listTag.innerText = "Unlisted"
+                        })
+                    }
+                })
             }
         </script>
+
+        <%- include('../layout/footer.ejs') %>
