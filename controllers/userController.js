@@ -106,37 +106,62 @@ const productDetails = async (req, res) => {
 
 // Display different categories
 const viewCategories = async (req, res) => {
-  const { category } = req.query;
-  const products = await Product.find({ category_id: category });
   const categories = await Category.find({});
-  res.render('categories', { categories, products, category });
+  const filter = 0;
+  const key = req.query.key ?? '';
+  const { category } = req.query;
+  if (!category) {
+    const products = await Product.find({
+      product_name: new RegExp(key, 'i'),
+    });
+    console.log(products);
+    res.render('categories', { categories, products, category, filter });
+  } else {
+    const products = await Product.find({ category_id: category });
+    res.render('categories', { categories, products, category, filter });
+  }
 };
 
 const getRadioProducts = async (req, res) => {
   const { category } = req.query;
-  const { filter } = req.query;
-  if (category && filter === '') {
+  const filter = parseInt(req.query.filter) ?? '';
+  console.log(filter);
+  console.log(category);
+  if (!filter && category) {
+    console.log('hi');
     const products = await Product.find({ category_id: category }).lean();
-    res.send({
+    return res.send({
       data: 'this is data',
       products,
+      filter,
     });
   }
-  if (category && filter) {
+  if (category && filter !== 0) {
+    console.log('hi1');
     const products = await Product.find({ category_id: category })
       .sort({ price: filter })
       .lean();
-    res.send({
+    return res.send({
       data: 'this is data',
       products,
-    });
-  } else {
-    const products = await Product.find({}).sort({ price: filter }).lean();
-    res.send({
-      data: 'this is data',
-      products,
+      filter,
     });
   }
+  if (!category && filter) {
+    const products = await Product.find({}).sort({ price: filter }).lean();
+    return res.send({
+      data: 'this is data',
+      products,
+      filter,
+    });
+  }
+  console.log('here');
+  const products = await Product.find({}).lean();
+  return res.send({
+    data: 'this is data',
+    products,
+    filter,
+  });
 };
 
 // display userprofile page
@@ -643,7 +668,7 @@ const applyCoupon = async (req, res) => {
       });
     }
 
-    if (req.body.total < couponInfo.minAmount) {
+    if (parseInt(req.body.orderTotalAmount) < couponInfo.minAmount) {
       return res.status(400).send({
         message: 'Total is below the minimum required to use this coupon',
         newTotalAmount,
@@ -659,8 +684,8 @@ const applyCoupon = async (req, res) => {
 
     const discountTotal = newTotalAmount - discountAmount;
 
-    couponInfo.users.push(req.body.userId);
-    await couponInfo.save();
+    // couponInfo.users.push(req.body.userId);
+    // await couponInfo.save();
     res.status(200).send({
       message: 'Coupon added',
       discountTotal,
@@ -683,6 +708,12 @@ const deleteCoupon = async (req, res) => {
     console.error(`Error Render Cart Page : ${err}`);
     res.redirect('/');
   }
+};
+
+const viewCoupons = async (req, res) => {
+  const categories = await Category.find({});
+  const coupons = await Coupon.find({ un_list: false });
+  res.render('couponList', { categories, coupons });
 };
 
 module.exports = {
@@ -723,4 +754,5 @@ module.exports = {
   verifyOnlinePayment,
   applyCoupon,
   deleteCoupon,
+  viewCoupons,
 };

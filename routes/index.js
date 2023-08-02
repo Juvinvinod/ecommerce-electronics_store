@@ -176,5 +176,7 @@ router.delete('/removeFromWishlist/:id', userController.removeFromWishlist);
 
 router.post('/applyCoupon', userController.applyCoupon);
 router.delete('/deleteCoupon', userController.deleteCoupon);
+router.get('/coupons', authController.isLoggedIn, userController.viewCoupons);
+router.get('/search', catchErrors(userController.viewCategories));
 
 module.exports = router;

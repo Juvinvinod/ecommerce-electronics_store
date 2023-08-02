@@ -36,20 +36,23 @@
                         </div>
                         <div class="filter-options mt-3">
                             <div class="ft-option">
-                                <input type="radio" value="1" name="filter" id="lowToHigh"
+                                <input type="radio" value="1" name="filter" id="lowToHigh" <% if(filter==1){ %> checked
+                                <% } %>
                                     onchange="handleChange('filter', 1)" />
-                                <label for="lowToHigh">Price - Low to High</label>
+                                    <label for="lowToHigh">Price - Low to High</label>
                             </div>
                             <div class="ft-option">
-                                <input type="radio" value="-1" name="filter" id="highToLow"
+                                <input type="radio" value="-1" name="filter" id="highToLow" <% if(filter==-1){ %>
+                                checked <% } %>
                                     onchange="handleChange('filter', -1)" />
-                                <label for="highToLow">Price - High to Low</label>
+                                    <label for="highToLow">Price - High to Low</label>
                             </div>
-                            <!-- <div class="ft-option">
-                                <input type="radio" value="0" name="filter" id="newLaunches"
+                            <div class="ft-option">
+                                <input type="radio" value="0" name="filter" id="newLaunches" <% if(filter==0){ %>
+                                checked <% } %>
                                     onchange="handleChange('filter', 0)" />
-                                <label for="newLaunches">New Launches</label>
-                            </div> -->
+                                    <label for="newLaunches">New Launches</label>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -95,6 +98,7 @@
                     searchParams.set(setName, value);
                     url.search = searchParams.toString();
                     var newURL = url.toString();
+                    console.log(newURL)
                     fetch(newURL, {
                         method: 'GET',
                         headers: {

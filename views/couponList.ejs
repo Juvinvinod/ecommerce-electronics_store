@@ -1,0 +1,46 @@
+<%- include('./layout/header.ejs') %>
+    <%- include('./layout/userNavbar.ejs') %>
+
+        <div class="wishlist-main">
+            <div class="container">
+                <h3 class="wish-head">Coupons <i class="ri-coupon-2-line"></i></h3>
+                <div class="row">
+                    <% coupons.forEach(item=>{ %>
+
+                        <div class="col-12 col-md-6">
+                            <div class="wish-item">
+                                <div class="wish-img">
+                                    <img src="img/coupon.png" alt="">
+                                </div>
+                                <div class="wish-detail">
+                                    <b style="font-size: 1.2rem;">
+                                        <%= item.name %>
+                                    </b>
+                                    <span>
+                                        <b>
+                                            <%= item.discount %>%
+                                        </b> discount upto <b>₹<%= item.maxDiscountAmount %></b> Cashback
+                                    </span>
+                                    <span>
+                                        (for minimum purchase of ₹<%= item.minAmount %>)
+                                    </span>
+                                    <span>
+                                        Coupon Code : <b>
+                                            <%=item.code %>
+                                        </b>
+                                    </span>
+                                    <span>
+                                        Expires in : <b>
+                                            <%=item.expiry.toLocaleString() %>
+                                        </b>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <%- include('./layout/footer.ejs') %>
