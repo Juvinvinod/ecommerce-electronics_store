@@ -117,6 +117,7 @@
             <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
+                let couponApply = false
                 const formEl = document.querySelector('.form')
                 const url = window.location.origin;
                 formEl.addEventListener('submit', event => {

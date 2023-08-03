@@ -6,30 +6,59 @@
                 <h3 class="wish-head">Order History <i class="fa fa-shopping-bag"></i></h3>
                 <div class="row">
 
-                    <% orders.forEach((item)=>{ %>
-                        <% item.product.forEach((productItem)=> { %>
-                            <div class="col-12">
-                                <div class="wish-item">
-                                    <a href="/order/<%=item._id%>" class="order-img text-dark ps-2">
-                                        <img src=".././uploads/<%=productItem.product_id.product_image1%>" alt="">
-                                    </a>
-                                    <a href="/order/<%=item._id%>" class="order-detail text-dark text-decoration-none">
-                                        <b>
-                                            <%= productItem.product_id.product_name %>
-                                        </b>
-                                        <h5 class="mt-2">₹<%= item.total_amount %>
-                                        </h5>
-                                    </a>
-                                    <div class="order-status d-flex">
-                                        <div class="<%=item.status%>">
-                                            <%=item.status %>
+                    <div class="col-12">
+                        <% orders.forEach((item)=>{ %>
+
+                            <div class="wish-item">
+                                <a href="/order/<%=item._id%>" class="order-img text-dark ps-2">
+                                    <img src="img/orderHistory.png" alt="">
+                                </a>
+                                <a href="/order/<%=item._id%>" class="order-detail text-dark text-decoration-none">
+                                    <div>
+                                        <div class="d-flex">
+                                            <b>
+                                                ORDER ID:</b> &nbsp
+                                            <%= item.order_id %>
                                         </div>
-                                        <!-- <button>Cancel</button> -->
+                                        <div class="d-flex pt-1">
+                                            <b>
+                                                ORDER DATE:</b>&nbsp
+                                            <%= item.orderTime.toLocaleDateString() %>
+                                        </div>
+                                        <div class="d-flex pt-1">
+                                            <b>
+                                                TOTAL PRICE:</b>&nbsp
+                                            ₹<%= item.total_amount %>
+                                        </div>
+                                        <div class="d-flex pt-1">
+                                            <b>
+                                                PAYMENT TYPE:</b>&nbsp
+                                            <%= item.payment_method %>
+                                        </div>
                                     </div>
+
+                                    <div class="d-flex pt-1">
+                                        <b>
+                                            PRODUCTS:</b>&nbsp
+
+                                        <% item.product.forEach((item1)=>{ %>
+
+                                            <%= item1.product_id.product_name %>,
+                                                <% })%>
+                                    </div>
+                                </a>
+
+
+                                <div class="order-status d-flex">
+                                    <div class="<%=item.status%>">
+                                        <%=item.status %>
+                                    </div>
+                                    <!-- <button>Cancel</button> -->
                                 </div>
-                                <% }) %>
                             </div>
+
                             <% }) %>
+                    </div>
 
                 </div>
                 <% if(!orders[0]){ %>

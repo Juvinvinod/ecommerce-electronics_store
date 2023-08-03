@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-require('dotenv').config({ path: 'variables.env' });
+require('dotenv').config({ path: '.env' });
 
 // generate a random number for using as OTP
 const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();

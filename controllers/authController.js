@@ -58,16 +58,6 @@ const login = (req, res, next) => {
   })(req, res, next);
 };
 
-// check if the user is already logged in
-const isLoggedIn = async (req, res, next) => {
-  if (req.isAuthenticated() && req.session.isOTPVerified) {
-    next();
-    return;
-  }
-  const categories = await Category.find({});
-  res.render('login', { categories });
-};
-
 // function to prevent going back to otp page after logging in
 const otpSessionCheck = (req, res, next) => {
   if (req.session.isOTPVerified === true) {
@@ -129,24 +119,14 @@ const otpVerify = async (req, res) => {
   }
 };
 
-// middleware to check for admin
-const adminChecker = (req, res, next) => {
-  if (!req.user) {
-    return res.redirect('/');
-  }
-  if (req.user.isAdmin) {
-    next();
-  } else {
-    res.redirect('/');
-  }
-};
-
+// display forgot password page
 const viewForgotPass = async (req, res) => {
   const id = 'reset';
   const categories = await Category.find({});
   res.render('forgotPassword', { categories, id });
 };
 
+// if the email matches send the reset otp number to the entered mail id
 const forgotPass = async (req, res) => {
   const { email } = req.body;
   const document = await User.findOne({ email });
@@ -162,6 +142,7 @@ const forgotPass = async (req, res) => {
   }
 };
 
+// verify if the entered otp is correct
 const resetOtpVerify = async (req, res) => {
   const user = req.query.id;
   console.log(req.signedCookies);
@@ -183,12 +164,14 @@ const resetOtpVerify = async (req, res) => {
   }
 };
 
+// display reset password page
 const viewChangePass = async (req, res) => {
   const validationHelper = validationHelpers.validationChecker;
   const categories = await Category.find({});
   res.render('passwordReset', { categories, validationHelper });
 };
 
+// do the necessary checks and update the existing password
 const changePassword = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -214,6 +197,7 @@ const changePassword = async (req, res) => {
   }
 };
 
+// backend validations for fields in reset password
 const validateResetPass = [
   body('password', 'Password Cannot be Blank!').notEmpty().escape(),
   body('passwordConfirm', 'Confirmed Password cannot be blank!')
@@ -224,13 +208,11 @@ const validateResetPass = [
 module.exports = {
   login,
   logout,
-  isLoggedIn,
   otpVerifyPage,
   otpVerify,
   verifyEmail,
   emailVerifySuccess,
   otpSessionCheck,
-  adminChecker,
   viewForgotPass,
   forgotPass,
   resetOtpVerify,

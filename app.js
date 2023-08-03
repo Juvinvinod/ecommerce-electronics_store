@@ -1,7 +1,6 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
@@ -33,7 +32,7 @@ app.use(cookieParser(process.env.COOKIE));
 // using session
 app.use(
   session({
-    secret: process.env.SECRET,
+    secret: process.env.SESSION_SECRET,
     key: process.env.KEY,
     resave: false,
     saveUninitialized: false,

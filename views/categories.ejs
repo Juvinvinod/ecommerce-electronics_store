@@ -1,118 +1,184 @@
 <%- include('./layout/header.ejs') %>
-    <%- include('./layout/userNavbar.ejs') %>
+    <!-- navbar starts here -->
+    <div class="d-flex customerCare justify-content-between p-3 ps-5 container-fluid ">
+        <div class="">24/7 customer service 1-800-235-5678
+        </div>
+        <form class="d-flex nav-link text-light " role="search" action="/search">
+            <input class="form-control me-2" type="search" placeholder="search products" aria-label="Search" name="key"
+                value="<%= key %>">
+            <button class="btn btn-outline-success text-light">Search</button>
+        </form>
+    </div>
+    <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
+        <div class="container-fluid  navbarColor">
+            <a class="navbar-brand text-light img-fluid " href="/"><img src="/img/logo.png" class="logoControl"
+                    alt=""></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-theme="dark"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon "></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light " href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            All products
+                        </a>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-md-3">
-                    <form class="filter-sec" method="get">
-                        <div class="row bg-white d-md-none d-flex p-2">
-                            <div class="col d-flex flex-row-reverse align-items-center" onclick="hideFilter()">
-                                <i class="ri-close-fill" style="margin-top: 10px; font-size: 1.8rem;"></i>
-                            </div>
+                        <ul class="dropdown-menu navbarColor ">
+                            <% categories.forEach((object)=> { %>
+                                <li><a class="dropdown-item text-light miniNav" href="#">
+
+                                        <%= object.category_name %>
+                                            <% }) %>
+                                    </a></li>
+                        </ul>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="#">New Arrivals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="#">Todays deal</a>
+                    </li>
+                </ul>
+                <a href="/cart"><i class="fa fa-cart-shopping text-decoration-none navIcon pb-1"></i></a>
+                <a href="/wishList"><i class="fa-regular fa-heart text-decoration-none navIcon pb-1"></i></a>
+                <a href="/coupons"><i class="fa fa-ticket text-decoration-none navIcon pb-1"></i></a>
+                <% if(locals.user) { %>
+                    <div class="dropdown" style="margin-right: 30px;background-color: #27323F;">
+                        <button class="btn btn-secondary dropdown-toggle" style="background-color: #27323F;"
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= user.name %>
+                        </button>
+                        <ul class="dropdown-menu navbarColor" style="min-width: 60px !important;">
+                            <li><a class="dropdown-item text-light miniNav" href="/userProfile">Profile</a></li>
+                            <li><a class="dropdown-item text-light miniNav" href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                    <% } else {%>
+                        <a class="nav-link text-light ps-3 me-2 " href="/login"> Login </a>
+                        <% } %>
+            </div>
+        </div>
+    </nav>
+    </div>
+    <!-- Navbar ends here -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-3">
+                <form class="filter-sec" method="get">
+                    <div class="row bg-white d-md-none d-flex p-2">
+                        <div class="col d-flex flex-row-reverse align-items-center" onclick="hideFilter()">
+                            <i class="ri-close-fill" style="margin-top: 10px; font-size: 1.8rem;"></i>
                         </div>
-                        <input type="text" value="" name="key" style="height: 0px; visibility: hidden;">
-                        <div class="row">
-                            <h6>Category</h6>
+                    </div>
+                    <input type="text" value="" name="key" style="height: 0px; visibility: hidden;">
+                    <div class="row">
+                        <h6>Category</h6>
+                    </div>
+                    <div class="filter-options mt-3">
+                        <div class="ft-option">
+                            <input type="radio" value="" name="category" id="d" <% if(category=="" ){ %> checked <% } %>
+                                onchange="handleChange('category', '')"/>
+                                <label for="d">All</label>
                         </div>
-                        <div class="filter-options mt-3">
+                        <% categories.forEach(item=>{ %>
                             <div class="ft-option">
-                                <input type="radio" value="" name="category" id="d" <% if(category=="" ){ %> checked <%
-                                    } %>
-                                    onchange="handleChange('category', '')"/>
-                                    <label for="d">All</label>
-                            </div>
-                            <% categories.forEach(item=>{ %>
-                                <div class="ft-option">
-                                    <input type="radio" value="" name="category" id="" <% if(category==item._id){ %>
-                                    checked <% } %> onchange="handleChange('category', '<%= item._id%>')" />
-                                            <label for="<%=item._id%>">
-                                                <%=item.category_name%>
-                                            </label>
-                                </div>
-                                <% }) %>
-                        </div>
-                        <div class="row mt-5">
-                            <h6>Sort By </h6>
-                        </div>
-                        <div class="filter-options mt-3">
-                            <div class="ft-option">
-                                <input type="radio" value="1" name="filter" id="lowToHigh" <% if(filter==1){ %> checked
-                                <% } %>
-                                    onchange="handleChange('filter', 1)" />
-                                    <label for="lowToHigh">Price - Low to High</label>
-                            </div>
-                            <div class="ft-option">
-                                <input type="radio" value="-1" name="filter" id="highToLow" <% if(filter==-1){ %>
-                                checked <% } %>
-                                    onchange="handleChange('filter', -1)" />
-                                    <label for="highToLow">Price - High to Low</label>
-                            </div>
-                            <div class="ft-option">
-                                <input type="radio" value="0" name="filter" id="newLaunches" <% if(filter==0){ %>
-                                checked <% } %>
-                                    onchange="handleChange('filter', 0)" />
-                                    <label for="newLaunches">New Launches</label>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-12 col-md-9 pt-5">
-                    <h2 class="mb-3"> Products </h2>
-                    <div class="row d-flex flex-wrap" id="productList">
-                        <% products.forEach((object)=> { %>
-                            <div class="col-12 col-sm-6 col-md-4">
-                                <div class="card">
-                                    <a href="productDetails/<%=object._id %>" class="text-decoration-none"
-                                        style="color: black;">
-                                        <img src=".././uploads/<%= object.product_image1 %>" class="card-img-top"
-                                            style="aspect-ratio: 1 / 1" />
-                                        <div class="card-body">
-                                            <h4 class="card-title">
-                                                <%= object.product_name %>
-                                            </h4>
-                                            <p class="card-text">
-                                                <%= object.description %>
-                                            </p>
-                                            <div class="buy d-flex justify-content-between align-items-center">
-                                                <div class="price text-success">
-                                                    <h5 class="mt-4">$<%= object.price %>
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
+                                <input type="radio" value="" name="category" id="" <% if(category==item._id){ %>
+                                checked <% } %> onchange="handleChange('category', '<%= item._id%>')" />
+                                        <label for="<%=item._id%>">
+                                            <%=item.category_name%>
+                                        </label>
                             </div>
                             <% }) %>
                     </div>
+                    <div class="row mt-5">
+                        <h6>Sort By </h6>
+                    </div>
+                    <div class="filter-options mt-3">
+                        <div class="ft-option">
+                            <input type="radio" value="1" name="filter" id="lowToHigh" <% if(filter==1){ %> checked
+                            <% } %>
+                                onchange="handleChange('filter', 1)" />
+                                <label for="lowToHigh">Price - Low to High</label>
+                        </div>
+                        <div class="ft-option">
+                            <input type="radio" value="-1" name="filter" id="highToLow" <% if(filter==-1){ %>
+                            checked <% } %>
+                                onchange="handleChange('filter', -1)" />
+                                <label for="highToLow">Price - High to Low</label>
+                        </div>
+                        <div class="ft-option">
+                            <input type="radio" value="0" name="filter" id="newLaunches" <% if(filter==0){ %>
+                            checked <% } %>
+                                onchange="handleChange('filter', 0)" />
+                                <label for="newLaunches">New Launches</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 col-md-9 pt-5">
+                <h2 class="mb-3"> Products </h2>
+                <div class="row d-flex flex-wrap" id="productList">
+                    <% products.forEach((object)=> { %>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="card">
+                                <a href="productDetails/<%=object._id %>" class="text-decoration-none"
+                                    style="color: black;">
+                                    <img src=".././uploads/<%= object.product_image1 %>" class="card-img-top"
+                                        style="aspect-ratio: 1 / 1" />
+                                    <div class="card-body">
+                                        <h4 class="card-title">
+                                            <%= object.product_name %>
+                                        </h4>
+                                        <p class="card-text">
+                                            <%= object.description %>
+                                        </p>
+                                        <div class="buy d-flex justify-content-between align-items-center">
+                                            <div class="price text-success">
+                                                <h5 class="mt-4">$<%= object.price %>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <% }) %>
                 </div>
             </div>
         </div>
+    </div>
 
-        <%- include('./layout/userFooterbar.ejs') %>
-            <script>
-                let url = new URL("http://localhost:3000/getProducts");
-                let searchParams = url.searchParams;
+    <%- include('./layout/userFooterbar.ejs') %>
+        <script>
+            let key = '<%=key%>'
+            let url = new URL("http://localhost:3000/getProducts");
+            let searchParams = url.searchParams;
 
-                function handleChange(setName, value) {
-                    searchParams.set(setName, value);
-                    url.search = searchParams.toString();
-                    var newURL = url.toString();
-                    console.log(newURL)
-                    fetch(newURL, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            "Content-Type": "application/json",
-                        }
-                    }).then((response) => response.json()).then((data) => {
-                        console.log(data)
-                        let productList = document.getElementById('productList');
-                        productList.innerHTML = "";
-                        data.products.forEach((item, index) => {
-                            let div = document.createElement('div');
-                            div.setAttribute('class', "col-12 col-sm-6 col-md-4");
-                            div.innerHTML = `
+            function handleChange(setName, value) {
+                searchParams.set(setName, value);
+                searchParams.set('key', key);
+                url.search = searchParams.toString();
+                var newURL = url.toString();
+                console.log(newURL)
+                fetch(newURL, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        "Content-Type": "application/json",
+                    }
+                }).then((response) => response.json()).then((data) => {
+                    console.log(data)
+                    let productList = document.getElementById('productList');
+                    productList.innerHTML = "";
+                    data.products.forEach((item, index) => {
+                        let div = document.createElement('div');
+                        div.setAttribute('class', "col-12 col-sm-6 col-md-4");
+                        div.innerHTML = `
                                             <div class="card">
                                                 <a href="productDetails/${item._id}" class="text-decoration-none"
                                         style="color: black;">
@@ -136,10 +202,10 @@
                                         </div>
                   `;
 
-                            productList.appendChild(div);
-                        });
-                    })
-                } 
-            </script>
+                        productList.appendChild(div);
+                    });
+                })
+            } 
+        </script>
 
-            <%- include('./layout/footer.ejs') %>
+        <%- include('./layout/footer.ejs') %>

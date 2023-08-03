@@ -114,22 +114,23 @@ const viewCategories = async (req, res) => {
     const products = await Product.find({
       product_name: new RegExp(key, 'i'),
     });
-    console.log(products);
-    res.render('categories', { categories, products, category, filter });
+    res.render('categories', { categories, products, category, filter, key });
   } else {
     const products = await Product.find({ category_id: category });
-    res.render('categories', { categories, products, category, filter });
+    res.render('categories', { categories, products, category, filter, key });
   }
 };
 
+// change products in category page based on the radio buttons
 const getRadioProducts = async (req, res) => {
   const { category } = req.query;
   const filter = parseInt(req.query.filter) ?? '';
-  console.log(filter);
-  console.log(category);
+  const key = req.query.key ?? '';
   if (!filter && category) {
-    console.log('hi');
-    const products = await Product.find({ category_id: category }).lean();
+    const products = await Product.find({
+      product_name: new RegExp(key, 'i'),
+      category_id: category,
+    }).lean();
     return res.send({
       data: 'this is data',
       products,
@@ -137,8 +138,10 @@ const getRadioProducts = async (req, res) => {
     });
   }
   if (category && filter !== 0) {
-    console.log('hi1');
-    const products = await Product.find({ category_id: category })
+    const products = await Product.find({
+      product_name: new RegExp(key, 'i'),
+      category_id: category,
+    })
       .sort({ price: filter })
       .lean();
     return res.send({
@@ -148,20 +151,25 @@ const getRadioProducts = async (req, res) => {
     });
   }
   if (!category && filter) {
-    const products = await Product.find({}).sort({ price: filter }).lean();
+    const products = await Product.find({ product_name: new RegExp(key, 'i') })
+      .sort({ price: filter })
+      .lean();
     return res.send({
       data: 'this is data',
       products,
       filter,
     });
   }
-  console.log('here');
-  const products = await Product.find({}).lean();
-  return res.send({
-    data: 'this is data',
-    products,
-    filter,
-  });
+  if (!category && !filter) {
+    const products = await Product.find({
+      product_name: new RegExp(key, 'i'),
+    }).lean();
+    return res.send({
+      data: 'this is data',
+      products,
+      filter,
+    });
+  }
 };
 
 // display userprofile page
@@ -311,6 +319,7 @@ const addToCart = async (req, res) => {
   res.json({ success: true, wishlistSize });
 };
 
+// function to find the total cost of products added in the cart
 function totalAmount(products) {
   let totalPrice = 0;
   for (let i = 0; i < products.length; i++) {
@@ -320,6 +329,7 @@ function totalAmount(products) {
   return totalPrice;
 }
 
+// display all the products added in the cart
 const displayCart = async (req, res) => {
   if (req.user) {
     const categories = await Category.find({});
@@ -333,6 +343,7 @@ const displayCart = async (req, res) => {
   }
 };
 
+// delete a product in cart
 const deleteCartItem = async (req, res) => {
   const cartId = req.params.id;
   const product = await Cart.findOne({ _id: cartId }).populate('product');
@@ -348,6 +359,7 @@ const deleteCartItem = async (req, res) => {
   });
 };
 
+// decrement the quantity of product added in cart
 const decQuantity = async (req, res) => {
   const { cartId } = req.query;
   let quantityZero = false;
@@ -372,6 +384,7 @@ const decQuantity = async (req, res) => {
   });
 };
 
+// increment the quantity of products added in cart
 const incQuantity = async (req, res) => {
   const userId = req.user._id;
   const { cartId } = req.query;
@@ -392,6 +405,7 @@ const incQuantity = async (req, res) => {
   });
 };
 
+// check whether the product added in cart has enough stock left
 const checkQuantity = async (req, res) => {
   const carts = await Cart.find({ user: req.user._id }).populate('product');
   let insufficientStock = false;
@@ -408,6 +422,7 @@ const checkQuantity = async (req, res) => {
   res.send({ data: 'this is data', insufficientStock });
 };
 
+// display the checkout page
 const viewCheckout = async (req, res) => {
   const userId = req.user._id;
   const address = await Address.find({ user_id: userId });
@@ -417,6 +432,7 @@ const viewCheckout = async (req, res) => {
   res.render('checkOut', { categories, address, total });
 };
 
+// create the order based on the type of payment chosen by the user
 const checkout = async (req, res) => {
   if (req.body.payment === 'cod') {
     const userId = req.user._id;
@@ -469,8 +485,8 @@ const checkout = async (req, res) => {
       const userId = req.user._id;
       const { address } = req.body;
 
-      const carts = await Cart.find({ user: userId }).populate('product');
-      const amount = totalAmount(carts);
+      // const carts = await Cart.find({ user: userId }).populate('product');
+      const amount = req.body.totalAmount;
       const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
       let orderId = 'EMRT000001';
       if (lastOrder.length > 0) {
@@ -480,7 +496,7 @@ const checkout = async (req, res) => {
       }
       const razorpayInstance = new Razorpay({
         key_id: 'rzp_test_ceFacoW5d4WL7R',
-        key_secret: process.env.razorpaySecret,
+        key_secret: process.env.RAZORPAY_SECRET,
       });
 
       const options = await razorpayInstance.orders.create({
@@ -507,11 +523,12 @@ const checkout = async (req, res) => {
   }
 };
 
+// verify whether the online payment was successful
 const verifyOnlinePayment = async (req, res) => {
   try {
     const { payment } = req.body;
     const orderDetails = req.body.order;
-    let hmac = crypto.createHmac('sha256', process.env.razorpaySecret);
+    let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
     hmac.update(`${payment.razorpay_order_id}|${payment.razorpay_payment_id}`);
     hmac = hmac.digest('hex');
     if (hmac === req.body.payment.razorpay_signature) {
@@ -551,6 +568,7 @@ const verifyOnlinePayment = async (req, res) => {
   }
 };
 
+// view all the orders placed by the user
 const viewOrders = async (req, res) => {
   const userId = req.user._id;
   const categories = await Category.find({});
@@ -559,10 +577,12 @@ const viewOrders = async (req, res) => {
       path: 'product.product_id',
       model: 'Product',
     })
-    .sort({ orderTime: -1 });
+    .sort({ order_id: -1 });
+  console.log(orders);
   res.render('orderHistory', { categories, orders });
 };
 
+// display in detail the selected order
 const getOrderedProduct = async (req, res) => {
   const categories = await Category.find({});
   const userId = req.user._id;
@@ -579,6 +599,7 @@ const getOrderedProduct = async (req, res) => {
   res.render('orderedProduct', { categories, order });
 };
 
+// cancel the order previously placed
 const cancelOrder = async (req, res) => {
   const _id = req.params.id;
   await Order.updateOne(
@@ -594,6 +615,7 @@ const cancelOrder = async (req, res) => {
   });
 };
 
+// return the ordered product after it has been delivered
 const returnOrder = async (req, res) => {
   const _id = req.params.id;
   await Order.updateOne(
@@ -609,6 +631,7 @@ const returnOrder = async (req, res) => {
   });
 };
 
+// display user wishlist page
 const viewWishList = async (req, res) => {
   const wishlist = req?.user?.wishlist ?? [];
   const categories = await Category.find({});
@@ -618,6 +641,7 @@ const viewWishList = async (req, res) => {
   res.render('wishList', { categories, products });
 };
 
+// add the product to wishlist
 const addToWishlist = async (req, res) => {
   const _id = req.user.id;
   const productId = req.params.id;
@@ -625,6 +649,7 @@ const addToWishlist = async (req, res) => {
   res.json({ success: true });
 };
 
+// remove the product from wishlist
 const removeFromWishlist = async (req, res) => {
   const _id = req.user.id;
   const productId = req.params.id;
@@ -633,6 +658,7 @@ const removeFromWishlist = async (req, res) => {
   res.json({ success: true, wishlistSize });
 };
 
+// apply the coupon to the order in checkout page
 const applyCoupon = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -698,6 +724,7 @@ const applyCoupon = async (req, res) => {
   }
 };
 
+// delete the coupon that is applied to a order in checkout page
 const deleteCoupon = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -710,6 +737,7 @@ const deleteCoupon = async (req, res) => {
   }
 };
 
+// display all the coupons available to the user
 const viewCoupons = async (req, res) => {
   const categories = await Category.find({});
   const coupons = await Coupon.find({ un_list: false });

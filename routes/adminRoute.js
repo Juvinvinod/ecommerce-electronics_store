@@ -1,6 +1,6 @@
 const express = require('express');
-const authController = require('../controllers/authController');
 const adminController = require('../controllers/adminController');
+const middleware = require('../middleware/authentication');
 const imageOptions = require('../handlers/multer.js');
 
 const { catchErrors } = require('../handlers/errorHandlers');
@@ -11,27 +11,23 @@ const router = express.Router();
 router.get('/', adminController.dashBoard);
 
 // customers
-router.get(
-  '/customers',
-  authController.adminChecker,
-  adminController.allCustomers
-); // display all customers
+router.get('/customers', middleware.adminChecker, adminController.allCustomers); // display all customers
 router.post('/customers', catchErrors(adminController.changeAccess)); // change access of customers
 
 // categories
 router.get(
   '/categories',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.displayCategory
 ); // display all categories
 router.get(
   '/addCategories',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.viewAddCategory
 ); // display addCategory
 router.get(
   '/editCategory',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.viewEditCategory
 ); // display editCategory
 router.post('/addCategories', adminController.addCategory); // add new categories
@@ -40,17 +36,17 @@ router.post('/editCategory', catchErrors(adminController.editCategory)); // edit
 // products
 router.get(
   '/products',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.displayProducts
 ); // display all products
 router.get(
   '/addProducts',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.viewAddProducts
 ); // display add products
 router.get(
   '/editProducts',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.viewEditProducts
 ); // display edit products
 router.post(
@@ -67,27 +63,23 @@ router.post(
 ); // change existing image of a product
 router.post('/editProducts', catchErrors(adminController.updateProducts)); // update existing data of a product
 router.post('/products', adminController.changeStatus); // block/unblock products
-router.get('/orders', authController.adminChecker, adminController.listOrders); // list all orders made by users
+router.get('/orders', middleware.adminChecker, adminController.listOrders); // list all orders made by users
 router.get(
   '/editOrder/:id',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.orderDetails
 ); // list all the orders placed by customers
 router.post(
   '/editOrder/:id',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.editOrder
 ); // update the status of placed order
 
 // coupons
-router.get(
-  '/coupons',
-  authController.adminChecker,
-  adminController.viewCoupons
-); // display all coupons
+router.get('/coupons', middleware.adminChecker, adminController.viewCoupons); // display all coupons
 router.get(
   '/addCoupons',
-  authController.adminChecker,
+  middleware.adminChecker,
   adminController.viewAddCoupons
 ); // display add coupon page
 router.post('/addCoupons', catchErrors(adminController.addCoupon)); // add new coupons with the data

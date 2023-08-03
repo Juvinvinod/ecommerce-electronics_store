@@ -72,9 +72,8 @@ const editCategory = async (req, res, next) => {
     req.flash('success', 'Categories updated');
     res.redirect('/admin/Categories');
   } else {
-    const error = new Error('Category already exists');
-    error.status = 400;
-    next(error);
+    req.flash('error', 'Category already exists');
+    res.redirect('/admin/Categories');
   }
 };
 
@@ -89,13 +88,15 @@ const addCategory = async (req, res, next) => {
   const existingCategory = await Category.findOne({
     category_name: { $regex: new RegExp(`^${name}$`, 'i') },
   });
-  console.log(existingCategory);
   if (existingCategory) {
-    const error = new Error('Category already exists');
-    error.status = 400;
-    next(error);
+    // const error = new Error('Category already exists');
+    // error.status = 400;
+    // next(error);
+    req.flash('error', 'Category already exists');
+    res.redirect('/admin/Categories');
   } else {
     await new Category(req.body).save();
+    req.flash('success', 'New category added');
     res.redirect('/admin/Categories');
   }
 };
@@ -233,6 +234,7 @@ const listOrders = async (req, res) => {
   res.render('admin/orders', { orders });
 };
 
+// display all the orders placed by users
 const orderDetails = async (req, res) => {
   const { id } = req.params;
   const order = await Order.findOne({ _id: id })
@@ -251,11 +253,10 @@ const orderDetails = async (req, res) => {
   res.render('admin/orderDetails', { order });
 };
 
+// change status of orders placed by users
 const editOrder = async (req, res) => {
   const { status } = req.body;
   const { id } = req.params;
-  console.log(status);
-  console.log(id);
   if (!status) {
     req.flash('message', 'Status not selected');
     return res.redirect('/admin/orders');
@@ -320,15 +321,18 @@ const editOrder = async (req, res) => {
   return res.redirect('/admin/orders');
 };
 
+// display all the coupons
 const viewCoupons = async (req, res) => {
   const coupons = await Coupon.find({});
   res.render('admin/coupons', { coupons });
 };
 
+// display add coupon page
 const viewAddCoupons = (req, res) => {
   res.render('admin/addCoupons');
 };
 
+// create coupon with the data provided
 const addCoupon = async (req, res) => {
   const { name } = req.body;
   const { code } = req.body;
@@ -349,24 +353,28 @@ const addCoupon = async (req, res) => {
   return res.redirect('/admin/coupons');
 };
 
+// change the status of coupon to listed
 const listCoupons = async (req, res) => {
   const _id = req.body.id;
   await Coupon.updateOne({ _id }, { $set: { un_list: false } });
   res.status(200).send({ message: 'Coupon Removed' });
 };
 
+// change the status of coupon to unlisted
 const unListCoupons = async (req, res) => {
   const _id = req.body.id;
   await Coupon.updateOne({ _id }, { $set: { un_list: true } });
   res.status(200).send({ message: 'Coupon added' });
 };
 
+// view edit coupons page
 const viewEditCoupons = async (req, res) => {
   const _id = req.params.id;
   const coupon = await Coupon.find({ _id });
   res.render('admin/editCoupons', { coupon });
 };
 
+// update the coupon with the data provided
 const editCoupons = async (req, res) => {
   const { name, discount, maxDiscountAmount, minAmount, expiry, code, _id } =
     req.body;

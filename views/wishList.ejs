@@ -1,10 +1,10 @@
 <%- include('./layout/header.ejs') %>
     <%- include('./layout/userNavbar.ejs') %>
 
-        <div class="wishlist-main">
-            <div class="container">
+        <div class="wishlist-main vh-100">
+            <div class="container ">
                 <h3 class="wish-head mt-3">Wishlist <i class="ri-heart-line"></i></h3>
-                <div class="row" id="wislistRow">
+                <div class="row " id="wislistRow">
                     <% products.forEach(item=>{ %>
                         <div class="col-12 col-md-6" id="<%='wish'+item._id%>">
                             <div class="wish-item">
@@ -28,11 +28,11 @@
                         </div>
                         <% }) %>
                 </div>
-                <div class="row" id="emptyWishlist">
+                <div class="row " id="emptyWishlist">
                     <% if(!products[0]){ %>
                         <div class="empty-container w-100 h-50 d-flex flex-column justify-content-center align-items-center"
                             style="gap:10px">
-                            <img src="img/emptyWishlist.png" height="250px" alt="">
+                            <img src="img/emptyWishlist.png" height="300px" alt="">
                             <h3>Your wishlist is empty!</h3>
                             <p>Tap Heart button to start saving your favorites</p>
                         </div>

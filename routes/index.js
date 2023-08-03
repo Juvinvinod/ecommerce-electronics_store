@@ -1,6 +1,7 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+const middleware = require('../middleware/authentication');
 const validator = require('../handlers/validators');
 
 const { catchErrors } = require('../handlers/errorHandlers');
@@ -9,6 +10,7 @@ const router = express.Router();
 
 // homepage
 router.get('/', userController.homePage); // display homepage
+router.get('/search', catchErrors(userController.viewCategories)); // search products
 
 // signup
 router.get('/signup', userController.signupForm); // display signup page
@@ -27,7 +29,7 @@ router.get(
 router.post('/otp/login', authController.otpVerify); // check if the otp entered by user is correct
 
 // login/logout
-router.get('/login', authController.isLoggedIn, userController.homePage); // display loginPage if user not logged in
+router.get('/login', middleware.isLoggedIn, userController.homePage); // display loginPage if user not logged in
 router.post('/login', authController.login); // check if the user entered the correct credentials
 router.get('/logout', authController.logout); // logout the current user
 
@@ -54,29 +56,25 @@ router.get('/getProducts', catchErrors(userController.getRadioProducts));
 // user profile
 router.get(
   '/userProfile',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.viewUserProfile
 ); // view user profile page of user
 router.get(
   '/editProfile',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.viewEditProfile
 ); // view edit username page
-router.post(
-  '/editProfile',
-  authController.isLoggedIn,
-  userController.updateName
-); // change existing user name
+router.post('/editProfile', middleware.isLoggedIn, userController.updateName); // change existing user name
 
 // change user password
 router.get(
   '/updatePassword',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.displayPasswordChange
 ); // display change password page
 router.post(
   '/updatePassword',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.validateUpdatePass,
   userController.updatePassword
 ); // update the user password
@@ -84,65 +82,65 @@ router.post(
 // address page
 router.get(
   '/addAddress',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.viewAddressPage
 ); // show  add address page
 router.post(
   '/addAddress',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   validator.validateAddress,
   catchErrors(userController.addAddress)
 ); // add entered address to user
 router.get(
   '/editAddress',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.viewEditAddress
 ); // display edit address page
 router.post(
   '/editAddress',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.updateAddress
 ); // update user address
 router.get(
   '/editAddress/:id',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.deleteAddress
 ); // delete user address
 
 // cart
 router.post(
   '/addToCart',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   catchErrors(userController.addToCart)
 ); // add product to user cart
 router.get('/cart', userController.displayCart); // display user cart
 router.put(
   '/cartDelete/:id',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.deleteCartItem
 ); // delete the card in cart and update data
 router.put(
   '/productDec',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   catchErrors(userController.decQuantity)
 ); // decrease the number of products in cart
 router.put(
   '/productInc',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   catchErrors(userController.incQuantity)
 ); // increase the number of products in cart
 
 router.get(
   '/quantityCheck',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.checkQuantity
 ); // check if the product selected has enough stocks
 
 // checkout
-router.get('/checkout', authController.isLoggedIn, userController.viewCheckout); // show checkout page
+router.get('/checkout', middleware.isLoggedIn, userController.viewCheckout); // show checkout page
 router.post(
   '/checkout',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   catchErrors(userController.checkout)
 ); // place order
 router.put('/verifyOnlinePayment', userController.verifyOnlinePayment);
@@ -150,33 +148,33 @@ router.put('/verifyOnlinePayment', userController.verifyOnlinePayment);
 // orders
 router.get(
   '/orders',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   catchErrors(userController.viewOrders)
 ); // view all orders placed by user
 router.get(
   '/order/:id',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.getOrderedProduct
 ); // display individual order
 router.put(
   '/cancelOrder/:id',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.cancelOrder
 ); // change status of order to cancelled
 router.put(
   '/returnOrder/:id',
-  authController.isLoggedIn,
+  middleware.isLoggedIn,
   userController.returnOrder
 ); // change status of order to delivered
 
 // wishlist
-router.get('/wishlist', authController.isLoggedIn, userController.viewWishList);
-router.get('/addToWishlist/:id', userController.addToWishlist);
-router.delete('/removeFromWishlist/:id', userController.removeFromWishlist);
+router.get('/wishlist', middleware.isLoggedIn, userController.viewWishList); // display wishlist page
+router.get('/addToWishlist/:id', userController.addToWishlist); // add products to wishlist
+router.delete('/removeFromWishlist/:id', userController.removeFromWishlist); // delete products from wishlist
 
-router.post('/applyCoupon', userController.applyCoupon);
-router.delete('/deleteCoupon', userController.deleteCoupon);
-router.get('/coupons', authController.isLoggedIn, userController.viewCoupons);
-router.get('/search', catchErrors(userController.viewCategories));
+// coupon
+router.post('/applyCoupon', userController.applyCoupon); // apply coupon at checkout
+router.delete('/deleteCoupon', userController.deleteCoupon); // delete coupon which is added at checkout
+router.get('/coupons', middleware.isLoggedIn, userController.viewCoupons); // list all coupons available to user
 
 module.exports = router;

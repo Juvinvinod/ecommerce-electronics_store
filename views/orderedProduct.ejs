@@ -3,6 +3,9 @@
 
         <div class="product-main">
             <div class="container">
+                <h3 class="mt-5">
+                    ORDER ID:<%=order.order_id %>
+                </h3>
                 <div class="row">
                     <% order.product.forEach((productItem)=> { %>
                         <div class="col-12 col-md-6">
@@ -22,7 +25,8 @@
                         <div class="col-12 col-md-6">
                             <div class="product-container">
                                 <div class="product-head mt-5">
-                                    <a href="/product/">
+                                    <a href="/productDetails/<%=productItem.product_id._id %>"
+                                        class="text-decoration-none">
                                         <h3>
                                             <%=productItem.product_id.product_name %>
                                         </h3>

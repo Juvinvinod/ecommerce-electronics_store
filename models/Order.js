@@ -41,7 +41,8 @@ const orderSchema = new Schema({
   },
   orderTime: {
     type: Date,
-    default: Date.now(),
+    // default: Date.now(),
+    default: new Date(),
   },
 });
 
