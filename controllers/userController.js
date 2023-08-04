@@ -434,6 +434,28 @@ const viewCheckout = async (req, res) => {
 
 // create the order based on the type of payment chosen by the user
 const checkout = async (req, res) => {
+  if (req.body.wallet) {
+    console.log('hi');
+    const id = req.user._id;
+    const walletAmount = req.user.wallet;
+    console.log(walletAmount);
+    console.log(req.body.totalAmount);
+    const remainingAmount = walletAmount - req.body.totalAmount;
+    if (remainingAmount < 0) {
+      await User.findByIdAndUpdate(id, {
+        $set: {
+          wallet: 0,
+        },
+      });
+    } else {
+      await User.findByIdAndUpdate(id, {
+        $set: {
+          wallet: parseInt(remainingAmount),
+        },
+      });
+    }
+  }
+
   if (req.body.payment === 'cod') {
     const userId = req.user._id;
     const { couponName } = req.body;
@@ -601,7 +623,13 @@ const getOrderedProduct = async (req, res) => {
 
 // cancel the order previously placed
 const cancelOrder = async (req, res) => {
+  const userId = req.user._id;
   const _id = req.params.id;
+  const order = await Order.findOne({ _id });
+  const walletInc = order.total_amount;
+  if (walletInc !== 0) {
+    await User.updateOne({ _id: userId }, { $inc: { wallet: walletInc } });
+  }
   await Order.updateOne(
     { _id },
     {

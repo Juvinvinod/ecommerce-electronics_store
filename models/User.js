@@ -42,6 +42,10 @@ const userSchema = new Schema({
     type: Array,
     default: [],
   },
+  wallet: {
+    type: Number,
+    default: 0,
+  },
 });
 
 userSchema.plugin(passportLocalMongoose, {

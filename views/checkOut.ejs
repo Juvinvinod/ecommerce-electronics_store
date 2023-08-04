@@ -58,7 +58,9 @@
                                     <div class="cw-cash">
                                         <b>
                                             ₹
-                                            <span id="walletAmount"></span>
+                                            <span id="walletAmount">
+                                                <%= user.wallet %>
+                                            </span>
                                         </b>
                                         <input type="checkbox" id="wallet" name="wallet" value=true>
                                     </div>
@@ -117,6 +119,30 @@
             <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
+                const walletCash = '<%= user.wallet %>';
+                var discount;
+                var totalCash = document.getElementById('totalAmount').innerText;
+                wallet.addEventListener('change', (e) => {
+                    console.log(totalCash)
+                    let walletAmount = document.getElementById('walletAmount');
+                    let totalAmount = document.getElementById('totalAmount');
+                    let wallet = document.getElementById('wallet')
+                    if (e.target.checked) {
+                        if (walletCash - totalCash >= 0) {
+                            totalAmount.innerText = 0;
+                            walletAmount.innerText = walletCash - totalCash;
+                        }
+                        else {
+                            totalAmount.innerText = totalCash - walletCash;
+                            walletAmount.innerText = 0
+                        }
+                    } else {
+                        totalAmount.innerText = totalCash;
+                        walletAmount.innerText = walletCash;
+                    }
+                })
+
+
                 let couponApply = false
                 const formEl = document.querySelector('.form')
                 const url = window.location.origin;
@@ -236,6 +262,7 @@
                                 couponApply = true
                                 const discountTotal = parseInt(data.discountTotal)
                                 const discountAmount = parseInt(data.discountAmount)
+                                discount = discountAmount;
                                 couponMessage.innerHTML =
                                     `<div class="alert alert-success alert-dismissible fade show d-flex " role="alert" >
     <strong style="flex: 1;" >${data.message}</strong>
@@ -253,6 +280,7 @@
 
 
                                 document.getElementById('totalAmount').innerText = discountTotal
+                                totalCash = discountTotal;
                                 document.getElementById('discount').innerHTML =
                                     `<div id="discountAmount"><span id="discountText" class="text-success">
                                    Discount : ₹ ${discountAmount}
@@ -304,7 +332,8 @@
                             setTimeout(() => {
                                 couponMessage.innerHTML = `<div></div>`
                             }, 3000);
-                            document.getElementById('totalAmount').innerText = data.newTotalAmount
+                            document.getElementById('totalAmount').innerText = totalCash + discount
+                            totalCash = totalCash + discount;
                             document.getElementById('discountAmount').style.display = "none"
 
                             document.getElementById('couponInputBox').innerHTML =
