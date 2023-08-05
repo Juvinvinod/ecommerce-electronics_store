@@ -10,82 +10,91 @@
                         Coupons</a>
                 </div>
             </div>
-            <% if (flashes.success) { %>
-                <div class="container alert alert-success alert-dismissible fade show" role="alert">
-                    <%= flashes.success %>
+            <% if (flashes.error) { %>
+                <div class="container alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= flashes.error %>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <% } %>
-                    <table class="table table-primary table-striped table-bordered align-middle table-hover ">
-                        <thead>
-                            <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Coupon Code</th>
-                                <th scope="col">Discount</th>
-                                <th scope="col">Max Discount</th>
-                                <th scope="col">Min-Amount</th>
-                                <th scope="col">Expiry</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <% coupons.forEach((item)=>{ %>
-                            <tr>
-                                <td>
-                                    <%=item.name %>
-                                </td>
-                                <td>
-                                    <%=item.code %>
-                                </td>
-                                <td>
-                                    <%=item.minAmount %>
-                                </td>
-                                <td>
-                                    <%=item.discount %>
-                                </td>
-                                <td>
-                                    <%=item.maxDiscountAmount %>
-                                </td>
-                                <td>
-                                    <% if(new Date(item.expiry) < new Date()) { %>
-                                        Expired
-                                        <% } else { %>
-                                            <%= item.expiry.toLocaleDateString() %>
-                                                <% } %>
-                                </td>
-                                <td id="listTag<%=item._id%>">
-                                    <% if(item.un_list) { %>
-                                        Unlisted
-                                        <% } else { %>
-                                            Listed
-                                            <% } %>
-                                </td>
-                                <td>
+                    <% if (flashes.success) { %>
+                        <div class="container alert alert-success alert-dismissible fade show" role="alert">
+                            <%= flashes.success %>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                        <% } %>
+                            <table class="table table-primary table-striped table-bordered align-middle table-hover ">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Coupon Code</th>
+                                        <th scope="col">Discount</th>
+                                        <th scope="col">Max Discount</th>
+                                        <th scope="col">Min-Amount</th>
+                                        <th scope="col">Expiry</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <% coupons.forEach((item)=>{ %>
+                                    <tr>
+                                        <td>
+                                            <%=item.name %>
+                                        </td>
+                                        <td>
+                                            <%=item.code %>
+                                        </td>
+                                        <td>
+                                            <%=item.minAmount %>
+                                        </td>
+                                        <td>
+                                            <%=item.discount %>
+                                        </td>
+                                        <td>
+                                            <%=item.maxDiscountAmount %>
+                                        </td>
+                                        <td>
+                                            <% if(new Date(item.expiry) < new Date()) { %>
+                                                Expired
+                                                <% } else { %>
+                                                    <%= item.expiry.toLocaleDateString() %>
+                                                        <% } %>
+                                        </td>
+                                        <td id="listTag<%=item._id%>">
+                                            <% if(item.un_list) { %>
+                                                Unlisted
+                                                <% } else { %>
+                                                    Listed
+                                                    <% } %>
+                                        </td>
+                                        <td>
 
 
-                                    <a class="btn btn-info" href="/admin/editCoupons/<%=item._id %> "
-                                        style="width:4rem">Edit</a>
+                                            <a class="btn btn-info" href="/admin/editCoupons/<%=item._id %> "
+                                                style="width:4rem">Edit</a>
 
 
-                                    <a id="listButton<%=item._id%>" class=<% if(item.un_list){ %>"btn btn-success"<%
-                                            }else{ %>"btn
-                                            btn-danger"<% } %>
-                                                <% if(item.un_list){ %> onclick="listThis('<%=item._id%>')" <% }else{ %>
-                                                            onclick="unListThis('<%=item._id%>')" <% } %>
-                                                                    style="width:4rem"
-                                                                    > <% if(item.un_list){ %> List <% }else{ %> Unlist
-                                                                            <% } %></a>
-
-
-
-                                </td>
-                            </tr>
-                            <% }) %>
+                                            <a id="listButton<%=item._id%>" class=<% if(item.un_list){ %>"btn
+                                                btn-success"<% }else{ %>"btn
+                                                    btn-danger"<% } %>
+                                                        <% if(item.un_list){ %> onclick="listThis('<%=item._id%>')" <%
+                                                                    }else{ %>
+                                                                    onclick="unListThis('<%=item._id%>')" <% } %>
+                                                                            style="width:4rem"
+                                                                            > <% if(item.un_list){ %> List <% }else{ %>
+                                                                                    Unlist
+                                                                                    <% } %></a>
 
 
 
+                                        </td>
+                                    </tr>
+                                    <% }) %>
 
-                    </table>
+
+
+
+                            </table>
 
         </div>
         <script>

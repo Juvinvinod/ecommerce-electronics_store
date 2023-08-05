@@ -61,14 +61,16 @@
                                     <p>
                                         <%= object.description %>
                                     </p>
+                                    <% if(object.stock===0){ %>
+                                        <h3 style="color:red">Out of stock</h3>
+                                        <% } %>
 
+                                            <hr />
 
-                                    <hr />
+                                            <div class="row mb-4">
 
-                                    <div class="row mb-4">
-
-                                        <!-- col.// -->
-                                        <!-- <div class="col-md-4 col-6 mb-3">
+                                                <!-- col.// -->
+                                                <!-- <div class="col-md-4 col-6 mb-3">
                                         <label class="mb-2 d-block">Quantity</label>
                                         <div class="input-group mb-3" style="width: 170px;">
                                             <button class="btn btn-white border border-secondary px-3" type="button"
@@ -84,32 +86,33 @@
                                             </button>
                                         </div>
                                     </div> -->
-                                    </div>
-                                    <% if(locals.user) { %>
-                                        <a onclick="addToCart('<%=object._id%>')" class="btn btn-warning shadow-0"
-                                            id="addToCart"> <i class="me-1 fa fa-shopping-basket"></i>Add
-                                            to cart </a>
-                                        <% if(!wish) { %>
-                                            <a class="btn btn-light border border-secondary py-2 px-3"
-                                                onclick="addToWishlist()" id="wishList">
-                                                <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
-                                            <% }else{ %>
-                                                <a class="btn btn-light border border-secondary py-2  px-3"
-                                                    onclick="removeFromWishlist()" id="wishListRemove">
-                                                    <i class="me-1 fa fa-heart fa-lg" style="color: red;"></i>
-                                                    Saved </a>
-                                                <% } %>
-                                                    <% } else { %>
-                                                        <a href="/login" class="btn btn-warning shadow-0"
-                                                            id="loginRequired"> <i
-                                                                class="me-1 fa fa-shopping-basket"></i>Add
-                                                            to cart </a>
-                                                        <a href="/login"
-                                                            class="btn btn-light border border-secondary py-2 icon-hover px-3"
-                                                            id='wishLogin'>
-                                                            <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                                            </div>
+                                            <% if(locals.user) { %>
+                                                <a onclick="addToCart('<%=object._id%>')"
+                                                    class="btn btn-warning shadow-0" id="addToCart"> <i
+                                                        class="me-1 fa fa-shopping-basket"></i>Add
+                                                    to cart </a>
+                                                <% if(!wish) { %>
+                                                    <a class="btn btn-light border border-secondary py-2 px-3"
+                                                        onclick="addToWishlist()" id="wishList">
+                                                        <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                                                    <% }else{ %>
+                                                        <a class="btn btn-light border border-secondary py-2  px-3"
+                                                            onclick="removeFromWishlist()" id="wishListRemove">
+                                                            <i class="me-1 fa fa-heart fa-lg" style="color: red;"></i>
+                                                            Saved </a>
                                                         <% } %>
-                                                            <% }) %>
+                                                            <% } else { %>
+                                                                <a href="/login" class="btn btn-warning shadow-0"
+                                                                    id="loginRequired"> <i
+                                                                        class="me-1 fa fa-shopping-basket"></i>Add
+                                                                    to cart </a>
+                                                                <a href="/login"
+                                                                    class="btn btn-light border border-secondary py-2 icon-hover px-3"
+                                                                    id='wishLogin'>
+                                                                    <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                                                                <% } %>
+                                                                    <% }) %>
                                 </div>
                             </main>
                         </div>

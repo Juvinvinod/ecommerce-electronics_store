@@ -230,7 +230,8 @@ const listOrders = async (req, res) => {
         path: 'user_id',
         model: 'User',
       },
-    });
+    })
+    .sort({ order_id: -1 });
   res.render('admin/orders', { orders });
 };
 
@@ -340,6 +341,11 @@ const addCoupon = async (req, res) => {
   const { discount } = req.body;
   const { maxDiscountAmount } = req.body;
   const { expiry } = req.body;
+  const exists = await Coupon.find({ code });
+  if (exists) {
+    req.flash('error', 'Coupon code already exists');
+    return res.redirect('/admin/coupons');
+  }
   const coupon = new Coupon({
     name,
     code,
@@ -393,6 +399,21 @@ const editCoupons = async (req, res) => {
   res.redirect('/admin/coupons');
 };
 
+// display complete details of the order
+const orderSummary = async (req, res) => {
+  const { id } = req.params;
+  const order = await Order.findOne({ _id: id })
+    .populate({
+      path: 'product.product_id',
+      model: 'Product',
+    })
+    .populate({
+      path: 'address',
+      model: 'Address',
+    });
+  res.render('admin/orderSummary', { order });
+};
+
 module.exports = {
   dashBoard,
   allCustomers,
@@ -419,4 +440,5 @@ module.exports = {
   unListCoupons,
   viewEditCoupons,
   editCoupons,
+  orderSummary,
 };

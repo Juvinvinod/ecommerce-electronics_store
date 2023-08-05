@@ -434,13 +434,15 @@ const viewCheckout = async (req, res) => {
 
 // create the order based on the type of payment chosen by the user
 const checkout = async (req, res) => {
-  if (req.body.wallet) {
-    console.log('hi');
+  if (req.body.payment === 'wallet') {
+    const userId = req.user._id;
     const id = req.user._id;
     const walletAmount = req.user.wallet;
-    console.log(walletAmount);
-    console.log(req.body.totalAmount);
     const remainingAmount = walletAmount - req.body.totalAmount;
+    if (req.body.totalAmount > walletAmount) {
+      console.log('hello');
+      return res.status(400).send({ message: 'Not enough cash in wallet' });
+    }
     if (remainingAmount < 0) {
       await User.findByIdAndUpdate(id, {
         $set: {
@@ -454,6 +456,39 @@ const checkout = async (req, res) => {
         },
       });
     }
+    const cartItems = await Cart.find({ user: userId });
+    const productArray = cartItems.map((item) => ({
+      product_id: item.product,
+      quantity: item.quantity,
+    }));
+    for (const item of productArray) {
+      const productId = item.product_id;
+      const { quantity } = item;
+      await Product.findOneAndUpdate(
+        { _id: productId },
+        { $inc: { stock: -quantity } }
+      );
+    }
+    const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
+    let orderId = 'EMRT000001';
+    if (lastOrder.length > 0) {
+      const lastOrderId = lastOrder[0].order_id;
+      const orderIdNumber = parseInt(lastOrderId.slice(4));
+      orderId = `EMRT${`000000${orderIdNumber + 1}`.slice(-6)}`;
+    }
+    const newOrder = new Order({
+      order_id: orderId,
+      user: userId,
+      product: productArray,
+      address: req.body.address,
+      total_amount: req.body.totalAmount,
+      payment_method: 'wallet',
+    });
+    await newOrder.save();
+    await Cart.deleteMany({ user: userId });
+    res.status(200).send({
+      msg: 'Order placed',
+    });
   }
 
   if (req.body.payment === 'cod') {
@@ -461,9 +496,9 @@ const checkout = async (req, res) => {
     const { couponName } = req.body;
     if (couponName) {
       const couponInfo = await Coupon.findOne({ code: couponName });
-      if (!couponInfo) {
-        return res.status(400).send({ message: 'Coupon name not valid' });
-      }
+      // if (!couponInfo) {
+      //   return res.status(400).send({ message: 'Coupon name not valid' });
+      // }
       couponInfo.users.push(userId);
       await couponInfo.save();
     }
@@ -557,7 +592,7 @@ const verifyOnlinePayment = async (req, res) => {
       const { userId } = req.body;
       const cartItems = await Cart.find({ user: userId });
       const productArray = cartItems.map((item) => ({
-        productId: item.product,
+        product_id: item.product,
         quantity: item.quantity,
       }));
       for (const item of productArray) {

@@ -13,47 +13,38 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Order ID</th>
-                                    <th scope="col">Name</th>
                                     <th scope="col">User</th>
                                     <th scope="col">Payment Status</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Total Amount</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% orders.forEach((item)=>{ %>
                                     <tr>
-                                        <th scope="row">
-                                            <%= item.order_id %>
-                                        </th>
-                                        <th scope="row">
-                                            <% item.product.forEach((productItem)=> { %>
-                                                <a href="/admin/order-details/<%=item._id%>"
-                                                    class="text-decoration-none">
-                                                    <%=productItem.product_id.product_name %> ,
-                                                </a>
-                                                <%}) %>
-                                        </th>
-                                        <td>
-                                            <%= item.address.user_id.name %>
-                                        </td>
-                                        <td>
-                                            <div class="del-status <%= item.status  %> ">
-                                                <%= item.status %>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <% item.product.forEach((productItem)=> { %>
-                                                <%=productItem.quantity %>,
-                                                    <%}) %>
-                                        </td>
-                                        <td>
-                                            <%=item.total_amount %>
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-info" href="/admin/editOrder/<%=item._id%>">Edit</a>
-                                        </td>
+                                        <a>
+                                            <th scope="row" class="pt-3">
+                                                <%= item.order_id %>
+                                            </th>
+
+                                            <td class="pt-3">
+                                                <%= item.address.user_id.name %>
+                                            </td>
+                                            <td class="pt-3">
+                                                <div class=" del-status <%= item.status  %> ">
+                                                    <%= item.status %>
+                                                </div>
+                                            </td>
+
+                                            <td class="pt-3" style="color: green;">
+                                                ₹ <%=item.total_amount %>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-success"
+                                                    href="/admin/orderSummary/<%=item._id%>">View</a>
+                                                <a class="btn btn-info" href="/admin/editOrder/<%=item._id%>">Edit</a>
+
+                                            </td>
                                     </tr>
                                     <%}) %>
 

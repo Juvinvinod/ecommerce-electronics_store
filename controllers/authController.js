@@ -58,15 +58,6 @@ const login = (req, res, next) => {
   })(req, res, next);
 };
 
-// function to prevent going back to otp page after logging in
-const otpSessionCheck = (req, res, next) => {
-  if (req.session.isOTPVerified === true) {
-    res.redirect('/');
-  } else {
-    next();
-  }
-};
-
 // destroying sessions and logging out
 const logout = function (req, res, next) {
   req.logout((err) => {
@@ -212,7 +203,6 @@ module.exports = {
   otpVerify,
   verifyEmail,
   emailVerifySuccess,
-  otpSessionCheck,
   viewForgotPass,
   forgotPass,
   resetOtpVerify,
