@@ -1,6 +1,5 @@
 <%- include('../layout/header.ejs') %>
     <%- include('../layout/adminNavbar.ejs') %>
-
         <div style="padding: 20px 20px 20px 20px;" class="my-5 container">
             <div class="container pt-3 d-flex justify-content-end ">
                 <div class="addCategoryButtonSetup">
@@ -27,7 +26,7 @@
                                     <th class="text-center">ACTIONS</th>
                                 </tr>
                             </thead>
-                            <% let count=1; %>
+                            <% let count=(pageNum*perPage-(perPage-1)) ?? 1; %>
                                 <% result.forEach((object)=> { %>
                                     <tr>
                                         <td>
@@ -95,6 +94,27 @@
                                     <% }) %>
 
                         </table>
+
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item">
+                                    <a class="page-link <% if ((pageNum -1)<1){ %>
+                                        disabled
+                                    <% } %>" href="?page=<%= pageNum - 1 %>">Previous</a>
+                                </li>
+                                <% for (let i=1;i<=pages; i++){ %>
+                                    <li class="page-item <% if (i == pageNum) { %>
+                                        active
+                                    <% } %>"><a class="page-link" href="?page=<%= i %>">
+                                            <%= i %>
+                                        </a></li>
+                                    <% } %>
+                                        <a class="page-link <% if (pageNum === pages){ %>
+                                            disabled
+                                        <% } %>" href="?page=<%= pageNum + 1 %>">Next</a>
+                                        </li>
+                            </ul>
+                        </nav>
                     </div>
         </div>
 

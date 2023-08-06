@@ -103,9 +103,19 @@ const addCategory = async (req, res, next) => {
 
 // find all documents and render products page
 const displayProducts = async (req, res) => {
-  await Product.find({}).then((result) => {
-    res.render('admin/products', { result });
-  });
+  const pageNum = parseInt(req.query.page);
+  const perPage = 4;
+  let docCount;
+  const result = await Product.find({})
+    .countDocuments()
+    .then((documents) => {
+      docCount = documents;
+      return Product.find({})
+        .skip((pageNum - 1) * perPage)
+        .limit(perPage);
+    });
+  const pages = Math.ceil(docCount / perPage);
+  res.render('admin/products', { result, docCount, pages, pageNum, perPage });
 };
 
 // view addProducts page
