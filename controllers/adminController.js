@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const User = mongoose.model('User');
 const Category = mongoose.model('Category');
@@ -7,10 +8,41 @@ const Order = mongoose.model('Order');
 const Coupon = mongoose.model('Coupon');
 
 const fs = require('fs');
+const { Console } = require('console');
 
 // display dashboard
-const dashBoard = (req, res) => {
-  res.render('admin/adminHome');
+const dashBoard = async (req, res) => {
+  const orders = await Order.find({});
+  const monthlyDataArray = await Order.aggregate([
+    { $match: { status: 'delivered' } },
+    {
+      $group: { _id: { $month: '$orderTime' }, sum: { $sum: '$total_amount' } },
+    },
+  ]);
+  const totalRevenue = await Order.aggregate([
+    {
+      $group: { _id: null, total: { $sum: '$total_amount' } },
+    },
+  ]);
+  const orderCount = await Order.find({}).count();
+  const ordersCompleted = await Order.find({ status: 'delivered' }).count();
+  const pendingOrders = await Order.find({ status: 'pending' }).count();
+  const ordersOnTheWay = await Order.find({ status: 'outForDelivery' }).count();
+  const monthlyDataObject = {};
+  monthlyDataArray.map((item) => (monthlyDataObject[item._id] = item.sum));
+  const monthlyData = [];
+  for (let i = 1; i <= 12; i++) {
+    monthlyData[i - 1] = monthlyDataObject[i] ?? 0;
+  }
+  res.render('admin/adminHome', {
+    orders,
+    orderCount,
+    ordersCompleted,
+    pendingOrders,
+    ordersOnTheWay,
+    monthlyData,
+    totalRevenue,
+  });
 };
 
 // display all the customers and search option
@@ -424,6 +456,99 @@ const orderSummary = async (req, res) => {
   res.render('admin/orderSummary', { order });
 };
 
+const getSalesReport = async (req, res) => {
+  let startDate = new Date(new Date().setDate(new Date().getDate() - 8));
+  let endDate = new Date();
+  if (req.query.startDate) {
+    startDate = new Date(req.query.startDate);
+    startDate.setHours(0, 0, 0, 0);
+  }
+  if (req.query.endDate) {
+    endDate = new Date(req.query.endDate);
+    endDate.setHours(24, 0, 0, 0);
+  }
+  if (req.query.filter === 'thisYear') {
+    const currentDate = new Date();
+    startDate = new Date(currentDate.getFullYear(), 0, 1);
+    startDate.setHours(0, 0, 0, 0);
+    endDate = new Date(new Date().setDate(new Date().getDate() + 1));
+    endDate.setHours(0, 0, 0, 0);
+  }
+  if (req.query.filter === 'lastYear') {
+    const currentDate = new Date();
+    startDate = new Date(currentDate.getFullYear() - 1, 0, 1);
+    startDate.setHours(0, 0, 0, 0);
+    endDate = new Date(currentDate.getFullYear() - 1, 11, 31);
+    endDate.setHours(0, 0, 0, 0);
+  }
+  if (req.query.filter === 'thisMonth') {
+    const currentDate = new Date();
+    startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    startDate.setHours(0, 0, 0, 0);
+    endDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      1
+    );
+    endDate.setHours(0, 0, 0, 0);
+  }
+  if (req.query.filter === 'lastMonth') {
+    const currentDate = new Date();
+    startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      1
+    );
+    startDate.setHours(0, 0, 0, 0);
+    endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    endDate.setHours(0, 0, 0, 0);
+  }
+
+  const orders = await Order.find({
+    orderTime: { $gt: startDate, $lt: endDate },
+  })
+    .populate('product')
+    .sort({ orderTime: -1 })
+    .lean();
+  const totalOrders = await Order.find({}).count();
+  const totalRevenue = await Order.aggregate([
+    { $match: { status: 'delivered' } },
+    {
+      $group: { _id: { $month: '$orderTime' }, sum: { $sum: '$total_amount' } },
+    },
+  ]);
+  const totalPending = await Order.find({ status: 'pending' }).count();
+  const ordersCompleted = await Order.find({ status: 'delivered' }).count();
+  const orderTable = [];
+  const byCategory = await Order.aggregate([
+    { $match: { orderTime: { $gt: startDate, $lt: endDate } } },
+    {
+      $lookup: {
+        from: 'Product',
+        localField: 'product_id',
+        foreignField: '_id',
+        as: 'product',
+      },
+    },
+    // { $unwind: '$product' },
+    {
+      $group: {
+        _id: '$product.category_id',
+        count: { $sum: 1 },
+        price: { $sum: '$product.price' },
+      },
+    },
+  ]);
+  console.log(byCategory.product);
+  res.render('admin/salesReport', {
+    startDate: moment(
+      new Date(startDate).setDate(new Date(startDate).getDate() + 1)
+    )
+      .utc()
+      .format('YYYY-MM-DD'),
+  });
+};
+
 module.exports = {
   dashBoard,
   allCustomers,
@@ -451,4 +576,5 @@ module.exports = {
   viewEditCoupons,
   editCoupons,
   orderSummary,
+  getSalesReport,
 };

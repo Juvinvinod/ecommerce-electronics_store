@@ -8,7 +8,14 @@ const { catchErrors } = require('../handlers/errorHandlers');
 const router = express.Router();
 
 // dashboard
-router.get('/', adminController.dashBoard);
+router.get('/', catchErrors(adminController.dashBoard));
+
+// sales report
+router.get(
+  '/salesReport',
+  middleware.adminChecker,
+  adminController.getSalesReport
+);
 
 // customers
 router.get(
