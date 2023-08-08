@@ -507,45 +507,118 @@ const getSalesReport = async (req, res) => {
   const orders = await Order.find({
     orderTime: { $gt: startDate, $lt: endDate },
   })
-    .populate('product')
-    .sort({ orderTime: -1 })
+    .populate({
+      path: 'product.product_id',
+      model: 'Product',
+    })
+    .sort({ order_id: -1, orderTime: -1 })
     .lean();
-  const totalOrders = await Order.find({}).count();
+
+  const orderCount = await Order.find({
+    orderTime: { $gt: startDate, $lt: endDate },
+  })
+    .populate({
+      path: 'product.product_id',
+      model: 'Product',
+    })
+    .sort({ order_id: -1, orderTime: -1 })
+    .count();
   const totalRevenue = await Order.aggregate([
-    { $match: { status: 'delivered' } },
     {
-      $group: { _id: { $month: '$orderTime' }, sum: { $sum: '$total_amount' } },
+      $match: {
+        status: 'delivered',
+        orderTime: {
+          $gt: startDate,
+          $lt: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+        sum: { $sum: '$total_amount' },
+      },
     },
   ]);
-  const totalPending = await Order.find({ status: 'pending' }).count();
-  const ordersCompleted = await Order.find({ status: 'delivered' }).count();
-  const orderTable = [];
+  const totalPending = await Order.aggregate([
+    {
+      $match: {
+        status: 'pending',
+        orderTime: {
+          $gt: startDate,
+          $lt: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+        sum: { $sum: '$total_amount' },
+      },
+    },
+  ]);
+  const ordersDispatched = await Order.aggregate([
+    {
+      $match: {
+        status: 'outForDelivery',
+        orderTime: {
+          $gt: startDate,
+          $lt: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+        sum: { $sum: '$total_amount' },
+      },
+    },
+  ]);
   const byCategory = await Order.aggregate([
     { $match: { orderTime: { $gt: startDate, $lt: endDate } } },
     {
-      $lookup: {
-        from: 'Product',
-        localField: 'product_id',
-        foreignField: '_id',
-        as: 'product',
+      $unwind: {
+        path: '$product',
       },
     },
-    // { $unwind: '$product' },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'product.product_id',
+        foreignField: '_id',
+        as: 'product.products',
+      },
+    },
+    { $unwind: '$product.products' },
     {
       $group: {
-        _id: '$product.category_id',
+        _id: '$product.products.category_name',
         count: { $sum: 1 },
-        price: { $sum: '$product.price' },
+        price: { $sum: '$product.products.price' },
       },
     },
   ]);
-  console.log(byCategory.product);
+  let filter = req.query.filter ?? '';
+  if (!req.query.filter && !req.query.startDate) {
+    filter = 'lastWeek';
+  }
   res.render('admin/salesReport', {
+    orders,
     startDate: moment(
       new Date(startDate).setDate(new Date(startDate).getDate() + 1)
     )
       .utc()
       .format('YYYY-MM-DD'),
+    endDate: moment(endDate).utc().format('YYYY-MM-DD'),
+    totalRevenue,
+    totalPending,
+    ordersDispatched,
+    byCategory,
+    filter,
+    orderCount,
   });
 };
 
