@@ -46,6 +46,9 @@
                                     <th scope="col">Total Revenue</th>
                                     <td scope="col">
                                         ₹ <%= totalRevenue[0]?.sum %>
+                                            <% if (!totalRevenue.length) { %>
+                                                0
+                                                <% } %>
                                     </td>
                                 </tr>
                                 <tr>
@@ -58,12 +61,18 @@
                                     <th scope="col">Total Pending</th>
                                     <td scope="col">
                                         <%= totalPending[0]?.count%>
+                                            <% if (!totalPending.length) { %>
+                                                0
+                                                <% } %>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="col">Total Dispatch</th>
                                     <td scope="col">
                                         <%= ordersDispatched[0]?.count%>
+                                            <% if (!ordersDispatched.length) { %>
+                                                0
+                                                <% } %>
                                     </td>
                                 </tr>
                             </tbody>

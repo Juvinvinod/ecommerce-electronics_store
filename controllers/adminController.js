@@ -34,6 +34,53 @@ const dashBoard = async (req, res) => {
   for (let i = 1; i <= 12; i++) {
     monthlyData[i - 1] = monthlyDataObject[i] ?? 0;
   }
+  const payment = await Order.aggregate([
+    { $group: { _id: '$payment_method', count: { $sum: 1 } } },
+    { $sort: { _id: 1 } },
+  ]);
+  const paymentData = [];
+  payment.forEach((item) => {
+    paymentData.push(parseFloat(item.count));
+  });
+  const categoryPrice = await Order.aggregate([
+    {
+      $unwind: {
+        path: '$product',
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'product.product_id',
+        foreignField: '_id',
+        as: 'product.products',
+      },
+    },
+    { $unwind: '$product.products' },
+    {
+      $group: {
+        _id: '$product.products.category_name',
+        price: { $sum: '$product.products.price' },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+  const category = await Category.aggregate([
+    { $group: { _id: '$category_name' } },
+    { $sort: { _id: 1 } },
+  ]);
+  const categoryName = [];
+  const totalPrice = [];
+  categoryPrice.forEach((item) => {
+    totalPrice.push(item.price);
+  });
+  category.forEach((item) => {
+    categoryName.push(item._id);
+  });
+  console.log(categoryName);
+  console.log(totalPrice);
   res.render('admin/adminHome', {
     orders,
     orderCount,
@@ -42,6 +89,9 @@ const dashBoard = async (req, res) => {
     ordersOnTheWay,
     monthlyData,
     totalRevenue,
+    paymentData,
+    categoryName,
+    totalPrice,
   });
 };
 

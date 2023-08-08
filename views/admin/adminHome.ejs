@@ -66,12 +66,30 @@
                         <div id="chart"></div>
                     </div>
                 </div>
+                <div class="d-flex">
+                    <div class="row mt-2 p-3">
+                        <h3 class="mt-5">Payment Method Overview</h3>
+                        <div class="chart-container">
+                            <div id="paymentChart"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-2 p-3">
+                        <h3 class="mt-5">Category Sales Overview</h3>
+                        <div class="chart-container">
+                            <div id="categoryChart"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script>
-            var monthlyData = '<%= JSON.stringify(monthlyData)%>'
+            const monthlyData = '<%= JSON.stringify(monthlyData)%>'
+            const paymentData = '<%= JSON.stringify(paymentData)%>'
+            let categoryData = '<%= categoryName%>'
+            const sales = '<%= JSON.stringify(totalPrice)%>'
+            console.log(categoryData)
             var options = {
                 series: [
                     {
@@ -143,5 +161,81 @@
             chart.render();
         </script>
 
+        <script>
+            var options = {
+                series: [
+                    ...JSON.parse(paymentData),
 
+                ],
+                chart: {
+                    width: 500,
+                    type: 'pie',
+                },
+                labels: ['Cash on Delivery', 'Online payment', 'Wallet'],
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            };
+            var chart = new ApexCharts(document.querySelector("#paymentChart"), options);
+            chart.render();
+        </script>
+        <script>
+            // var options = {
+            //     series: [{
+            //         data: JSON.parse(sales),
+            //     }],
+            //     chart: {
+            //         type: 'bar',
+            //         height: 450,
+            //         width: 650,
+            //     },
+            //     plotOptions: {
+            //         bar: {
+            //             borderRadius: 4,
+            //             horizontal: true,
+            //         }
+            //     },
+            //     dataLabels: {
+            //         enabled: false
+            //     },
+            //     xaxis: {
+            //         categories: [...categoryData.split(',')],
+            //     }
+            // };
+
+            // var chart = new ApexCharts(document.querySelector("#categoryChart"), options);
+            // chart.render();
+            var options = {
+                series: [
+                    ...JSON.parse(sales),
+
+                ],
+                chart: {
+                    width: 500,
+                    type: 'pie',
+                },
+                labels: [...categoryData.split(',')],
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
+            };
+            var chart = new ApexCharts(document.querySelector("#categoryChart"), options);
+            chart.render();
+        </script>
         <%- include('../layout/footer.ejs') %>
