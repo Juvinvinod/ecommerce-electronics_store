@@ -434,6 +434,7 @@ const viewCheckout = async (req, res) => {
 
 // create the order based on the type of payment chosen by the user
 const checkout = async (req, res) => {
+  const { couponName } = req.body;
   if (req.body.payment === 'wallet') {
     const userId = req.user._id;
     const id = req.user._id;
@@ -455,6 +456,14 @@ const checkout = async (req, res) => {
           wallet: parseInt(remainingAmount),
         },
       });
+    }
+    if (couponName) {
+      const couponInfo = await Coupon.findOne({ code: couponName });
+      if (!couponInfo) {
+        return res.status(400).send({ message: 'Coupon name not valid' });
+      }
+      couponInfo.users.push(userId);
+      await couponInfo.save();
     }
     const cartItems = await Cart.find({ user: userId });
     const productArray = cartItems.map((item) => ({
@@ -484,6 +493,9 @@ const checkout = async (req, res) => {
       total_amount: req.body.totalAmount,
       payment_method: 'wallet',
     });
+    if (couponName) {
+      newOrder.coupon_used = couponName;
+    }
     await newOrder.save();
     await Cart.deleteMany({ user: userId });
     res.status(200).send({
@@ -493,12 +505,11 @@ const checkout = async (req, res) => {
 
   if (req.body.payment === 'cod') {
     const userId = req.user._id;
-    const { couponName } = req.body;
     if (couponName) {
       const couponInfo = await Coupon.findOne({ code: couponName });
-      // if (!couponInfo) {
-      //   return res.status(400).send({ message: 'Coupon name not valid' });
-      // }
+      if (!couponInfo) {
+        return res.status(400).send({ message: 'Coupon name not valid' });
+      }
       couponInfo.users.push(userId);
       await couponInfo.save();
     }
@@ -530,6 +541,9 @@ const checkout = async (req, res) => {
       total_amount: req.body.totalAmount,
       payment_method: 'COD',
     });
+    if (couponName) {
+      newOrder.coupon_used = couponName;
+    }
     await newOrder.save();
     await Cart.deleteMany({ user: userId });
     res.status(200).send({
@@ -585,6 +599,7 @@ const verifyOnlinePayment = async (req, res) => {
   try {
     const { payment } = req.body;
     const orderDetails = req.body.order;
+    const { couponName } = req.body;
     let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
     hmac.update(`${payment.razorpay_order_id}|${payment.razorpay_payment_id}`);
     hmac = hmac.digest('hex');
@@ -603,6 +618,14 @@ const verifyOnlinePayment = async (req, res) => {
           { $inc: { stock: -quantity } }
         );
       }
+      if (couponName.length) {
+        const couponInfo = await Coupon.findOne({ code: couponName });
+        if (!couponInfo) {
+          return res.status(400).send({ message: 'Coupon name not valid' });
+        }
+        couponInfo.users.push(userId);
+        await couponInfo.save();
+      }
       const newOrder = new Order({
         order_id: orderDetails.receipt,
         user: userId,
@@ -611,6 +634,9 @@ const verifyOnlinePayment = async (req, res) => {
         total_amount: orderDetails.amount / 100,
         payment_method: 'Online',
       });
+      if (couponName.length) {
+        newOrder.coupon_used = couponName;
+      }
       await newOrder.save();
       await Cart.deleteMany({ user: userId });
       const orderId = orderDetails.receipt;
@@ -808,6 +834,12 @@ const viewCoupons = async (req, res) => {
   res.render('couponList', { categories, coupons });
 };
 
+// display blogPage
+const viewBlog = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('dummy', { categories });
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -847,4 +879,5 @@ module.exports = {
   applyCoupon,
   deleteCoupon,
   viewCoupons,
+  viewBlog,
 };

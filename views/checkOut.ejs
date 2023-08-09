@@ -186,7 +186,7 @@
                                     image: "img/logo.png",
                                     order_id: orderData.options.id,
                                     handler: function (response) {
-                                        storeOrderData(response, orderData.options, orderData.userDetails, orderData.address);
+                                        storeOrderData(response, orderData.options, orderData.userDetails, orderData.address, couponName);
                                     },
                                     prefill: {
                                         name: orderData.userDetails.name,
@@ -206,7 +206,7 @@
 
 
 
-                function storeOrderData(payment, order, userId, address) {
+                function storeOrderData(payment, order, userId, address, couponName) {
                     const url = window.location.origin;
                     console.log(url);
                     fetch(`${url}/verifyOnlinePayment`, {
@@ -220,6 +220,7 @@
                             order,
                             userId,
                             address,
+                            couponName,
                         })
                     }).then((response) => {
                         if (response.ok) {

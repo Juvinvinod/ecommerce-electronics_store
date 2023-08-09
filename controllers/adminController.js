@@ -194,7 +194,10 @@ const addCategory = async (req, res, next) => {
 
 // find all documents and render products page
 const displayProducts = async (req, res) => {
-  const pageNum = parseInt(req.query.page);
+  let pageNum = parseInt(req.query.page);
+  if (!pageNum) {
+    pageNum = 1;
+  }
   const perPage = 4;
   let docCount;
   const result = await Product.find({})
@@ -407,8 +410,10 @@ const addCoupon = async (req, res) => {
   const { discount } = req.body;
   const { maxDiscountAmount } = req.body;
   const { expiry } = req.body;
-  const exists = await Coupon.find({ code });
-  if (exists) {
+  const exists = await Coupon.find({
+    code: { $regex: new RegExp(`^${code}$`, 'i') },
+  });
+  if (exists.length !== 0) {
     req.flash('error', 'Coupon code already exists');
     return res.redirect('/admin/coupons');
   }
@@ -480,6 +485,7 @@ const orderSummary = async (req, res) => {
   res.render('admin/orderSummary', { order });
 };
 
+// display sales
 const getSalesReport = async (req, res) => {
   let startDate = new Date(new Date().setDate(new Date().getDate() - 8));
   let endDate = new Date();

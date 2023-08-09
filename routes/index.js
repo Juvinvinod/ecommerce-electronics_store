@@ -206,4 +206,7 @@ router.get(
   catchErrors(userController.viewCoupons)
 ); // list all coupons available to user
 
+// blog
+router.get('/blog', catchErrors(userController.viewBlog));
+
 module.exports = router;

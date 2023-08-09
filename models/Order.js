@@ -44,6 +44,9 @@ const orderSchema = new Schema({
     // default: Date.now(),
     default: new Date(),
   },
+  coupon_used: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('Order', orderSchema);
