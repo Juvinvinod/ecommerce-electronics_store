@@ -1,10 +1,10 @@
 <%- include('../layout/header.ejs') %>
     <%- include('../layout/adminNavbar.ejs') %>
 
-        <div class="container my-5 card">
+        <div class="container my-5 card" id="body">
             <div class="card-body">
-                <form action="addCategories" method="POST">
-                    <div class="mb-3 ">
+                <form action="addCategories" method="POST" id="myForm" onsubmit="submitForm(event)">
+                    <div class="mb-3">
                         <h4>Add Category</h4>
                         <label for="exampleInputEmail1" class="form-label ">Category</label>
                         <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
@@ -15,5 +15,20 @@
             </div>
         </div>
         </div>
+        <div id="loader" style="display: none;"></div>
+        <script>
+            function submitForm(event) {
+                event.preventDefault(); // Prevent form submission
 
+                // Display the loader and hide the form
+                document.getElementById("loader").style.setProperty("display", "block", "important");
+                document.getElementById("body").style.setProperty("display", "none", "important");
+
+                // Simulate asynchronous form submission
+                setTimeout(function () {
+                    document.getElementById("myForm").submit();
+                }, 1500);
+            }
+
+        </script>
         <%- include('../layout/footer.ejs') %>

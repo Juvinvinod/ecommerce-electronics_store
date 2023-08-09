@@ -66,6 +66,7 @@ async function sendOTP(req, res, email) {
 
     // Send the email
     const info = await transporter.sendMail(mailOptions);
+    console.log(otp1);
     console.log('Email sent:', info.response);
     return otp1;
   } catch (error) {

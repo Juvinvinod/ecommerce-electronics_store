@@ -1,9 +1,10 @@
 <%- include('../layout/header.ejs') %>
     <%- include('../layout/adminNavbar.ejs') %>
 
-        <div class="container my-5">
+        <div class="container my-5" id="body">
             <h3>Add Coupon</h3>
-            <form method="POST" action="/admin/addCoupons" id="myForm" style="display: block;z-index: 1000;">
+            <form method="POST" action="/admin/addCoupons" id="myForm" style="display: block;z-index: 1000;"
+                onsubmit="submitForm(event)">
                 <div class="mb-3 ">
 
                     <div class="my-3">
@@ -36,8 +37,24 @@
                         <input type="date" name="expiry" placeholder="expiry" required />
                     </div>
                     <button type="submit" class="btn loginButton mt-3">Add Coupon</button>
+                </div>
             </form>
 
         </div>
+        <div id="loader" style="display: none;"></div>
+        <script>
+            function submitForm(event) {
+                event.preventDefault(); // Prevent form submission
 
+                // Display the loader and hide the form
+                document.getElementById("loader").style.setProperty("display", "block", "important");
+                document.getElementById("body").style.setProperty("display", "none", "important");
+
+                // Simulate asynchronous form submission
+                setTimeout(function () {
+                    document.getElementById("myForm").submit();
+                }, 1500);
+            }
+
+        </script>
         <%- include('../layout/footer.ejs') %>

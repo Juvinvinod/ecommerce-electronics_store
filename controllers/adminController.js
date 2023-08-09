@@ -79,8 +79,6 @@ const dashBoard = async (req, res) => {
   category.forEach((item) => {
     categoryName.push(item._id);
   });
-  console.log(categoryName);
-  console.log(totalPrice);
   res.render('admin/adminHome', {
     orders,
     orderCount,
@@ -146,6 +144,12 @@ const editCategory = async (req, res, next) => {
   const oldName = { _id: req.query.id };
   const check = req.body.name;
   const newName = { category_name: req.body.name };
+  const containsSymbolsOrNumbers =
+    /[^\w\s]/.test(newName) || /\d/.test(newName);
+  if (containsSymbolsOrNumbers) {
+    req.flash('error', 'Category name  should not contain symbols or numbers');
+    return res.redirect('/admin/Categories');
+  }
   const existingCategory = await Category.findOne({
     category_name: { $regex: new RegExp(`^${check}$`, 'i') },
   });
@@ -167,6 +171,11 @@ const viewAddCategory = (req, res) => {
 // check whether the category already exists,if not add it to the database
 const addCategory = async (req, res, next) => {
   const name = req.body.category_name;
+  const containsSymbolsOrNumbers = /[^\w\s]/.test(name) || /\d/.test(name);
+  if (containsSymbolsOrNumbers) {
+    req.flash('error', 'Category name  should not contain symbols or numbers');
+    return res.redirect('/admin/Categories');
+  }
   const existingCategory = await Category.findOne({
     category_name: { $regex: new RegExp(`^${name}$`, 'i') },
   });
@@ -348,6 +357,7 @@ const orderDetails = async (req, res) => {
 
 // change status of orders placed by users
 const editOrder = async (req, res) => {
+  const userId = req.user._id;
   const { status } = req.body;
   const { id } = req.params;
   if (!status) {
@@ -355,52 +365,16 @@ const editOrder = async (req, res) => {
     return res.redirect('/admin/orders');
   }
   if (status === 'returned') {
-    await Order.updateOne(
-      { _id: id },
-      {
-        $set: {
-          status,
-        },
+    const order = await Order.findOne({ _id: id });
+    if (order.status !== 'returned') {
+      const walletInc = order.total_amount;
+      if (walletInc !== 0) {
+        await User.updateOne({ _id: userId }, { $inc: { wallet: walletInc } });
       }
-    );
-    req.flash('message', 'Status changed to returned');
-    return res.redirect('/admin/orders');
-  }
-  if (status === 'outForDelivery') {
-    await Order.updateOne(
-      { _id: id },
-      {
-        $set: {
-          status,
-        },
-      }
-    );
-    req.flash('message', 'Status changed to out for delivery');
-    return res.redirect('/admin/orders');
-  }
-  if (status === 'returnProcessing') {
-    await Order.updateOne(
-      { _id: id },
-      {
-        $set: {
-          status,
-        },
-      }
-    );
-    req.flash('message', 'Status changed to return Processing');
-    return res.redirect('/admin/orders');
-  }
-  if (status === 'delivered') {
-    await Order.updateOne(
-      { _id: id },
-      {
-        $set: {
-          status,
-        },
-      }
-    );
-    req.flash('message', 'Status changed to delivered');
-    return res.redirect('/admin/orders');
+    } else {
+      req.flash('message', 'Product already returned');
+      return res.redirect('/admin/orders');
+    }
   }
   await Order.updateOne(
     { _id: id },
@@ -410,7 +384,7 @@ const editOrder = async (req, res) => {
       },
     }
   );
-  req.flash('message', 'Status changed to pending');
+  req.flash('message', `Status changed to ${status}`);
   return res.redirect('/admin/orders');
 };
 

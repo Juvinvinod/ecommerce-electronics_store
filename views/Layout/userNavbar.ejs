@@ -4,7 +4,7 @@
     </div>
     <form class="d-flex nav-link text-light " role="search" action="/search">
         <input class="form-control me-2" type="search" placeholder="search products" aria-label="Search" name="key">
-        <button class="btn btn-outline-success text-light">Search</button>
+        <button class="btn btn-dark loginButton">Search</button>
     </form>
 </div>
 <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
@@ -40,23 +40,24 @@
                     <a class="nav-link text-light ps-3" href="#">Todays deal</a>
                 </li>
             </ul>
-            <a href="/cart"><i class="fa fa-cart-shopping text-decoration-none navIcon pb-1"></i></a>
-            <a href="/wishList"><i class="fa-regular fa-heart text-decoration-none navIcon pb-1"></i></a>
-            <a href="/coupons"><i class="fa fa-ticket text-decoration-none navIcon pb-1"></i></a>
-            <% if(locals.user) { %>
-                <div class="dropdown" style="margin-right: 30px;background-color: #27323F;">
-                    <button class="btn btn-secondary dropdown-toggle" style="background-color: #27323F;" type="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <%= user.name %>
-                    </button>
-                    <ul class="dropdown-menu navbarColor" style="min-width: 60px !important;">
-                        <li><a class="dropdown-item text-light miniNav" href="/userProfile">Profile</a></li>
-                        <li><a class="dropdown-item text-light miniNav" href="/logout">Logout</a></li>
-                    </ul>
-                </div>
-                <% } else {%>
-                    <a class="nav-link text-light ps-3 me-2 " href="/login"> Login </a>
-                    <% } %>
+            <div class="d-flex" style="margin-right: 0;padding-right: 10px;">
+                <a href="/cart"><i class="fa fa-cart-shopping text-decoration-none navIcon pb-1"></i></a>
+                <a href="/wishList"><i class="fa-regular fa-heart text-decoration-none navIcon pb-1"></i></a>
+                <a href="/coupons"><i class="fa fa-ticket text-decoration-none navIcon pb-1"></i></a>
+                <% if(locals.user) { %>
+
+
+                    <a href="/userProfile"><img src="<%= user.gravatar %>" alt=""
+                            style="width: 30px;border-radius: 50%;" class="ms-3"></a>
+                    <a class="text-light ps-3 pb-1 ms-3" href="/logout"><i class="fa fa-sign-out  fa-lg pb-1"
+                            aria-hidden="true"></i></a>
+
+
+
+                    <% } else {%>
+                        <a class="nav-link text-light ps-3 me-2 pb-1" href="/login"> Login </a>
+                        <% } %>
+            </div>
         </div>
     </div>
 </nav>

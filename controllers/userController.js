@@ -662,9 +662,10 @@ const cancelOrder = async (req, res) => {
   const _id = req.params.id;
   const order = await Order.findOne({ _id });
   const walletInc = order.total_amount;
-  if (walletInc !== 0) {
-    await User.updateOne({ _id: userId }, { $inc: { wallet: walletInc } });
-  }
+  if (order.payment_method !== 'COD')
+    if (walletInc !== 0) {
+      await User.updateOne({ _id: userId }, { $inc: { wallet: walletInc } });
+    }
   await Order.updateOne(
     { _id },
     {

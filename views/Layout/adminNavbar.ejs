@@ -39,15 +39,19 @@
                     <li class="nav-item">
                         <a class="nav-link text-light ps-3" href="/admin/coupons">Coupons</a>
                     </li>
+                    <li class="nav-item">
+
+                    </li>
                 </ul>
-                <div class="dropdown" style="margin-right: 30px;background-color: #27323F;">
-                    <button class="btn btn-secondary dropdown-toggle" style="background-color: #27323F;" type="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <%= user.name %>
-                    </button>
-                    <ul class="dropdown-menu navbarColor" style="min-width: 60px !important;">
-                        <li><a class="dropdown-item text-light miniNav" href="/logout">Logout</a></li>
-                    </ul>
+                <div class="dropdown d-flex pb-1 " style="margin-right: 30px;background-color: #27323F;">
+
+                    <img src="<%= user.gravatar %>" alt="" style="width: 30px;border-radius: 50%;">
+
+
+
+
+                    <a class="dropdown-item text-light miniNav ps-3 pt-1 ms-3" href="/logout"><i
+                            class="fa fa-sign-out  fa-lg" aria-hidden="true"></i></a>
                 </div>
 
 
