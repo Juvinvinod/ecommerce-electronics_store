@@ -25,7 +25,8 @@
 
                     <ul class="dropdown-menu navbarColor ">
                         <% categories.forEach((object)=> { %>
-                            <li><a class="dropdown-item text-light miniNav" href="#">
+                            <li><a class="dropdown-item text-light miniNav"
+                                    href="/categories?category=<%=object._id %>">
 
                                     <%= object.category_name %>
                                         <% }) %>

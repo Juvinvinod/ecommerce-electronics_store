@@ -28,7 +28,8 @@
 
                         <ul class="dropdown-menu navbarColor ">
                             <% categories.forEach((object)=> { %>
-                                <li><a class="dropdown-item text-light miniNav" href="#">
+                                <li><a class="dropdown-item text-light miniNav"
+                                        href="/categories?category=<%=object._id %>">
 
                                         <%= object.category_name %>
                                             <% }) %>
@@ -88,7 +89,8 @@
                         </div>
                         <% categories.forEach(item=>{ %>
                             <div class="ft-option">
-                                <input type="radio" value="" name="category" id="" <% if(category==item._id){ %>
+                                <input type="radio" value="<%= item._id%>" name="category" id="<%= item._id%>" <%
+                                    if(category==item._id){ %>
                                 checked <% } %> onchange="handleChange('category', '<%= item._id%>')" />
                                         <label for="<%=item._id%>">
                                             <%=item.category_name%>
@@ -113,11 +115,13 @@
                                 <label for="highToLow">Price - High to Low</label>
                         </div>
                         <div class="ft-option">
-                            <input type="radio" value="0" name="filter" id="newLaunches" <% if(filter==0){ %>
-                            checked <% } %>
-                                onchange="handleChange('filter', 0)" />
+                            <input type="radio" value="1" name="filter" id="newLaunches" <% if(filter==0){ %> checked <%
+                                } %>
+                                onchange="handleChange('filter', 1)"
+                                />
                                 <label for="newLaunches">New Launches</label>
                         </div>
+
                     </div>
                 </form>
             </div>
@@ -150,6 +154,28 @@
                         </div>
                         <% }) %>
                 </div>
+                <nav aria-label="Page navigation example text-dark pl-pagination" id="pagination">
+                    <% if(pageCount>1) {%>
+                        <ul class="pagination d-flex justify-content-center text-dark categoryPagination">
+                            <li class="page-item <% if(page == 0) { %> disabled <% } %>">
+                                <span class="page-link text-dark  " aria-label="Previous">
+                                    <span aria-hidden="true" onclick="gotoPage('<%=parseInt(page)-1%>')">&laquo;</span>
+                                </span>
+                            </li>
+                            <% for(let i=0; i<pageCount; i++) {%>
+                                <li class="page-item"><span onclick="gotoPage('<%=i%>')" class="page-link text-dark" <%
+                                        if(page==i){ %> style="font-weight:1000;" <% } %>
+                                            ><%= i+1 %> </span></li>
+                                <% } %>
+                                    <li class="page-item <% if(parseInt(page)+1 == pageCount) { %> disabled <% } %>">
+                                        <span class="page-link text-dark" aria-label="Next">
+                                            <span aria-hidden="true"
+                                                onclick="gotoPage('<%=parseInt(page)+1%>')">&raquo;</span>
+                                        </span>
+                                    </li>
+                        </ul>
+                </nav>
+                <% } %>
             </div>
         </div>
     </div>
@@ -157,14 +183,30 @@
     <%- include('./layout/userFooterbar.ejs') %>
         <script>
             let key = '<%=key%>'
-            let url = new URL("http://localhost:3000/getProducts");
+            let mainUrl = new URL(window.location.href);
+            let mainSearchParams = mainUrl.searchParams
+            let newMainUrl = ''
+            let trial = new URLSearchParams(window.location.search);
+            let cat = trial.get('category')
+            let url = new URL(`http://localhost:3000/getProducts?category=${cat}`);
             let searchParams = url.searchParams;
+
+            function gotoPage(page) {
+                mainSearchParams.set('page', page);
+                mainSearchParams.set('key', key);
+                mainUrl.search = mainSearchParams.toString();
+                newMainUrl = mainUrl.toString();
+                window.location.href = newMainUrl
+            }
 
             function handleChange(setName, value) {
                 searchParams.set(setName, value);
                 searchParams.set('key', key);
+                mainSearchParams.set(setName, value);
                 url.search = searchParams.toString();
+                mainUrl.search = mainSearchParams.toString();
                 var newURL = url.toString();
+                newMainURL = url.toString();
                 console.log(newURL)
                 fetch(newURL, {
                     method: 'GET',
@@ -205,6 +247,44 @@
 
                         productList.appendChild(div);
                     });
+                    if (data?.pageCount <= 1) {
+                        let pagination = document.getElementById('pagination')
+                        pagination.innerHTML = ""
+                    } else {
+                        let pagination = document.getElementById('pagination')
+                        pagination.innerHTML = `
+      <nav aria-label="Page navigation example text-dark pl-pagination">
+            <ul class="pagination d-flex justify-content-center mt-3 categoryPagination" id="paginationUl">
+            </ul>
+          </nav>
+      `
+                        let paginationUl = document.getElementById('paginationUl');
+                        let li1 = document.createElement('li');
+                        li1.setAttribute('class', 'page-item if(data.page == 0) { disabled }')
+                        li1.innerHTML = `
+          <span class="page-link text-dark" aria-label="Previous">
+            <span aria-hidden="true" onclick="gotoPage('${data.page - 1}')">&laquo;</span>
+          </span>
+      `
+                        paginationUl.appendChild(li1)
+                        for (let i = 0; i < data.pageCount; i++) {
+                            let li2 = document.createElement('li');
+                            li2.setAttribute('class', 'page-item')
+                            li2.innerHTML = `
+        <span onclick="gotoPage('${i}')" class="page-link text-dark" > ${i + 1} </span>
+        
+        `
+                            paginationUl.appendChild(li2)
+                        }
+                        let li3 = document.createElement('li');
+                        li3.setAttribute('class', 'page-item')
+                        li3.innerHTML = `
+      <span class="page-link text-dark" aria-label="Next">
+                  <span aria-hidden="true" onclick="gotoPage('${data.page + 1}')">&raquo;</span>
+                </span>
+      `
+                        paginationUl.appendChild(li3)
+                    }
                 })
             } 
         </script>

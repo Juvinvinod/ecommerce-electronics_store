@@ -107,34 +107,90 @@ const productDetails = async (req, res) => {
 // Display different categories
 const viewCategories = async (req, res) => {
   const categories = await Category.find({});
-  const filter = 0;
+  const filter = req.query.filter ?? '';
+  const limit = 6;
   const key = req.query.key ?? '';
-  const { category } = req.query;
+  const page = req.query.page ?? 0;
+  const { category } = req.query ?? '';
   if (!category) {
     const products = await Product.find({
       product_name: new RegExp(key, 'i'),
+    })
+      .sort({ price: filter })
+      .skip(page * limit)
+      .limit(limit);
+    // const count = products.length;
+    // console.log(count);
+    const productCount = await Product.find({
+      product_name: new RegExp(key, 'i'),
+      status: true,
+    }).count();
+    const pageCount = Math.ceil(productCount / limit);
+    return res.render('categories', {
+      categories,
+      products,
+      category,
+      filter,
+      key,
+      pageCount,
+      page,
     });
-    res.render('categories', { categories, products, category, filter, key });
-  } else {
-    const products = await Product.find({ category_id: category });
-    res.render('categories', { categories, products, category, filter, key });
+  }
+  if (category) {
+    const products = await Product.find({ category_id: category })
+      .sort({ price: filter })
+      .skip(page * limit)
+      .limit(limit);
+    // const count = products.length;
+    // console.log(count);
+    const productCount = await Product.find(
+      {
+        category_id: category,
+      },
+      { status: true }
+    ).count();
+    console.log(page);
+    const pageCount = Math.ceil(productCount / limit);
+    console.log(pageCount);
+    res.render('categories', {
+      categories,
+      products,
+      category,
+      filter,
+      key,
+      pageCount,
+      page,
+    });
   }
 };
 
 // change products in category page based on the radio buttons
 const getRadioProducts = async (req, res) => {
-  const { category } = req.query;
-  const filter = parseInt(req.query.filter) ?? '';
+  const { category } = req.query ?? '';
+  const filter = req.query.filter ?? '';
   const key = req.query.key ?? '';
+  const page = req.query.page ?? 0;
+  const limit = 6;
   if (!filter && category) {
     const products = await Product.find({
       product_name: new RegExp(key, 'i'),
       category_id: category,
-    }).lean();
+    })
+      .skip(page * limit)
+      .limit(limit)
+      .lean();
+    const productCount = await Product.find({
+      product_name: new RegExp(key, 'i'),
+      category_id: category,
+      status: true,
+    }).count();
+    const pageCount = Math.ceil(productCount / limit);
     return res.send({
       data: 'this is data',
       products,
       filter,
+      page,
+      pageCount,
     });
   }
   if (category && filter !== 0) {
@@ -143,31 +199,63 @@ const getRadioProducts = async (req, res) => {
       category_id: category,
     })
       .sort({ price: filter })
+      .skip(page * limit)
+      .limit(limit)
       .lean();
+    const productCount = await Product.find({
+      product_name: new RegExp(key, 'i'),
+      category_id: category,
+      status: true,
+    }).count();
+    const pageCount = Math.ceil(productCount / limit);
     return res.send({
       data: 'this is data',
       products,
       filter,
+      page,
+      pageCount,
     });
   }
-  if (!category && filter) {
+  if (!category && filter !== '0') {
+    console.log('hi');
     const products = await Product.find({ product_name: new RegExp(key, 'i') })
       .sort({ price: filter })
+      .skip(page * limit)
+      .limit(limit)
       .lean();
+    const productCount = await Product.find({
+      product_name: new RegExp(key, 'i'),
+      status: true,
+    }).count();
+    const pageCount = Math.ceil(productCount / limit);
     return res.send({
       data: 'this is data',
       products,
       filter,
+      page,
+      pageCount,
     });
   }
   if (!category && !filter) {
     const products = await Product.find({
       product_name: new RegExp(key, 'i'),
-    }).lean();
+    })
+      .sort({ price: filter })
+      .skip(page * limit)
+      .limit(limit)
+      .lean();
+    const productCount = await Product.find({
+      product_name: new RegExp(key, 'i'),
+      status: true,
+    }).count();
+    const pageCount = Math.ceil(productCount / limit);
+    console.log(pageCount);
     return res.send({
       data: 'this is data',
       products,
       filter,
+      page,
+      pageCount,
     });
   }
 };

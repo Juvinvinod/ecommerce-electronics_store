@@ -68,12 +68,18 @@
                                 <div class="quantity-box mt-3">
                                     <input type="number" value="<%-productItem.quantity%>" id="quantity" disabled />
                                 </div>
-                                <h5 class="mt-4">Payment Type</h5>
-                                <div class="quantity-box mt-3">
-                                    <span>
-                                        <%= order.payment_method %>
-                                    </span>
-                                </div>
+                                <% if(order.coupon_used) { %>
+                                    <h5 class="mt-4">Applied coupon</h5>
+                                    <div class="quantity-box mt-3">
+                                        <input type="text" value="<%= order.coupon_used%>" id="coupon" disabled />
+                                    </div>
+                                    <% } %>
+                                        <h5 class="mt-4">Payment Type</h5>
+                                        <div class="quantity-box mt-3">
+                                            <span>
+                                                <%= order.payment_method %>
+                                            </span>
+                                        </div>
                             </div>
                         </div>
                         <% }) %>
