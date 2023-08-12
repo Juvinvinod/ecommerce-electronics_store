@@ -6,6 +6,7 @@ const Address = mongoose.model('Address');
 const Cart = mongoose.model('Cart');
 const Order = mongoose.model('Order');
 const Coupon = mongoose.model('Coupon');
+const Wallet = mongoose.model('Wallet');
 
 const User = mongoose.model('User');
 const promisify = require('es6-promisify');
@@ -32,7 +33,6 @@ const homePage = async (req, res) => {
 // display login page
 const loginForm = async (req, res) => {
   const categories = await Category.find({});
-  console.log(categories);
   res.render('login', { categories });
 };
 
@@ -119,8 +119,6 @@ const viewCategories = async (req, res) => {
       .sort({ price: filter })
       .skip(page * limit)
       .limit(limit);
-    // const count = products.length;
-    // console.log(count);
     const productCount = await Product.find({
       product_name: new RegExp(key, 'i'),
       status: true,
@@ -141,17 +139,13 @@ const viewCategories = async (req, res) => {
       .sort({ price: filter })
       .skip(page * limit)
       .limit(limit);
-    // const count = products.length;
-    // console.log(count);
     const productCount = await Product.find(
       {
         category_id: category,
       },
       { status: true }
     ).count();
-    console.log(page);
     const pageCount = Math.ceil(productCount / limit);
-    console.log(pageCount);
     res.render('categories', {
       categories,
       products,
@@ -217,7 +211,6 @@ const getRadioProducts = async (req, res) => {
     });
   }
   if (!category && filter !== '0') {
-    console.log('hi');
     const products = await Product.find({ product_name: new RegExp(key, 'i') })
       .sort({ price: filter })
       .skip(page * limit)
@@ -249,7 +242,6 @@ const getRadioProducts = async (req, res) => {
       status: true,
     }).count();
     const pageCount = Math.ceil(productCount / limit);
-    console.log(pageCount);
     return res.send({
       data: 'this is data',
       products,
@@ -529,7 +521,6 @@ const checkout = async (req, res) => {
     const walletAmount = req.user.wallet;
     const remainingAmount = walletAmount - req.body.totalAmount;
     if (req.body.totalAmount > walletAmount) {
-      console.log('hello');
       return res.status(400).send({ message: 'Not enough cash in wallet' });
     }
     if (remainingAmount < 0) {
@@ -538,12 +529,24 @@ const checkout = async (req, res) => {
           wallet: 0,
         },
       });
+      const wallet = new Wallet({
+        user_id: userId,
+        credit: req.body.totalAmount,
+        remaining_amount: 0,
+      });
+      await wallet.save();
     } else {
       await User.findByIdAndUpdate(id, {
         $set: {
           wallet: parseInt(remainingAmount),
         },
       });
+      const wallet = new Wallet({
+        user_id: userId,
+        credit: req.body.totalAmount,
+        remaining_amount: remainingAmount,
+      });
+      await wallet.save();
     }
     if (couponName) {
       const couponInfo = await Coupon.findOne({ code: couponName });
@@ -749,7 +752,6 @@ const viewOrders = async (req, res) => {
       model: 'Product',
     })
     .sort({ order_id: -1 });
-  console.log(orders);
   res.render('orderHistory', { categories, orders });
 };
 
@@ -776,10 +778,18 @@ const cancelOrder = async (req, res) => {
   const _id = req.params.id;
   const order = await Order.findOne({ _id });
   const walletInc = order.total_amount;
-  if (order.payment_method !== 'COD')
+  if (order.payment_method !== 'COD') {
     if (walletInc !== 0) {
       await User.updateOne({ _id: userId }, { $inc: { wallet: walletInc } });
+      const document = await User.findOne({ _id: userId });
+      const wallet = new Wallet({
+        user_id: userId,
+        debit: walletInc,
+        remaining_amount: document.wallet,
+      });
+      await wallet.save();
     }
+  }
   await Order.updateOne(
     { _id },
     {
@@ -928,6 +938,76 @@ const viewBlog = async (req, res) => {
   res.render('dummy', { categories });
 };
 
+// display walletPage
+const viewWalletPage = async (req, res) => {
+  const { _id } = req.user;
+  const categories = await Category.find({});
+  const documents = await Wallet.find({ user_id: _id }).sort({ _id: -1 });
+  res.render('wallet', { categories, documents });
+};
+
+const addDataWallet = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const amount = req.body.wallet;
+    const razorpayInstance = new Razorpay({
+      key_id: 'rzp_test_ceFacoW5d4WL7R',
+      key_secret: process.env.RAZORPAY_SECRET,
+    });
+
+    const options = await razorpayInstance.orders.create({
+      amount: amount * 100,
+      currency: 'INR',
+      // receipt: orderId,
+    });
+    const userDetails = await User.findOne({ _id: userId });
+
+    res.status(201).json({
+      success: true,
+      options,
+      amount,
+      userDetails,
+    });
+  } catch (err) {
+    console.error(`Error Online Payment:`, err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+};
+
+const verifyWalletPayment = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { payment } = req.body;
+    const walletInc = parseInt(req.body.order.amount / 100);
+    console.log(walletInc);
+    let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
+    hmac.update(`${payment.razorpay_order_id}|${payment.razorpay_payment_id}`);
+    hmac = hmac.digest('hex');
+    if (hmac === req.body.payment.razorpay_signature) {
+      await User.updateOne({ _id: userId }, { $inc: { wallet: walletInc } });
+      const document = await User.findOne({ _id: userId });
+      const wallet = new Wallet({
+        user_id: userId,
+        debit: walletInc,
+        remaining_amount: document.wallet,
+      });
+      await wallet.save();
+      res.status(200).send({
+        msg: 'Wallet updated',
+      });
+    }
+  } catch (err) {
+    console.error(`Error Verify Online Payment:`, err);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -968,4 +1048,7 @@ module.exports = {
   deleteCoupon,
   viewCoupons,
   viewBlog,
+  viewWalletPage,
+  addDataWallet,
+  verifyWalletPayment,
 };

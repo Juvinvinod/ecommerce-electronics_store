@@ -206,6 +206,11 @@ router.get(
   catchErrors(userController.viewCoupons)
 ); // list all coupons available to user
 
+// wallet
+router.get('/wallet', middleware.isLoggedIn, userController.viewWalletPage);
+router.post('/wallet', userController.addDataWallet);
+router.put('/verifyWalletPayment', userController.verifyWalletPayment);
+
 // blog
 router.get('/blog', catchErrors(userController.viewBlog));
 
