@@ -222,7 +222,7 @@ const viewAddProducts = async (req, res) => {
 // check if the category already exists,if so then add the product to the database
 const addProducts = async (req, res, next) => {
   const findCategory = req.body.category;
-  console.log(findCategory);
+
   const found = await Category.findOne({
     category_name: { $regex: new RegExp(`^${findCategory}$`, 'i') },
   });

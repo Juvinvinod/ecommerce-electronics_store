@@ -112,13 +112,15 @@ const viewCategories = async (req, res) => {
   const key = req.query.key ?? '';
   const page = req.query.page ?? 0;
   const { category } = req.query ?? '';
-  if (!category) {
+
+  if (filter == 0) {
     const products = await Product.find({
       product_name: new RegExp(key, 'i'),
+      category_id: new RegExp(category, 'i'),
     })
-      .sort({ price: filter })
       .skip(page * limit)
       .limit(limit);
+
     const productCount = await Product.find({
       product_name: new RegExp(key, 'i'),
       status: true,
@@ -134,14 +136,43 @@ const viewCategories = async (req, res) => {
       page,
     });
   }
-  if (category) {
-    const products = await Product.find({ category_id: category })
+  if (filter && !key) {
+    const products = await Product.find({
+      category_id: new RegExp(category, 'i'),
+    })
       .sort({ price: filter })
       .skip(page * limit)
       .limit(limit);
+    console.log(products);
     const productCount = await Product.find(
       {
-        category_id: category,
+        category_id: new RegExp(category, 'i'),
+      },
+      { status: true }
+    ).count();
+    const pageCount = Math.ceil(productCount / limit);
+    res.render('categories', {
+      categories,
+      products,
+      category,
+      filter,
+      key,
+      pageCount,
+      page,
+    });
+  }
+  if (filter && key) {
+    const products = await Product.find({
+      category_id: new RegExp(category, 'i'),
+      product_name: new RegExp(key, 'i'),
+    })
+      .sort({ price: filter })
+      .skip(page * limit)
+      .limit(limit);
+
+    const productCount = await Product.find(
+      {
+        category_id: new RegExp(category, 'i'),
       },
       { status: true }
     ).count();
@@ -165,20 +196,21 @@ const getRadioProducts = async (req, res) => {
   const key = req.query.key ?? '';
   const page = req.query.page ?? 0;
   const limit = 6;
-  if (!filter && category) {
+  if (filter == 0) {
     const products = await Product.find({
       product_name: new RegExp(key, 'i'),
-      category_id: category,
+      category_id: new RegExp(category, 'i'),
     })
       .skip(page * limit)
       .limit(limit)
       .lean();
     const productCount = await Product.find({
       product_name: new RegExp(key, 'i'),
-      category_id: category,
+      category_id: new RegExp(category, 'i'),
       status: true,
     }).count();
     const pageCount = Math.ceil(productCount / limit);
+    console.log(products);
     return res.send({
       data: 'this is data',
       products,
@@ -187,51 +219,10 @@ const getRadioProducts = async (req, res) => {
       pageCount,
     });
   }
-  if (category && filter !== 0) {
+  if (filter) {
     const products = await Product.find({
       product_name: new RegExp(key, 'i'),
-      category_id: category,
-    })
-      .sort({ price: filter })
-      .skip(page * limit)
-      .limit(limit)
-      .lean();
-    const productCount = await Product.find({
-      product_name: new RegExp(key, 'i'),
-      category_id: category,
-      status: true,
-    }).count();
-    const pageCount = Math.ceil(productCount / limit);
-    return res.send({
-      data: 'this is data',
-      products,
-      filter,
-      page,
-      pageCount,
-    });
-  }
-  if (!category && filter !== '0') {
-    const products = await Product.find({ product_name: new RegExp(key, 'i') })
-      .sort({ price: filter })
-      .skip(page * limit)
-      .limit(limit)
-      .lean();
-    const productCount = await Product.find({
-      product_name: new RegExp(key, 'i'),
-      status: true,
-    }).count();
-    const pageCount = Math.ceil(productCount / limit);
-    return res.send({
-      data: 'this is data',
-      products,
-      filter,
-      page,
-      pageCount,
-    });
-  }
-  if (!category && !filter) {
-    const products = await Product.find({
-      product_name: new RegExp(key, 'i'),
+      category_id: new RegExp(category, 'i'),
     })
       .sort({ price: filter })
       .skip(page * limit)
@@ -239,9 +230,11 @@ const getRadioProducts = async (req, res) => {
       .lean();
     const productCount = await Product.find({
       product_name: new RegExp(key, 'i'),
+      category_id: new RegExp(category, 'i'),
       status: true,
     }).count();
     const pageCount = Math.ceil(productCount / limit);
+    console.log(products);
     return res.send({
       data: 'this is data',
       products,
@@ -250,6 +243,46 @@ const getRadioProducts = async (req, res) => {
       pageCount,
     });
   }
+  // if (!category && filter !== '0') {
+  //   const products = await Product.find({ product_name: new RegExp(key, 'i') })
+  //     .sort({ price: filter })
+  //     .skip(page * limit)
+  //     .limit(limit)
+  //     .lean();
+  //   const productCount = await Product.find({
+  //     product_name: new RegExp(key, 'i'),
+  //     status: true,
+  //   }).count();
+  //   const pageCount = Math.ceil(productCount / limit);
+  //   return res.send({
+  //     data: 'this is data',
+  //     products,
+  //     filter,
+  //     page,
+  //     pageCount,
+  //   });
+  // }
+  // if (!category && !filter) {
+  //   const products = await Product.find({
+  //     product_name: new RegExp(key, 'i'),
+  //   })
+  //     .sort({ price: filter })
+  //     .skip(page * limit)
+  //     .limit(limit)
+  //     .lean();
+  //   const productCount = await Product.find({
+  //     product_name: new RegExp(key, 'i'),
+  //     status: true,
+  //   }).count();
+  //   const pageCount = Math.ceil(productCount / limit);
+  //   return res.send({
+  //     data: 'this is data',
+  //     products,
+  //     filter,
+  //     page,
+  //     pageCount,
+  //   });
+  // }
 };
 
 // display userprofile page
@@ -982,7 +1015,7 @@ const verifyWalletPayment = async (req, res) => {
     const userId = req.user._id;
     const { payment } = req.body;
     const walletInc = parseInt(req.body.order.amount / 100);
-    console.log(walletInc);
+
     let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
     hmac.update(`${payment.razorpay_order_id}|${payment.razorpay_payment_id}`);
     hmac = hmac.digest('hex');

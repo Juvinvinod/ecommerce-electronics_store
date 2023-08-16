@@ -51,7 +51,6 @@ const login = (req, res, next) => {
       if (err) {
         return next(err);
       }
-      console.log(req.user);
 
       return res.redirect('/otp');
     });
@@ -124,10 +123,9 @@ const forgotPass = async (req, res) => {
   if (document) {
     mail.resetOTP(req, res, document);
     const categories = await Category.find({});
-    console.log(document);
+
     res.render('otp', { categories, link: 'reset', document });
   } else {
-    console.log(req.body.email);
     req.flash('error', 'Entered email does not exist');
     res.redirect('/forgotPassword');
   }
@@ -136,15 +134,11 @@ const forgotPass = async (req, res) => {
 // verify if the entered otp is correct
 const resetOtpVerify = async (req, res) => {
   const user = req.query.id;
-  console.log(req.signedCookies);
   const enteredOTP =
     req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
   const storedOTP = req.signedCookies.otpReset;
   const username = req.signedCookies.usernameReset;
-  // console.log(username);
-  // console.log(user);
-  // console.log(storedOTP);
-  // console.log(enteredOTP);
+
   if (enteredOTP === storedOTP && username === user) {
     res.clearCookie(storedOTP); // Clear the OTP cookie
     res.clearCookie(username);
@@ -166,14 +160,12 @@ const viewChangePass = async (req, res) => {
 const changePassword = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log({ error: errors.array() });
     req.flash('errorObject', errors.array());
     return res.redirect('/changePassword');
   }
   const newPass = req.body.password;
   const repeatPass = req.body.passwordConfirm;
-  console.log(newPass);
-  console.log(repeatPass);
+
   if (newPass === repeatPass) {
     const username = req.signedCookies.usernameReset;
     const updateUser = await User.findOne({ email: username });

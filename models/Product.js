@@ -5,19 +5,15 @@ const { Schema } = mongoose;
 const productSchema = new Schema({
   product_image1: {
     type: String,
-    // required: true,
   },
   product_image2: {
     type: String,
-    // required: true,
   },
   product_image3: {
     type: String,
-    // required: true,
   },
   product_image4: {
     type: String,
-    // required: true,
   },
   product_name: {
     type: String,
@@ -47,8 +43,7 @@ const productSchema = new Schema({
     required: true,
   },
   category_id: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
+    type: String,
     required: true,
   },
 });

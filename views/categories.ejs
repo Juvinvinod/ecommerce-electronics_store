@@ -77,7 +77,7 @@
                             <i class="ri-close-fill" style="margin-top: 10px; font-size: 1.8rem;"></i>
                         </div>
                     </div>
-                    <input type="text" value="" name="key" style="height: 0px; visibility: hidden;">
+                    <input type="text" value="<%=key%>" name="key" style="height: 0px; visibility: hidden;">
                     <div class="row">
                         <h6>Category</h6>
                     </div>
@@ -115,9 +115,9 @@
                                 <label for="highToLow">Price - High to Low</label>
                         </div>
                         <div class="ft-option">
-                            <input type="radio" value="1" name="filter" id="newLaunches" <% if(filter==0){ %> checked <%
+                            <input type="radio" value="0" name="filter" id="newLaunches" <% if(filter==0){ %> checked <%
                                 } %>
-                                onchange="handleChange('filter', 1)"
+                                onchange="handleChange('filter', 0)"
                                 />
                                 <label for="newLaunches">New Launches</label>
                         </div>
