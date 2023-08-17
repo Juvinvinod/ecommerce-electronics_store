@@ -11,61 +11,73 @@ const User = mongoose.model('User');
 
 // find the user document,send otp and render otp page
 const login = (req, res, next) => {
-  passport.authenticate('local', (err, user) => {
-    if (err) {
-      // Handle error
-      return next(err);
-    }
-    if (!user) {
-      // Handle authentication failure
-      req.flash('error', 'Email/Password Incorrect!');
-      return res.redirect('/login');
-    }
+  try {
+    passport.authenticate('local', (err, user) => {
+      if (err) {
+        // Handle error
+        return next(err);
+      }
+      if (!user) {
+        // Handle authentication failure
+        req.flash('error', 'Email/Password Incorrect!');
+        return res.redirect('/login');
+      }
 
-    if (!user.access) {
-      req.flash('error', 'Access Denied!');
-      return res.redirect('/login');
-    }
+      if (!user.access) {
+        req.flash('error', 'Access Denied!');
+        return res.redirect('/login');
+      }
 
-    if (!user.isVerified) {
-      req.flash('error', 'Email not verified');
-      return res.redirect('/login');
-    }
+      if (!user.isVerified) {
+        req.flash('error', 'Email not verified');
+        return res.redirect('/login');
+      }
 
-    // check if the user is an admin
-    if (user.isAdmin) {
+      // check if the user is an admin
+      if (user.isAdmin) {
+        req.logIn(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          return res.redirect('/admin');
+        });
+        return;
+      }
+
+      // Generate and send OTP
+      sendOTP(req, res, user.email);
+
+      // Call req.logIn to maintain the session
       req.logIn(user, (err) => {
         if (err) {
           return next(err);
         }
-        return res.redirect('/admin');
+
+        return res.redirect('/otp');
       });
-      return;
-    }
-
-    // Generate and send OTP
-    sendOTP(req, res, user.email);
-
-    // Call req.logIn to maintain the session
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-
-      return res.redirect('/otp');
-    });
-  })(req, res, next);
+    })(req, res, next);
+  } catch (error) {
+    error.status = 500;
+    error.message = 'Internal server error';
+    next(error);
+  }
 };
 
 // destroying sessions and logging out
 const logout = function (req, res, next) {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    req.session.isOTPVerified = null;
-    res.redirect('/');
-  });
+  try {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      req.session.isOTPVerified = null;
+      res.redirect('/');
+    });
+  } catch (error) {
+    error.status = 500;
+    error.message = 'Internal server error';
+    next(error);
+  }
 };
 
 // display verify email page

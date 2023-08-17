@@ -1041,6 +1041,11 @@ const verifyWalletPayment = async (req, res) => {
   }
 };
 
+const viewContactPage = async (req, res) => {
+  const categories = await Category.find({});
+  res.render('contact', { categories });
+};
+
 module.exports = {
   loginForm,
   signupForm,
@@ -1084,4 +1089,5 @@ module.exports = {
   viewWalletPage,
   addDataWallet,
   verifyWalletPayment,
+  viewContactPage,
 };

@@ -28,7 +28,11 @@ router.get(
 ); // verify email and display success page
 
 // otp
-router.get('/otp', middleware.otpSessionCheck, authController.otpVerifyPage); // check if the user is already logged in.If not then render the otp page
+router.get(
+  '/otp',
+  middleware.otpSessionCheck,
+  catchErrors(authController.otpVerifyPage)
+); // check if the user is already logged in.If not then render the otp page
 router.post('/otp/login', catchErrors(authController.otpVerify)); // check if the otp entered by user is correct
 
 // login/logout
@@ -43,7 +47,7 @@ router.get('/logout', authController.logout); // logout the current user
 // forgot password
 router.get('/forgotPassword', catchErrors(authController.viewForgotPass)); // view forgot password page
 router.post('/forgotPassword', catchErrors(authController.forgotPass)); // check the entered email address
-router.post('/otp/reset', authController.resetOtpVerify); // check the otp entered by user
+router.post('/otp/reset', catchErrors(authController.resetOtpVerify)); // check the otp entered by user
 router.get('/changePassword', catchErrors(authController.viewChangePass)); // view change password page
 router.post(
   '/changePassword',
@@ -213,5 +217,6 @@ router.put('/verifyWalletPayment', userController.verifyWalletPayment);
 
 // blog
 router.get('/blog', catchErrors(userController.viewBlog));
+router.get('/contact', middleware.isLoggedIn, userController.viewContactPage);
 
 module.exports = router;

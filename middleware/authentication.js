@@ -14,7 +14,9 @@ const adminChecker = (req, res, next) => {
       res.redirect('/');
     }
   } catch (error) {
-    console.log(error);
+    error.status = 500;
+    error.message = 'Internal server error';
+    next(error);
   }
 };
 
@@ -28,16 +30,24 @@ const isLoggedIn = async (req, res, next) => {
     const categories = await Category.find({});
     res.render('login', { categories });
   } catch (error) {
-    console.log(error);
+    error.status = 500;
+    error.message = 'Internal server error';
+    next(error);
   }
 };
 
 // function to prevent going back to otp page after logging in
 const otpSessionCheck = (req, res, next) => {
-  if (req.session.isOTPVerified === true) {
-    res.redirect('/');
-  } else {
-    next();
+  try {
+    if (req.session.isOTPVerified === true) {
+      res.redirect('/');
+    } else {
+      next();
+    }
+  } catch (error) {
+    error.status = 500;
+    error.message = 'Internal server error';
+    next(error);
   }
 };
 

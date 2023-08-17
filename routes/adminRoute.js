@@ -14,7 +14,7 @@ router.get('/', catchErrors(adminController.dashBoard));
 router.get(
   '/salesReport',
   middleware.adminChecker,
-  adminController.getSalesReport
+  catchErrors(adminController.getSalesReport)
 );
 
 // customers
@@ -34,7 +34,7 @@ router.get(
 router.get(
   '/addCategories',
   middleware.adminChecker,
-  adminController.viewAddCategory
+  catchErrors(adminController.viewAddCategory)
 ); // display addCategory
 router.get(
   '/editCategory',
@@ -69,7 +69,7 @@ router.post(
 router.post(
   '/changeImage',
   imageOptions.updateUpload,
-  catchErrors(imageOptions.updateResize),
+  imageOptions.updateResize,
   catchErrors(adminController.updateImages)
 ); // change existing image of a product
 router.post('/editProducts', catchErrors(adminController.updateProducts)); // update existing data of a product
@@ -89,12 +89,12 @@ router.get(
 router.post(
   '/editOrder/:id',
   middleware.adminChecker,
-  adminController.editOrder
+  catchErrors(adminController.editOrder)
 ); // update the status of placed order
 router.get(
   '/orderSummary/:id',
   middleware.adminChecker,
-  adminController.orderSummary
+  catchErrors(adminController.orderSummary)
 );
 
 // coupons
@@ -106,11 +106,15 @@ router.get(
 router.get(
   '/addCoupons',
   middleware.adminChecker,
-  adminController.viewAddCoupons
+  catchErrors(adminController.viewAddCoupons)
 ); // display add coupon page
 router.post('/addCoupons', catchErrors(adminController.addCoupon)); // add new coupons with the data
 router.put('/listCoupons', catchErrors(adminController.listCoupons)); // change status to list-true
 router.put('/unListCoupons', catchErrors(adminController.unListCoupons)); // change status to list-false
-router.get('/editCoupons/:id', catchErrors(adminController.viewEditCoupons)); // display editCoupon page
+router.get(
+  '/editCoupons/:id',
+  middleware.adminChecker,
+  catchErrors(adminController.viewEditCoupons)
+); // display editCoupon page
 router.post('/editCoupons', catchErrors(adminController.editCoupons)); // update the coupons with submitted data
 module.exports = router;
