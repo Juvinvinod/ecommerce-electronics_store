@@ -155,8 +155,8 @@
                         <% }) %>
                 </div>
                 <nav aria-label="Page navigation example text-dark pl-pagination" id="pagination">
-                    <% if(pageCount>2) {%>
-                        <ul class="pagination d-flex justify-content-center text-dark categoryPagination">
+                    <% if(pageCount>1) {%>
+                        <ul class="pagination d-flex justify-content-center text-dark categoryPagination pt-2">
                             <li class="page-item <% if(page == 0) { %> disabled <% } %>">
                                 <span class="page-link text-dark  " aria-label="Previous">
                                     <span aria-hidden="true" onclick="gotoPage('<%=parseInt(page)-1%>')">&laquo;</span>

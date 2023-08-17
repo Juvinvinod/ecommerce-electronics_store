@@ -123,6 +123,7 @@ const viewCategories = async (req, res) => {
 
     const productCount = await Product.find({
       product_name: new RegExp(key, 'i'),
+      category_id: new RegExp(category, 'i'),
       status: true,
     }).count();
     const pageCount = Math.ceil(productCount / limit);
@@ -143,7 +144,6 @@ const viewCategories = async (req, res) => {
       .sort({ price: filter })
       .skip(page * limit)
       .limit(limit);
-    console.log(products);
     const productCount = await Product.find(
       {
         category_id: new RegExp(category, 'i'),
@@ -151,6 +151,7 @@ const viewCategories = async (req, res) => {
       { status: true }
     ).count();
     const pageCount = Math.ceil(productCount / limit);
+    console.log(pageCount);
     res.render('categories', {
       categories,
       products,
@@ -210,7 +211,6 @@ const getRadioProducts = async (req, res) => {
       status: true,
     }).count();
     const pageCount = Math.ceil(productCount / limit);
-    console.log(products);
     return res.send({
       data: 'this is data',
       products,
@@ -234,7 +234,7 @@ const getRadioProducts = async (req, res) => {
       status: true,
     }).count();
     const pageCount = Math.ceil(productCount / limit);
-    console.log(products);
+
     return res.send({
       data: 'this is data',
       products,
