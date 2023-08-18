@@ -33,6 +33,7 @@ router.get(
   middleware.otpSessionCheck,
   catchErrors(authController.otpVerifyPage)
 ); // check if the user is already logged in.If not then render the otp page
+router.get('/otpResend', authController.resendOtp); // resend otp
 router.post('/otp/login', catchErrors(authController.otpVerify)); // check if the otp entered by user is correct
 
 // login/logout

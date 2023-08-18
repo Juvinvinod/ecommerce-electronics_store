@@ -38,10 +38,10 @@ exports.developmentErrors = (err, req, res, next) => {
     ),
   };
   res.status(err.status || 500);
-  if (err.status !== 404) {
-    errorDetails.status = 500;
-    errorDetails.message = 'Internal server error';
-  }
+  // if (err.status !== 404) {
+  //   errorDetails.status = 500;
+  //   errorDetails.message = 'Internal server error';
+  // }
   res.format({
     // Based on the `Accept` http header
     'text/html': () => {

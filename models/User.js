@@ -47,6 +47,8 @@ const userSchema = new Schema({
     type: Number,
     default: 0,
   },
+  otpToken: String,
+  tokenExpires: Date,
 });
 
 userSchema.virtual('gravatar').get(function () {

@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
+const User = require('../models/User');
 require('dotenv').config({ path: '.env' });
 
 // generate a random number for using as OTP
@@ -40,8 +42,6 @@ const verifyEmail = async (body) => {
 async function sendOTP(req, res, email) {
   try {
     const otp1 = generateOTP();
-    res.cookie('otp', otp1, { signed: true });
-    res.cookie('username', email.name, { signed: true });
     // Configure the email transport settings
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -66,9 +66,11 @@ async function sendOTP(req, res, email) {
 
     // Send the email
     const info = await transporter.sendMail(mailOptions);
-    console.log(otp1);
     console.log('Email sent:', info.response);
-    return otp1;
+    const user = await User.findOne({ email });
+    user.otpToken = otp1;
+    user.tokenExpires = Date.now() + 300000;
+    await user.save();
   } catch (error) {
     console.error('Error sending email:', error);
   }

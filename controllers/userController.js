@@ -444,7 +444,7 @@ function totalAmount(products) {
 
 // display all the products added in the cart
 const displayCart = async (req, res) => {
-  if (req.user) {
+  if (req.user && req.session.isOTPVerified) {
     const categories = await Category.find({});
     const carts = await Cart.find({ user: req.user._id }).populate('product');
     const count = await Cart.find({ user: req.user._id }).count();
@@ -609,11 +609,12 @@ const checkout = async (req, res) => {
       const orderIdNumber = parseInt(lastOrderId.slice(4));
       orderId = `EMRT${`000000${orderIdNumber + 1}`.slice(-6)}`;
     }
+    const address = await Address.findOne({ _id: req.body.address });
     const newOrder = new Order({
       order_id: orderId,
       user: userId,
       product: productArray,
-      address: req.body.address,
+      address,
       total_amount: req.body.totalAmount,
       payment_method: 'wallet',
     });
@@ -657,11 +658,12 @@ const checkout = async (req, res) => {
       const orderIdNumber = parseInt(lastOrderId.slice(4));
       orderId = `EMRT${`000000${orderIdNumber + 1}`.slice(-6)}`;
     }
+    const address = await Address.findOne({ _id: req.body.address });
     const newOrder = new Order({
       order_id: orderId,
       user: userId,
       product: productArray,
-      address: req.body.address,
+      address,
       total_amount: req.body.totalAmount,
       payment_method: 'COD',
     });
@@ -750,11 +752,12 @@ const verifyOnlinePayment = async (req, res) => {
         couponInfo.users.push(userId);
         await couponInfo.save();
       }
+      const address = await Address.findOne({ _id: req.body.address });
       const newOrder = new Order({
         order_id: orderDetails.receipt,
         user: userId,
         product: productArray,
-        address: req.body.address,
+        address,
         total_amount: orderDetails.amount / 100,
         payment_method: 'Online',
       });
@@ -793,15 +796,10 @@ const getOrderedProduct = async (req, res) => {
   const categories = await Category.find({});
   const userId = req.user._id;
   const orderId = req.params.id;
-  const order = await Order.findOne({ _id: orderId, user: userId })
-    .populate({
-      path: 'product.product_id',
-      model: 'Product',
-    })
-    .populate({
-      path: 'address',
-      model: 'Address',
-    });
+  const order = await Order.findOne({ _id: orderId, user: userId }).populate({
+    path: 'product.product_id',
+    model: 'Product',
+  });
   res.render('orderedProduct', { categories, order });
 };
 

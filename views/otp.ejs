@@ -30,18 +30,29 @@
                                     aria-label="Close"></button>
                         </div>
                         <% } %>
-                            <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2"> <input
-                                    class="m-2 text-center form-control rounded" type="text" id="first" maxlength="1"
-                                    name="otp1" />
-                                <input class="m-2 text-center form-control rounded" type="text" id="second"
-                                    maxlength="1" name="otp2" /> <input class="m-2 text-center form-control rounded"
-                                    type="text" id="third" maxlength="1" name="otp3" /> <input
-                                    class="m-2 text-center form-control rounded" type="text" id="fourth" maxlength="1"
-                                    name="otp4" />
-                            </div>
-                            <div class="mt-4"> <button class="btn btn-danger px-4 validate"
-                                    type="submit">Validate</button>
-                            </div>
+                            <% if (flashes.message) { %>
+                                <div class="container alert alert-success alert-dismissible fade show" role="alert">
+                                    <%= flashes.message %>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                                <% } %>
+                                    <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2"> <input
+                                            class="m-2 text-center form-control rounded" type="text" id="first"
+                                            maxlength="1" name="otp1" />
+                                        <input class="m-2 text-center form-control rounded" type="text" id="second"
+                                            maxlength="1" name="otp2" /> <input
+                                            class="m-2 text-center form-control rounded" type="text" id="third"
+                                            maxlength="1" name="otp3" /> <input
+                                            class="m-2 text-center form-control rounded" type="text" id="fourth"
+                                            maxlength="1" name="otp4" />
+                                    </div>
+                                    <div class="mt-4"> <button class="btn btn-danger px-4 validate"
+                                            type="submit">Validate</button>
+                                    </div>
+                </div>
+                <div class="text-center pt-3">
+                    <a href="otpResend" class="text-decoration-none">Resend OTP</a>
                 </div>
             </div>
         </div>

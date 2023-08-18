@@ -80,6 +80,14 @@ const logout = function (req, res, next) {
   }
 };
 
+// resend otp
+const resendOtp = (req, res) => {
+  const { user } = req;
+  sendOTP(req, res, user.email);
+  req.flash('message', 'Otp send..Please check..!!');
+  res.redirect('/otp');
+};
+
 // display verify email page
 const verifyEmail = async (req, res) => {
   const categories = await Category.find({});
@@ -108,15 +116,18 @@ const otpVerifyPage = async (req, res) => {
 const otpVerify = async (req, res) => {
   const enteredOTP =
     req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
-  const storedOTP = req.signedCookies.otp;
-  const { username } = req.signedCookies;
-  if (enteredOTP === storedOTP) {
+  const user = await User.findOne({
+    otpToken: enteredOTP,
+    tokenExpires: { $gt: Date.now() },
+  });
+  if (user) {
     req.session.isOTPVerified = true;
-    res.clearCookie(storedOTP); // Clear the OTP cookie
-    res.clearCookie(username);
+    user.otpToken = undefined;
+    user.tokenExpires = undefined;
+    await user.save();
     res.redirect('/');
   } else {
-    req.flash('error', 'Entered otp is incorrect');
+    req.flash('error', 'Entered otp is incorrect/expired');
     res.redirect('/otp');
   }
 };
@@ -213,4 +224,5 @@ module.exports = {
   viewChangePass,
   changePassword,
   validateResetPass,
+  resendOtp,
 };
