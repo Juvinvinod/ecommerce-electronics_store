@@ -86,7 +86,7 @@
 
 /* carousal home */
 .carousel-item {
-    margin-top: 10px;
+    margin-top: 2px;
     background-position: center;
     background-size: cover;
     color: white;
@@ -100,7 +100,7 @@
 
     /* Adjust the breakpoint value as needed */
     #carouselExampleAutoplaying {
-        margin-top: 40px;
+        margin-top: 10px;
         /* Adjust the margin-top value as needed */
     }
 }

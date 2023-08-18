@@ -8,7 +8,6 @@ const Order = mongoose.model('Order');
 const Coupon = mongoose.model('Coupon');
 
 const fs = require('fs');
-const { Console } = require('console');
 
 // display login page
 const viewAdminLogin = (req, res) => {
@@ -347,19 +346,10 @@ const listOrders = async (req, res) => {
 // display all the orders placed by users
 const orderDetails = async (req, res) => {
   const { id } = req.params;
-  const order = await Order.findOne({ _id: id })
-    .populate({
-      path: 'product.product_id',
-      model: 'Product',
-    })
-    .populate({
-      path: 'address',
-      model: 'Address',
-      populate: {
-        path: 'user_id',
-        model: 'User',
-      },
-    });
+  const order = await Order.findOne({ _id: id }).populate({
+    path: 'product.product_id',
+    model: 'Product',
+  });
   res.render('admin/orderDetails', { order });
 };
 

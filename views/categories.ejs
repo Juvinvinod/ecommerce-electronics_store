@@ -183,12 +183,13 @@
     <%- include('./layout/userFooterbar.ejs') %>
         <script>
             let key = '<%=key%>'
+            let origin = window.location.origin;
             let mainUrl = new URL(window.location.href);
             let mainSearchParams = mainUrl.searchParams
             let newMainUrl = ''
             let trial = new URLSearchParams(window.location.search);
             let cat = trial.get('category')
-            let url = new URL(`http://localhost:3000/getProducts?category=${cat}`);
+            let url = new URL(`${origin}/getProducts?category=${cat}`);
             let searchParams = url.searchParams;
 
             function gotoPage(page) {
