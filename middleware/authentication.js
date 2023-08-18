@@ -6,17 +6,24 @@ const Category = mongoose.model('Category');
 const adminChecker = (req, res, next) => {
   try {
     if (!req.user) {
-      return res.redirect('/');
+      return res.redirect('/admin/login');
     }
     if (req.user.isAdmin) {
       next();
-    } else {
-      res.redirect('/');
     }
   } catch (error) {
     error.status = 500;
     error.message = 'Internal server error';
     next(error);
+  }
+};
+
+// check if the admin is already logged in
+const existingAdminChecker = (req, res, next) => {
+  if (!req.user) {
+    next();
+  } else {
+    res.redirect('/admin');
   }
 };
 
@@ -55,4 +62,5 @@ module.exports = {
   adminChecker,
   isLoggedIn,
   otpSessionCheck,
+  existingAdminChecker,
 };

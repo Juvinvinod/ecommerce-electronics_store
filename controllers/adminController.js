@@ -10,6 +10,11 @@ const Coupon = mongoose.model('Coupon');
 const fs = require('fs');
 const { Console } = require('console');
 
+// display login page
+const viewAdminLogin = (req, res) => {
+  res.render('admin/adminLogin');
+};
+
 // display dashboard
 const dashBoard = async (req, res) => {
   const orders = await Order.find({});
@@ -653,6 +658,7 @@ const getSalesReport = async (req, res) => {
 };
 
 module.exports = {
+  viewAdminLogin,
   dashBoard,
   allCustomers,
   changeAccess,

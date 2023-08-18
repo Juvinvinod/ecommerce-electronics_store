@@ -45,13 +45,20 @@
                 </ul>
                 <div class="dropdown d-flex pb-1 " style="margin-right: 30px;background-color: #27323F;">
 
-                    <img src="<%= user.gravatar %>" alt="" style="width: 30px;border-radius: 50%;">
+
+                    <% if(locals.user) { %>
+
+
+                        <a href="/userProfile"><img src="<%= user.gravatar %>" alt=""
+                                style="width: 30px;border-radius: 50%;" class="ms-3"></a>
+                        <a class="text-light ps-3 pb-1 ms-3" href="/admin/adminLogout"><i
+                                class="fa fa-sign-out  fa-lg pb-1" aria-hidden="true"></i></a>
 
 
 
-
-                    <a class="dropdown-item text-light miniNav ps-3 pt-1 ms-3" href="/logout"><i
-                            class="fa fa-sign-out  fa-lg" aria-hidden="true"></i></a>
+                        <% } else {%>
+                            <a class="nav-link text-light ps-3 me-2 pb-1" href="/admin/login"> Login </a>
+                            <% } %>
                 </div>
 
 

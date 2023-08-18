@@ -23,7 +23,7 @@ exports.notFound = (req, res, next) => {
 };
 
 /*
-  Development Error Hanlder
+  Development Error Handler
 
   In development we show good error messages so if we hit a syntax error or any other previously un-handled error, we can show good info on what happened
 */
@@ -38,10 +38,10 @@ exports.developmentErrors = (err, req, res, next) => {
     ),
   };
   res.status(err.status || 500);
-  // if (err.status !== 404) {
-  //   errorDetails.status = 500;
-  //   errorDetails.message = 'Internal server error';
-  // }
+  if (err.status !== 404) {
+    errorDetails.status = 500;
+    errorDetails.message = 'Internal server error';
+  }
   res.format({
     // Based on the `Accept` http header
     'text/html': () => {

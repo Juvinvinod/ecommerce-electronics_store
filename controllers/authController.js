@@ -63,6 +63,50 @@ const login = (req, res, next) => {
   }
 };
 
+// check admin login
+const adminLogin = (req, res, next) => {
+  try {
+    passport.authenticate('local', (err, user) => {
+      if (err) {
+        // Handle error
+        return next(err);
+      }
+      if (!user) {
+        // Handle authentication failure
+        req.flash('error', 'Email/Password Incorrect!');
+        return res.redirect('/admin/login');
+      }
+
+      if (!user.access) {
+        req.flash('error', 'Access Denied!');
+        return res.redirect('/admin/login');
+      }
+
+      if (!user.isVerified) {
+        req.flash('error', 'Email not verified');
+        return res.redirect('/admin/login');
+      }
+
+      // check if the user is an admin
+      if (user.isAdmin) {
+        req.logIn(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          return res.redirect('/admin');
+        });
+      } else {
+        req.flash('error', 'You  do not have access');
+        return res.redirect('/admin/login');
+      }
+    })(req, res, next);
+  } catch (error) {
+    error.status = 500;
+    error.message = 'Internal server error';
+    next(error);
+  }
+};
+
 // destroying sessions and logging out
 const logout = function (req, res, next) {
   try {
@@ -72,6 +116,23 @@ const logout = function (req, res, next) {
       }
       req.session.isOTPVerified = null;
       res.redirect('/');
+    });
+  } catch (error) {
+    error.status = 500;
+    error.message = 'Internal server error';
+    next(error);
+  }
+};
+
+// destroying sessions and logging out
+const adminLogout = function (req, res, next) {
+  try {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      req.session.isOTPVerified = null;
+      res.redirect('/admin');
     });
   } catch (error) {
     error.status = 500;
@@ -213,7 +274,9 @@ const validateResetPass = [
 
 module.exports = {
   login,
+  adminLogin,
   logout,
+  adminLogout,
   otpVerifyPage,
   otpVerify,
   verifyEmail,

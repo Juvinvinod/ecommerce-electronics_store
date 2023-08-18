@@ -1,11 +1,22 @@
 const express = require('express');
 const adminController = require('../controllers/adminController');
+const authController = require('../controllers/authController');
 const middleware = require('../middleware/authentication');
 const imageOptions = require('../handlers/multer.js');
 
 const { catchErrors } = require('../handlers/errorHandlers');
 
 const router = express.Router();
+
+// login
+router.get(
+  '/login',
+  middleware.existingAdminChecker,
+  adminController.viewAdminLogin
+);
+
+router.post('/adminLogin', authController.adminLogin);
+router.get('/adminLogout', authController.adminLogout);
 
 // dashboard
 router.get(
