@@ -218,6 +218,6 @@ router.put('/verifyWalletPayment', userController.verifyWalletPayment);
 
 // blog
 router.get('/blog', catchErrors(userController.viewBlog));
-router.get('/contact', middleware.isLoggedIn, userController.viewContactPage);
+router.get('/contact', userController.viewContactPage);
 
 module.exports = router;
