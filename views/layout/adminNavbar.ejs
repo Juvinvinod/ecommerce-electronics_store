@@ -1,0 +1,70 @@
+<!-- navbar starts here -->
+<div class="d-flex customerCare justify-content-between p-3 ps-5  container-fluid ">
+    <div>24/7 customer service 1-800-235-5678
+    </div>
+
+</div>
+<div>
+    <nav class="navbar navbar-expand-lg " style=" background-color: #27323F;height: 30px;">
+        <div class="container-fluid  navbarColor">
+            <a class="navbar-brand text-light img-fluid " href="/admin"><img src="/img/logo.png" class="logoControl"
+                    alt=""></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-theme="dark"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon "></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-light " href="/admin">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="/admin/salesReport">Sales report</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="/admin/categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="/admin/products?page=1">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="/admin/orders">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="/admin/customers">Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light ps-3" href="/admin/coupons">Coupons</a>
+                    </li>
+                    <li class="nav-item">
+
+                    </li>
+                </ul>
+                <div class="dropdown d-flex pb-1 " style="margin-right: 30px;background-color: #27323F;">
+
+
+                    <% if(locals.user) { %>
+
+
+                        <a href="/userProfile"><img src="<%= user.gravatar %>" alt=""
+                                style="width: 30px;border-radius: 50%;" class="ms-3"></a>
+                        <a class="text-light ps-3 pb-1 ms-3" href="/admin/adminLogout"><i
+                                class="fa fa-sign-out  fa-lg pb-1" aria-hidden="true"></i></a>
+
+
+
+                        <% } else {%>
+                            <a class="nav-link text-light ps-3 me-2 pb-1" href="/admin/login"> Login </a>
+                            <% } %>
+                </div>
+
+
+            </div>
+        </div>
+    </nav>
+</div>
+</div>
+<!-- Navbar ends here -->
