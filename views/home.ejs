@@ -113,7 +113,7 @@
                                                                                                 class="btn btn-primary shadow-0 me-1">Add
                                                                                                 to cart</a>
                                                                                         <% } else { %>
-                                                                                                <a onclick="addToCart('<%=object._id%>')"
+                                                                                                <a onclick="login()"
                                                                                                         class="btn btn-primary shadow-0 me-1">Add
                                                                                                         to cart</a>
                                                                                                 <% } %>
@@ -387,7 +387,19 @@
                                         })
                                 }
 
+                                function login() {
+                                        Swal.fire({
+                                                title: 'Login required',
+                                                text: " Please login to add to cart",
+                                                icon: 'error',
+                                                showConfirmButton: false,
+                                        })
+                                        setTimeout(() => {
 
+                                                Swal.close(); // Close the alert
+
+                                        }, 1500);
+                                }
 
 
 
