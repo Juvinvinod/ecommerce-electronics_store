@@ -26,7 +26,7 @@ const verifyEmail = async (body) => {
       from: process.env.AU_EMAIL,
       to: body.email,
       subject: 'Welcome to e-mart',
-      html: `<p>Hello, <strong>${body.name}</strong>, Please click the link button below to complete the registration process. If this is not you, you can safely ignore this email</p><a href="http://localhost:3000/verifyEmailSuccess/${body.name}">Click here</a>`,
+      html: `<p>Hello, <strong>${body.name}</strong>, Please click the link button below to complete the registration process. If this is not you, you can safely ignore this email</p><a href="http://www.emart.juvin.in/verifyEmailSuccess/${body.name}">Click here</a>`,
     };
 
     const info = await transporter.sendMail(mailOptions);
