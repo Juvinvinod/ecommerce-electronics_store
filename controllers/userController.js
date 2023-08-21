@@ -429,7 +429,7 @@ const addToCart = async (req, res) => {
     });
     await newCart.save();
   }
-  res.json({ success: true, wishlistSize });
+  res.send({ success: true, wishlistSize });
 };
 
 // function to find the total cost of products added in the cart
