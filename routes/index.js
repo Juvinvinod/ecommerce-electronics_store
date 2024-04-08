@@ -82,7 +82,7 @@ router.post(
   catchErrors(userController.updateName)
 ); // change existing user name
 
-// change user password
+// user password
 router.get(
   '/updatePassword',
   middleware.isLoggedIn,
@@ -166,7 +166,7 @@ router.post(
 router.put(
   '/verifyOnlinePayment',
   catchErrors(userController.verifyOnlinePayment)
-);
+); // verify online payment
 
 // orders
 router.get(
@@ -212,12 +212,12 @@ router.get(
 ); // list all coupons available to user
 
 // wallet
-router.get('/wallet', middleware.isLoggedIn, userController.viewWalletPage);
-router.post('/wallet', userController.addDataWallet);
-router.put('/verifyWalletPayment', userController.verifyWalletPayment);
+router.get('/wallet', middleware.isLoggedIn, userController.viewWalletPage); // get wallet info
+router.post('/wallet', userController.addDataWallet); // add cash to wallet
+router.put('/verifyWalletPayment', userController.verifyWalletPayment); // verify payment
 
 // blog
-router.get('/blog', catchErrors(userController.viewBlog));
-router.get('/contact', userController.viewContactPage);
+router.get('/blog', catchErrors(userController.viewBlog)); // display blog page
+router.get('/contact', userController.viewContactPage); // display contact page
 
 module.exports = router;
